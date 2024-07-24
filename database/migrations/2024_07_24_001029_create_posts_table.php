@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->mediumText('content');
-            $table->date('created');
             $table->time('read_time');
             $table->smallInteger('difficulty');
             $table->boolean('featured');
