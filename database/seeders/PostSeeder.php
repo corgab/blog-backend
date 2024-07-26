@@ -51,7 +51,6 @@ class PostSeeder extends Seeder
                 $new_post->slug = Str::slug($new_post->name, '-');
                 $new_post->content = $row[1];
                 $new_post->created_at = $row[2];
-                $new_post->read_time = $row[3];
                 $new_post->difficulty = $row[4];
                 $new_post->featured = $row[5];
 
@@ -61,8 +60,8 @@ class PostSeeder extends Seeder
                 $tags_id = Tag::all()->pluck('id')->all();
                 $technologies_id = Technology::all()->pluck('id')->all();
 
-                $random_tag = $faker->randomElements($tags_id, 1);
-                $random_tech = $faker->randomElements($technologies_id, 1);
+                $random_tag = $faker->randomElements($tags_id, 2);
+                $random_tech = $faker->randomElements($technologies_id, 2);
 
                 $new_post->tags()->attach($random_tag);
                 $new_post->technologies()->attach($random_tech);

@@ -23,7 +23,7 @@
             <td>{{$post->name}}</td>
             <td>{{$post->content}}</td>
             <td>{{$post->user->name}}</td>
-            <td>{{$post->read_time}}</td>
+            <td>{{ $post->reading_time }}</td>
             <td>{{$post->difficulty}}</td>
             <td>{{$post->featured}}</td>
             <td>{{$post->created_at->translatedFormat('d F Y ')}}</td>

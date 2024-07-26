@@ -13,7 +13,7 @@
         <th scope="col">difficulty</th>
         <th scope="col">read time</th>
         <th scope="col">created</th>
-        <th scope="col">tags</th>
+        <th scope="col">technologies</th>
         <th scope="col" colspan="3">actions</th>
       </tr>
     </thead>
@@ -26,7 +26,7 @@
             <td>{{$post->user->name}}</td>
             <td>{{$post->featured}}</td>
             <td>{{$post->difficulty}}</td>
-            <td>{{$post->read_time}}</td>
+            <td>{{ $post->reading_time }}</td>
             <td>{{$post->created_at->translatedFormat('d F Y ')}}</td>
             <td>
                 @foreach($post->technologies as $technology)
