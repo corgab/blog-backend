@@ -47,8 +47,8 @@ class PostSeeder extends Seeder
                 $new_post = new Post();
 
                 $new_post->user_id = $user_id;
-                $new_post->name = $row[0];
-                $new_post->slug = Str::slug($new_post->name, '-');
+                $new_post->title = $row[0];
+                $new_post->slug = Str::slug($new_post->title, '-');
                 $new_post->content = $row[1];
                 $new_post->created_at = $row[2];
                 $new_post->difficulty = $row[4];

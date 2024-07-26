@@ -22,7 +22,7 @@
         <tr>
 
             <th scope="row">{{$post->id}}</th>
-            <td>{{$post->name}}</td>
+            <td>{{$post->title}}</td>
             <td>{{$post->user->name}}</td>
             <td>{{$post->featured}}</td>
             <td>{{$post->difficulty}}</td>
