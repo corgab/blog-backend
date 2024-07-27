@@ -12,8 +12,8 @@
             <th scope="col">content</th>
             <th scope="col">creator</th>
             <th scope="col">read time</th>
-            <th scope="col">difficulty</th>
             <th scope="col">featured</th>
+            <th scope="col">difficulty</th>
             <th scope="col">created</th>
             <th scope="col">tags</th>
             <th scope="col">technologies</th>
