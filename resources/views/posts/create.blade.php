@@ -31,6 +31,15 @@
                 <label class="form-check-label" for="featured">Featured</label>
             </div>
         </div>
+        {{-- @dd($tags) --}}
+        <div class="form-check">
+            @foreach ($tags as $tag)
+                <div class="col-2">
+                    <input @checked(in_array($tag->id, old('tag_id', []))) class="form-check-input @error('tag_id') is-invalid @enderror" name="tag_id[]" type="checkbox" value="{{ $tag->id }}" id="type-{{ $tag->id }}">
+                    <label class="form-check-label" for="type-{{ $tag->id }}">{{ $tag->name }}</label>
+                </div>
+            @endforeach
+        </div>
         <button type="submit">Invia</button>
     </form>
 

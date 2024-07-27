@@ -27,10 +27,10 @@ class StorePostRequest extends FormRequest
             'content' => 'required|string',
             'difficulty' => 'required|integer|between:1,3',
             'featured' => 'required|boolean',
-            // 'tag_id' => 'required|array',
-            // 'tag_id.*' => 'exists:tags,id',
-            // 'type_id' => 'required|array',
-            // 'type_id.*' => 'exists:technologies,id',
+            'tag_id' => 'required|array',
+            'tag_id.*' => 'exists:tags,id',
+            // 'technology_id' => 'required|array',
+            // 'technology_id.*' => 'exists:technologies,id',
         ];
     }
 }

@@ -19,7 +19,7 @@ class PostController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    
+
     {
         $user = Auth::user();
         // $posts = Post::all();
@@ -52,14 +52,13 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
 
         // Assegna l'ID dell'utente al campo 'user_id'
         $form_data['user_id'] = Auth::id();
 
-        // slug
+        // Creazione slug univoco
         $base_slug = Str::slug($form_data['title']);
         $slug = $base_slug;
         $n = 0;
@@ -74,10 +73,11 @@ class PostController extends Controller
 
         // Creazione nuovo post
         $new_post = Post::create($form_data);
-        // $new_post->tags()->sync($form_data['tag_id']);
-        // $new_post->technologies()->sync($form_data['type_id']);
 
-        return redirect()->route('posts.index')->with('success', 'Post created successfully!');
+        $new_post->tags()->sync($form_data['tag_id']);
+
+        // Ritorna alla pagina degli indici dei post
+        return to_route('posts.index');
     }
 
     /**
