@@ -24,8 +24,18 @@
             <td>{{$post->content}}</td>
             <td>{{$post->user->name}}</td>
             <td>{{ $post->reading_time }}</td>
-            <td>{{$post->difficulty}}</td>
-            <td>{{$post->featured}}</td>
+            <td>
+                @if($post->featured == 1)
+                True
+                @elseif($post->featured == 0)
+                False
+                @endif
+              </td>
+              <td>
+                @for($i = 0; $i < $post->difficulty; $i++)
+                <i class="bi bi-star-fill"></i>
+                @endfor
+              </td>
             <td>{{$post->created_at->translatedFormat('d F Y ')}}</td>
             <td>
                 @foreach($post->tags as $tag)

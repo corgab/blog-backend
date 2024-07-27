@@ -8,10 +8,10 @@
     <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">nome</th>
-        <th scope="col">creator</th>
-        <th scope="col">featured</th>
-        <th scope="col">difficulty</th>
+        <th scope="col">Title</th>
+        <th scope="col">Creator</th>
+        <th scope="col">Featured</th>
+        <th scope="col">Difficulty</th>
         <th scope="col">read time</th>
         <th scope="col">created</th>
         <th scope="col">technologies</th>
@@ -25,8 +25,19 @@
             <th scope="row">{{$post->id}}</th>
             <td>{{$post->title}}</td>
             <td>{{$post->user->name}}</td>
-            <td>{{$post->featured}}</td>
-            <td>{{$post->difficulty}}</td>
+            {{-- <td>{{$post->featured}}</td> --}}
+            <td>
+              @if($post->featured == 1)
+              True
+              @elseif($post->featured == 0)
+              False
+              @endif
+            </td>
+            <td>
+              @for($i = 0; $i < $post->difficulty; $i++)
+              <i class="bi bi-star-fill"></i>
+              @endfor
+            </td>
             <td>{{ $post->reading_time }}</td>
             <td>{{$post->created_at->translatedFormat('d F Y ')}}</td>
             <td>
