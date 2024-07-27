@@ -2,11 +2,13 @@
 
 @section('content')
 
+<h1 class="text-center">{{$post->title}}</h1>
+
 <table class="table">
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">nome</th>
+            {{-- <th scope="col">nome</th> --}}
             <th scope="col">content</th>
             <th scope="col">creator</th>
             <th scope="col">read time</th>
@@ -20,7 +22,7 @@
     <tbody>
         <tr>
             <th scope="row">{{$post->id}}</th>
-            <td>{{$post->title}}</td>
+            {{-- <td>{{$post->title}}</td> --}}
             <td>{{$post->content}}</td>
             <td>{{$post->user->name}}</td>
             <td>{{ $post->reading_time }}</td>

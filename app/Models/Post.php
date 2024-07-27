@@ -45,13 +45,10 @@ class Post extends Model
         // Calcola il tempo di lettura
         $minutes = ceil($wordCount / $wordsPerMinute);
 
-        if($minutes < 1) {
+        if($minutes <= 1) {
             return 'Less than 1 minute';    
-        } elseif($minutes = 1) {
-            return '1 minute';
-        } else {
+        } else
             return "{$minutes} minutes";
-        }
     }
 
 }

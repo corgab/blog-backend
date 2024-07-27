@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <h1 class="text-center">Creazione piatto</h1>
+    <h1 class="text-center">Creazione Post</h1>
 
     <form action="{{route('posts.store')}}" method="POST">
         @csrf
