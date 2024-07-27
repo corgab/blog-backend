@@ -3,6 +3,7 @@
 
 <h1 class="text-center">POSTS</h1>
 
+@if(isset($posts))
 <table class="table">
     <thead>
       <tr>
@@ -39,5 +40,10 @@
         </tr>
         @endforeach
     </tbody>
-
+        
+    @else
+        
+      <h1 class="text-center">Non hai ancora creato un post</h1>
+    
+    @endif
 @endsection

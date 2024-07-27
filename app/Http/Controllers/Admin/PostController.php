@@ -19,9 +19,11 @@ class PostController extends Controller
      * Display a listing of the resource.
      */
     public function index()
+    
     {
+        $user = Auth::user();
         // $posts = Post::all();
-        $posts = Post::orderBy('created_at', 'desc')->with('user','tags','technologies')->get();
+        $posts = Post::orderBy('created_at', 'desc')->where('user_id', $user->id)->with('user','tags','technologies')->get();
 
         // dd($posts);
 
