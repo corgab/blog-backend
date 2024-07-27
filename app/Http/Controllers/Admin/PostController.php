@@ -75,6 +75,7 @@ class PostController extends Controller
         $new_post = Post::create($form_data);
 
         $new_post->tags()->sync($form_data['tag_id']);
+        $new_post->technologies()->sync($form_data['technology_id']);
 
         // Ritorna alla pagina degli indici dei post
         return to_route('posts.index');

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <h1 class="text-center">Creazione Post</h1>
+    <h1 class="text-center text-body">Creazione Post</h1>
 
     <form action="{{route('posts.store')}}" method="POST">
         @csrf
@@ -31,15 +31,26 @@
                 <label class="form-check-label" for="featured">Featured</label>
             </div>
         </div>
-        {{-- @dd($tags) --}}
+        {{-- Tags --}}
         <div class="form-check">
             @foreach ($tags as $tag)
-                <div class="col-2">
+                <div>
                     <input @checked(in_array($tag->id, old('tag_id', []))) class="form-check-input @error('tag_id') is-invalid @enderror" name="tag_id[]" type="checkbox" value="{{ $tag->id }}" id="type-{{ $tag->id }}">
                     <label class="form-check-label" for="type-{{ $tag->id }}">{{ $tag->name }}</label>
                 </div>
             @endforeach
         </div>
+        {{-- Technologies --}}
+        <h1>Technologies</h1>
+        <div class="form-check">
+            @foreach ($technologies as $technology)
+                <div>
+                    <input @checked(in_array($technology->id, old('technology_id', []))) class="form-check-input @error('technology_id') is-invalid @enderror" name="technology_id[]" type="checkbox" value="{{ $technology->id }}" id="technology-{{ $technology->id }}">
+                    <label class="form-check-label" for="technology-{{ $technology->id }}">{{ $technology->name }}</label>
+                </div>
+            @endforeach
+        </div>
+        
         <button type="submit">Invia</button>
     </form>
 
