@@ -6,12 +6,12 @@
         @csrf
         {{-- Title --}}
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="title" name="title" placeholder="Write title here">
+            <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}" placeholder="Write title here">
             <label for="title">Title</label>
         </div>
         {{-- Content --}}
         <div class="form-floating mb-3">
-            <textarea class="form-control" placeholder="Write content here" id="content" name="content"></textarea>
+            <textarea class="form-control" placeholder="Write content here" id="content" name="content">{{ old('content') }}</textarea>
             <label for="content">Content</label>
         </div>
         <div class="d-flex gap-4">
@@ -27,7 +27,7 @@
             {{-- Featured --}}
             <div class="form-check form-switch form-check-reverse">
                 <input type="hidden" value="0" id="featured-hidden" name="featured">
-                <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured" value="1">
+                <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured" value="1" {{ old('featured', 0) == 1 ? 'checked' : '' }}>
                 <label class="form-check-label" for="featured">Featured</label>
             </div>
         </div>
