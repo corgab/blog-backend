@@ -8,7 +8,7 @@
     <div class="row justify-content-center">
         <div class="col">
             <div class="card">
-                <div class="card-header">Posts</div>
+                <div class="card-header">Dashboard</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -21,8 +21,10 @@
 
                     {{-- {{ __('You are logged in!') }} --}}
                     {{-- create posts --}}
-                    <a class="d-block" href="{{route('posts.index')}}"> POSTS</a>
-
+                    <div class="d-flex column-gap-3">
+                        <a href="{{route('posts.index')}}"> POSTS</a>
+                        <a href="{{route('technologies.index')}}">TECHNOLOGIES</a>
+                    </div>
                     <h6 class="pt-3">Last posts</h6>
                     <table class="table">
                         <thead>
@@ -31,6 +33,7 @@
                             {{-- <th scope="col">Difficulty</th> --}}
                             <th scope="col">tags</th>
                             <th scope="col">technologies</th>
+                            {{-- <th scope="col">actions</th> --}}
                           </tr>
                         </thead>
                         <tbody>
@@ -52,6 +55,10 @@
                                   {{$tag->name}}
                                   @endforeach
                               </td>
+                              {{-- FIXARE --}}
+                              {{-- <td>
+                                <a href="{{route('posts.show')}}">View</a>
+                              </td> --}}
                             </tr>
                             @endforeach
                       </table>
