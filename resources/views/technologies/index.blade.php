@@ -1,8 +1,9 @@
 @extends('layouts.app')
 @section('content')
 
-<h1 class="text-center">Technologies</h1>
+<h1 class="text-center">TECHNOLOGIES</h1>
 
+<a href="{{route('technologies.create')}}" class="btn btn-primary">Create</a>
 <table class="table">
     <thead>
       <tr>
@@ -29,7 +30,5 @@
     @endforeach
     </tbody>
   </table>
-
-  <a href="{{route('technologies.create')}}" class="btn btn-primary">Create</a>
 
 @endsection

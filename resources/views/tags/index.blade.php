@@ -1,5 +1,7 @@
 @extends('layouts.app')
 @section('content')
+<h1 class="text-center">TAGS</h1>
+<a href="{{route('tags.create')}}" class="btn btn-primary">Create</a>
 <table class="table">
     <thead>
       <tr>
@@ -25,6 +27,4 @@
     @endforeach
     </tbody>
   </table>
-
-  <a href="{{route('tags.create')}}" class="btn btn-primary">Create</a>
 @endsection

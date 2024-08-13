@@ -17,34 +17,29 @@
                     </div>
                     @endif
 
-                    <h5>Benvenuto <span class="text-danger bold">{{$user->name}}</span></h5>
+                    <h5>Benvenuto <span class="text-danger text-uppercase bold">{{$user->name}}</span></h5>
 
                     {{-- {{ __('You are logged in!') }} --}}
                     {{-- create posts --}}
+                    @if(isset($posts))
                     <div class="d-flex column-gap-3">
                         <a href="{{route('posts.index')}}"> POSTS</a>
                         <a href="{{route('technologies.index')}}">TECHNOLOGIES</a>
+                        <a href="{{route('tags.index')}}">TAGS</a>
                     </div>
                     <h6 class="pt-3">Last posts</h6>
                     <table class="table">
                         <thead>
                           <tr>
                             <th scope="col">Title</th>
-                            {{-- <th scope="col">Difficulty</th> --}}
                             <th scope="col">tags</th>
                             <th scope="col">technologies</th>
-                            {{-- <th scope="col">actions</th> --}}
                           </tr>
                         </thead>
                         <tbody>
                             @foreach($posts as $post)
                             <tr>
                                 <td>{{$post->title}}</td>
-                                {{-- <td>
-                                  @for($i = 0; $i < $post->difficulty; $i++)
-                                  <i class="bi bi-star-fill"></i>
-                                  @endfor
-                                </td> --}}
                                 <td>
                                     @foreach($post->technologies as $technology)
                                     {{$technology->name}}
@@ -55,14 +50,12 @@
                                   {{$tag->name}}
                                   @endforeach
                               </td>
-                              {{-- FIXARE --}}
-                              {{-- <td>
-                                <a href="{{route('posts.show')}}">View</a>
-                              </td> --}}
                             </tr>
                             @endforeach
                       </table>
-            
+                      @else
+                      <h6>Create your first <a href="{{route('posts.create')}}">post</a></h6>
+                      @endif
                 </div>
             </div>
         </div>
