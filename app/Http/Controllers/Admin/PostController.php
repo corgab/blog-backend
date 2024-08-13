@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Technology;
@@ -95,17 +96,35 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Post $post)
     {
-        //
+
+        // Carica le relazioni 'tags' e 'technologies'
+        $post->load('tags', 'technologies');
+
+        $technologies = Technology::orderBy('name', 'asc')->get();
+        $tags = Tag::orderBy('name', 'asc')->get();
+
+        return view('posts.edit', compact('post','technologies','tags'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdatePostRequest $request, Post $post)
     {
-        //
+        // Ottieni i dati validati dalla richiesta
+        $form_data = $request->validated();
+
+        // Aggiorna il post con i dati validati
+        $post->update($form_data);
+
+        // Sincronizza le tecnologie e i tag con i dati validati
+        $post->technologies()->sync($request->input('technology_id', []));
+        $post->tags()->sync($request->input('tag_id', []));
+
+        // Redireziona alla lista dei post
+        return to_route('posts.index', $post);
     }
 
     /**

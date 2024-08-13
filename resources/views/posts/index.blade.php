@@ -52,7 +52,7 @@
               @endforeach
           </td>
             <td><a href="{{route('posts.show',$post)}}" class="btn btn-primary">Show</a></td>
-            <td><a href="{{route('posts.show',$post)}}" class="btn btn-warning">Modify</a></td> <!-- MODIFY -->
+            <td><a href="{{route('posts.edit', $post)}}" class="btn btn-primary">Modify</a></td> <!-- MODIFY -->
             <td>
               <form action="{{route('posts.destroy', $post)}}" method="POST">
                 @csrf
