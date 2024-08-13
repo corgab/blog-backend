@@ -64,6 +64,9 @@
         </tr>
         @endforeach
     </tbody>
+</table>
+
+<a href="{{route('posts.create')}}" class="btn btn-primary">Create</a>
         
     @else
         
