@@ -51,7 +51,7 @@ class PostSeeder extends Seeder
                 $new_post->slug = Str::slug($new_post->title, '-');
                 $new_post->content = $row[1];
                 $new_post->created_at = $row[2];
-                $new_post->difficulty = $row[4];
+                // $new_post->difficulty = $row[4];
                 $new_post->featured = $row[5];
 
                 $new_post->save();

@@ -18,22 +18,19 @@
         <label for="content">Content</label>
     </div>
 
-    <div class="d-flex gap-4">
-        {{-- Difficulty --}}
-        <div class="mb-3">
-            <select class="form-select" id="difficulty" name="difficulty" multiple>
-                {{-- <option>Select difficulty</option> --}}
-                <option value="1" {{ old('difficulty', $post->difficulty) == 1 ? 'selected' : '' }}>Easy</option>
-                <option value="2" {{ old('difficulty', $post->difficulty) == 2 ? 'selected' : '' }}>Medium</option>
-                <option value="3" {{ old('difficulty', $post->difficulty) == 3 ? 'selected' : '' }}>Hard</option>
-            </select>
-        </div>
-        {{-- Featured --}}
-        <div class="form-check form-switch form-check-reverse">
-            <input type="hidden" value="0" id="featured-hidden" name="featured">
-            <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured" value="1" {{ old('featured', $post->featured) ? 'checked' : '' }}> <!-- DA FIXARE-->
-            <label class="form-check-label" for="featured">Featured</label>
-        </div>
+    {{-- Difficulty --}}
+    {{-- <div class="mb-3">
+        <select class="form-select" id="difficulty" name="difficulty" multiple>
+            <option value="1" {{ old('difficulty', $post->difficulty) == 1 ? 'selected' : '' }}>Easy</option>
+            <option value="2" {{ old('difficulty', $post->difficulty) == 2 ? 'selected' : '' }}>Medium</option>
+            <option value="3" {{ old('difficulty', $post->difficulty) == 3 ? 'selected' : '' }}>Hard</option>
+        </select>
+    </div> --}}
+    {{-- Featured --}}
+    <div class="form-check form-switch form-check-reverse">
+        <input type="hidden" value="0" id="featured-hidden" name="featured">
+        <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured" value="1" {{ old('featured', $post->featured) ? 'checked' : '' }}> <!-- DA FIXARE-->
+        <label class="form-check-label" for="featured">Featured</label>
     </div>
     {{-- Tags --}}
     <div class="form-check">

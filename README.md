@@ -45,3 +45,16 @@ Guides
 ### All post for category (tecnologia)
 ### Membership
 ## 404
+
+
+## Json Post
+
+Tag
+Title
+small text
+Creator - Date
+post image
+### Section
+title
+text
+placeholder video - img randooms

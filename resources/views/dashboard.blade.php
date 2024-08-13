@@ -28,7 +28,7 @@
                         <thead>
                           <tr>
                             <th scope="col">Title</th>
-                            <th scope="col">Difficulty</th>
+                            {{-- <th scope="col">Difficulty</th> --}}
                             <th scope="col">tags</th>
                             <th scope="col">technologies</th>
                           </tr>
@@ -37,11 +37,11 @@
                             @foreach($posts as $post)
                             <tr>
                                 <td>{{$post->title}}</td>
-                                <td>
+                                {{-- <td>
                                   @for($i = 0; $i < $post->difficulty; $i++)
                                   <i class="bi bi-star-fill"></i>
                                   @endfor
-                                </td>
+                                </td> --}}
                                 <td>
                                     @foreach($post->technologies as $technology)
                                     {{$technology->name}}

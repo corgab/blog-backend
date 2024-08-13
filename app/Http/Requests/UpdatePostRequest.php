@@ -25,7 +25,7 @@ class UpdatePostRequest extends FormRequest
             'title' =>'required|string|max:255',
             'slug' =>'nullable|string',
             'content' => 'required|string',
-            'difficulty' => 'required|integer|between:1,3',
+            // 'difficulty' => 'required|integer|between:1,3',
             'featured' => 'required|boolean',
             'tag_id' => 'required|array',
             'tag_id.*' => 'exists:tags,id',

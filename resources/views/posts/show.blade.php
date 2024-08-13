@@ -13,7 +13,7 @@
             {{-- <th scope="col">creator</th> --}}
             <th scope="col">read time</th>
             <th scope="col">featured</th>
-            <th scope="col">difficulty</th>
+            {{-- <th scope="col">difficulty</th> --}}
             <th scope="col">tags</th>
             <th scope="col">technologies</th>
             <th scope="col">created</th>
@@ -33,11 +33,11 @@
                 False
                 @endif
             </td>
-            <td>
+            {{-- <td>
                 @for($i = 0; $i < $post->difficulty; $i++)
                 <i class="bi bi-star-fill"></i>
                 @endfor
-            </td>
+            </td> --}}
             <td>
                 @foreach($post->tags as $tag)
                 {{$tag->name}}

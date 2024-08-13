@@ -11,7 +11,7 @@
         <th scope="col">Title</th>
         {{-- <th scope="col">Creator</th> --}}
         {{-- <th scope="col">Featured</th> --}}
-        <th scope="col">Difficulty</th>
+        {{-- <th scope="col">Difficulty</th> --}}
         {{-- <th scope="col">read time</th> --}}
         {{-- <th scope="col">created</th> --}}
         <th scope="col">technologies</th>
@@ -34,11 +34,11 @@
               False
               @endif
             </td> --}}
-            <td>
+            {{-- <td>
               @for($i = 0; $i < $post->difficulty; $i++)
               <i class="bi bi-star-fill"></i>
               @endfor
-            </td>
+            </td> --}}
             {{-- <td>{{ $post->reading_time }}</td> --}}
             {{-- <td>{{$post->created_at->translatedFormat('d F Y ')}}</td> --}}
             <td>
