@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\TechnologyController;
+use App\Http\Controllers\Admin\TagController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,6 +36,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('/technologies', TechnologyController::class)->except('show','edit');
+    Route::resource('/tags', TagController::class)->except('show','edit');
 });
 
 require __DIR__.'/auth.php';

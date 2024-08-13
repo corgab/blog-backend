@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
-<h1>technologies</h1>
+<h1 class="text-center">Technologies</h1>
 
 <table class="table">
     <thead>
