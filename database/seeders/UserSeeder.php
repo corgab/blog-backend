@@ -33,13 +33,16 @@ class UserSeeder extends Seeder
 
         $data = $this->getCSVData(__DIR__.'/csv/users.csv');
 
+
         foreach($data as $index=>$row) {
             if($index !== 0) {
+                
                 $new_user = new User();
 
                 $new_user->name = $row[0];
                 $new_user->email = $row[1];
                 $new_user->password = Hash::make($row[2]);
+
 
                 $new_user->save();
 
