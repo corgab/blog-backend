@@ -42,7 +42,7 @@ class PostSeeder extends Seeder
         foreach($data as $index=>$row) {
             if($index !== 0) {
 
-                $user_id = $index;
+                $user_id = $faker->numberBetween(1, 11);;
 
                 $new_post = new Post();
 
