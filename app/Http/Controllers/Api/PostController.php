@@ -49,7 +49,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
         // Carica le immagini con il post
-        $post->load('images');
+        $post->load('images','tags','technologies');
 
         // Costruisci la risposta
         $response = [
