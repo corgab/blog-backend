@@ -48,7 +48,28 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return response()->json($post);
+        // Carica le immagini con il post
+        $post->load('images');
+
+        // Costruisci la risposta
+        $response = [
+            'id' => $post->id,
+            'title' => $post->title,
+            'reading_time' => $post->reading_time,
+            'featured' => $post->featured ? 'True' : 'False',
+            'tags' => $post->tags->pluck('name'),
+            'technologies' => $post->technologies->pluck('name'),
+            'created_at' => $post->created_at->translatedFormat('d F Y '),
+            'images' => $post->images->map(function($image) {
+                return [
+                    url('storage/' . $image->path), // URL Immagine
+                    'is_featured' => $image->is_featured ? 'True' : 'False', // Copertina
+                    //Alt
+                ];
+            }),
+        ];
+
+        return response()->json($response);
     }
 
     /**
