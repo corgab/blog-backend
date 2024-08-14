@@ -21,8 +21,22 @@ class PostController extends Controller
         // Recuperare i post
         $posts = Post::paginate($perPage); // Impaginazione
 
-        // Logice aggiuntive per ricerca
+        // Logiche aggiuntive per ricerca
 
+        $tag = request()->input('tag');
+
+        // Esegui la query per ottenere i post
+        $postsQuery = Post::query();
+
+        if ($tag) {
+            $postsQuery->whereHas('tags', function($query) use ($tag) {
+                $query->where('name', $tag);
+            });
+        }
+
+        // Paginazione dei risultati
+        $posts = $postsQuery->paginate($perPage);
+        
 
         return response()->json($posts);
 
