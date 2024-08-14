@@ -42,6 +42,14 @@
         </tr>
     </tbody>
 </table>
+@foreach($post->images as $image)
+<div class="col-md-4">
+    @if($image->is_featured === 1)
+    <h5 class="text-center">Copertina</h5>
+    @endif
+    <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $image->alt }}" class="img-fluid">
+</div>
+@endforeach
 
 {{-- CONTENT --}}
 
