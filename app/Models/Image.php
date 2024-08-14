@@ -10,6 +10,7 @@ class Image extends Model
     use HasFactory;
 
     protected $fillable = [
+        'post_id',
         'path', 
         'is_featured'
     ];

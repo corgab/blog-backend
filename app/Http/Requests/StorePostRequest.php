@@ -25,12 +25,13 @@ class StorePostRequest extends FormRequest
             'title' => 'required|string|max:255|unique:posts,title',
             'slug' => 'nullable|string|unique:posts,slug',
             'content' => 'required|string',
-            // 'difficulty' => 'required|integer|between:1,3',
+            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:5000',
             'featured' => 'required|boolean',
             'tag_id' => 'required|array',
             'tag_id.*' => 'exists:tags,id',
             'technology_id' => 'required|array',
             'technology_id.*' => 'exists:technologies,id',
+
         ];
     }
 }

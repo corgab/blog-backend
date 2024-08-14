@@ -2,7 +2,7 @@
 @section('content')
     <h1 class="text-center text-body">Creazione Post</h1>
 
-    <form action="{{route('posts.store')}}" method="POST">
+    <form action="{{route('posts.store')}}" method="POST" enctype="multipart/form-data">
         @csrf
         {{-- Title --}}
         <div class="form-floating mb-3">
@@ -47,6 +47,12 @@
                 </div>
             @endforeach
         </div>
+
+        <h1>image</h1>
+        <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <input class="form-control" type="file" id="image" name="image">
+          </div>
         
         <button type="submit">Invia</button>
     </form>

@@ -9,6 +9,9 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Technology;
+use App\Models\Image;
+
+use Intervention\Image\Facades\Image as InterventionImage; 
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -72,8 +75,28 @@ class PostController extends Controller
         } while ($find !== null);
         $form_data['slug'] = $slug;
 
+        // Logica immagini
+
         // Creazione nuovo post
         $new_post = Post::create($form_data);
+
+        // Gestione dell'immagine
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $fileName = Str::uuid() . '.webp';
+            
+            // Converti l'immagine in formato webp
+            $convertedImage = InterventionImage::make($image)
+            ->encode('webp', 90);
+
+            $path = $image->storeAs('/images', $fileName);
+
+            Image::create([
+                'post_id' => $new_post->id,
+                'path' => $path,
+                'is_featured' => true,
+            ]);
+        }   
 
         $new_post->tags()->sync($form_data['tag_id']);
         $new_post->technologies()->sync($form_data['technology_id']);
