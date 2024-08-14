@@ -33,6 +33,11 @@ class Post extends Model
         return $this->belongsToMany(Technology::class);
     }
 
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
+
     // Tempo di lettura
     public function getReadingTimeAttribute()
     {
