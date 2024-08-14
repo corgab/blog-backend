@@ -12,10 +12,14 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+
+        // api da frontend
+        $perPage = $request->input('per_page', 5);
+
         // Recuperare i post
-        $posts = Post::all(); // Impaginazione
+        $posts = Post::paginate($perPage); // Impaginazione
 
         // Logice aggiuntive per ricerca
 
