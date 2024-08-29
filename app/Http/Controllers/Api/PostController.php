@@ -19,7 +19,7 @@ class PostController extends Controller
         $perPage = $request->input('per_page', 5);
     
         // Inizializza la query per i post
-        $postsQuery = Post::with('user'); // Corretto il nome del rapporto se è 'user' e non 'users'
+        $postsQuery = Post::with('user'); 
     
         // Logiche aggiuntive per ricerca
         $tag = $request->input('tag');
