@@ -56,4 +56,6 @@ class Post extends Model
             return "{$minutes} minutes";
     }
 
+    protected $appends = ['reading_time'];
+
 }

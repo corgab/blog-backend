@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use App\Models\Post;
 
@@ -14,33 +15,37 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-
         // api da frontend
         $perPage = $request->input('per_page', 5);
-
-        // Recuperare i post
-        $posts = Post::paginate($perPage); // Impaginazione
-
+    
+        // Inizializza la query per i post
+        $postsQuery = Post::with('user'); // Corretto il nome del rapporto se è 'user' e non 'users'
+    
         // Logiche aggiuntive per ricerca
-
-        $tag = request()->input('tag');
-
-        // Esegui la query per ottenere i post
-        $postsQuery = Post::query();
-
+        $tag = $request->input('tag');
+    
         if ($tag) {
             $postsQuery->whereHas('tags', function($query) use ($tag) {
                 $query->where('name', $tag);
             });
         }
-
-        // Paginazione dei risultati
+    
+        // Esegui la query e applica la paginazione
         $posts = $postsQuery->paginate($perPage);
-        
+    
+        // Trasforma i dati della collezione
+        $posts->getCollection()->transform(function($post) {
+            $post->user_name = $post->user->name;
 
+            $post->created_date = $post->created_at->translatedFormat('d F Y');
+            // Rimuovi la data originale se non necessaria
+            unset($post->created_at);
+            return $post;
+        });
+    
         return response()->json($posts);
-
     }
+    
 
 
     /**
