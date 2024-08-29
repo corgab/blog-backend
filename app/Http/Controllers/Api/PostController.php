@@ -38,7 +38,13 @@ class PostController extends Controller
             $post->user_name = $post->user->name;
 
             $post->created_date = $post->created_at->translatedFormat('d F Y');
-            // Rimuovi la data originale se non necessaria
+
+            $post->images = $post->images->map(function($image) {
+
+                $image->link = url('storage/' . $image->path);
+                return $image;
+            });
+
             unset($post->created_at);
             return $post;
         });
