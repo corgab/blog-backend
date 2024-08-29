@@ -19,7 +19,7 @@ class PostController extends Controller
         $perPage = $request->input('per_page', 5);
     
         // Inizializza la query per i post
-        $postsQuery = Post::with('user'); 
+        $postsQuery = Post::with('user','images','tags','technologies'); 
     
         // Logiche aggiuntive per ricerca
         $tag = $request->input('tag');
