@@ -58,13 +58,13 @@ class PostSeeder extends Seeder
 
                 // Recupera gli ID di tutti i tags in un array
                 $tags_id = Tag::all()->pluck('id')->all();
-                $technologies_id = Technology::all()->pluck('id')->all();
+                // $technologies_id = Technology::all()->pluck('id')->all();
 
                 $random_tag = $faker->randomElements($tags_id, 2);
-                $random_tech = $faker->randomElements($technologies_id, 2);
+                // $random_tech = $faker->randomElements($technologies_id, 2);
 
                 $new_post->tags()->attach($random_tag);
-                $new_post->technologies()->attach($random_tech);
+                // $new_post->technologies()->attach($random_tech);
 
             }
         }

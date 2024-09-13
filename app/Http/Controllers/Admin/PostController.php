@@ -124,8 +124,7 @@ class PostController extends Controller
 
         // Carica le relazioni 'tags' e 'technologies'
         $post->load('tags', 'technologies');
-
-        $technologies = Technology::orderBy('name', 'asc')->get();
+        
         $tags = Tag::orderBy('name', 'asc')->get();
 
         return view('posts.edit', compact('post','technologies','tags'));
@@ -143,7 +142,6 @@ class PostController extends Controller
         $post->update($form_data);
 
         // Sincronizza le tecnologie e i tag con i dati validati
-        $post->technologies()->sync($request->input('technology_id', []));
         $post->tags()->sync($request->input('tag_id', []));
 
         // Redireziona alla lista dei post
