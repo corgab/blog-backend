@@ -16,7 +16,7 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::orderBy('name', 'asc')->get();
+        $tags = Tag::orderBy('id', 'asc')->get();
 
         return view('tags.index',compact('tags'));
     }
@@ -26,7 +26,7 @@ class TagController extends Controller
      */
     public function create()
     {
-        $tags = Tag::orderBy('name', 'asc')->get();
+        $tags = Tag::orderBy('id', 'asc')->get();
 
         return view('tags.create',compact('tags'));
     }
