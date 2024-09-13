@@ -92,7 +92,7 @@ class PostController extends Controller
             Image::create([
                 'post_id' => $new_post->id,
                 'path' => $path,
-                'is_featured' => false,
+                'is_featured' => true,
             ]);
         }   
 
