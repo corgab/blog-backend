@@ -24,7 +24,6 @@
                     @if(isset($posts))
                     <div class="d-flex column-gap-3">
                         <a href="{{route('posts.index')}}"> POSTS</a>
-                        <a href="{{route('technologies.index')}}">TECHNOLOGIES</a>
                         <a href="{{route('tags.index')}}">TAGS</a>
                     </div>
                     <h6 class="pt-3">Last posts</h6>
@@ -33,18 +32,12 @@
                           <tr>
                             <th scope="col">Title</th>
                             <th scope="col">tags</th>
-                            <th scope="col">technologies</th>
                           </tr>
                         </thead>
                         <tbody>
                             @foreach($posts as $post)
                             <tr>
                                 <td>{{$post->title}}</td>
-                                <td>
-                                    @foreach($post->technologies as $technology)
-                                    {{$technology->name}}
-                                    @endforeach
-                                </td>
                                 <td>
                                   @foreach($post->tags as $tag)
                                   {{$tag->name}}

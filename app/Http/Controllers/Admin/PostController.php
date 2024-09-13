@@ -8,7 +8,6 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\Tag;
-use App\Models\Technology;
 use App\Models\Image;
 
 use Intervention\Image\Facades\Image as InterventionImage; 
@@ -27,7 +26,7 @@ class PostController extends Controller
     {
         $user = Auth::user();
         // $posts = Post::all();
-        $posts = Post::orderBy('created_at', 'desc')->where('user_id', $user->id)->with('user','tags','technologies')->get();
+        $posts = Post::orderBy('created_at', 'desc')->where('user_id', $user->id)->with('user','tags')->get();
 
         // dd($posts);
 
@@ -45,9 +44,8 @@ class PostController extends Controller
         $posts = Post::where('user_id', $user->id)->first();
         // Tutti i tags
         $tags = Tag::orderBy('name', 'asc')->get();
-        $technologies = Technology::orderBy('name','asc')->get();
 
-        return view('posts.create', compact('user','posts','tags','technologies'));
+        return view('posts.create', compact('user','posts','tags'));
 
     }
 
@@ -99,7 +97,6 @@ class PostController extends Controller
         }   
 
         $new_post->tags()->sync($form_data['tag_id']);
-        $new_post->technologies()->sync($form_data['technology_id']);
 
         // Ritorna alla pagina degli indici dei post
         return to_route('posts.index');
@@ -111,7 +108,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
 
-        $post->load('images', 'tags', 'technologies');
+        $post->load('images', 'tags');
 
         return view('posts.show', compact('post'));
     }
@@ -122,12 +119,12 @@ class PostController extends Controller
     public function edit(Post $post)
     {
 
-        // Carica le relazioni 'tags' e 'technologies'
-        $post->load('tags', 'technologies');
+        // Carica le relazioni tags
+        $post->load('tags');
         
         $tags = Tag::orderBy('name', 'asc')->get();
 
-        return view('posts.edit', compact('post','technologies','tags'));
+        return view('posts.edit', compact('post','tags'));
     }
 
     /**

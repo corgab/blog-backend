@@ -16,7 +16,7 @@ class DashboardController extends Controller
         // $posts = Post::all();
         $posts = Post::orderBy('created_at', 'desc')
         ->where('user_id', $user->id)
-        ->with('user','tags','technologies')
+        ->with('user','tags')
         ->take(5)
         ->get();
 

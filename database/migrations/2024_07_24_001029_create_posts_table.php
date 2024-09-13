@@ -18,6 +18,8 @@ return new class extends Migration
             $table->mediumText('content');
             $table->boolean('featured');
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 

@@ -29,8 +29,6 @@ class StorePostRequest extends FormRequest
             'featured' => 'required|boolean',
             'tag_id' => 'required|array',
             'tag_id.*' => 'exists:tags,id',
-            'technology_id' => 'required|array',
-            'technology_id.*' => 'exists:technologies,id',
 
         ];
     }

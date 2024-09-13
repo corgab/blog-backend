@@ -11,7 +11,6 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">Title</th>
-        <th scope="col">technologies</th>
         <th scope="col">tags</th>
         <th scope="col" colspan="3">actions</th>
       </tr>
@@ -22,11 +21,6 @@
 
             <th scope="row">{{$post->id}}</th>
             <td>{{$post->title}}</td>
-            <td>
-                @foreach($post->technologies as $technology)
-                {{$technology->name}}
-                @endforeach
-            </td>
             <td>
               @foreach($post->tags as $tag)
               {{$tag->name}}

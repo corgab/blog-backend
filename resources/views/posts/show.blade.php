@@ -12,7 +12,6 @@
             <th scope="col">read time</th>
             <th scope="col">featured</th>
             <th scope="col">tags</th>
-            <th scope="col">technologies</th>
             <th scope="col">created</th>
         </tr>
     </thead>
@@ -33,12 +32,7 @@
                 {{$tag->name}}
                 @endforeach
             </td>
-            <td>
-                @foreach($post->technologies as $technology)
-                {{$technology->name}}
-                @endforeach
-            </td>
-            <td>{{$post->created_at->translatedFormat('d F Y ')}}</td>
+            <td>{{ucfirst($post->created_at->translatedFormat('M d, Y'))}}</td>
         </tr>
     </tbody>
 </table>
