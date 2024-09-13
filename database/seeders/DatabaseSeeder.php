@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             TagSeeder::class,
             TechnologySeeder::class,
             PostSeeder::class,
+            ImageSeeder::class
          ]);
     }
 }
