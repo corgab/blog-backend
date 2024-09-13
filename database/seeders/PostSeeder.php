@@ -60,7 +60,7 @@ class PostSeeder extends Seeder
                 $tags_id = Tag::all()->pluck('id')->all();
                 // $technologies_id = Technology::all()->pluck('id')->all();
 
-                $random_tag = $faker->randomElements($tags_id, 2);
+                $random_tag = $faker->randomElements($tags_id, 1);
                 // $random_tech = $faker->randomElements($technologies_id, 2);
 
                 $new_post->tags()->attach($random_tag);

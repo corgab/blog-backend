@@ -13,12 +13,27 @@ class TagSeeder extends Seeder
      */
     public function run(): void
     {
-        $tags = ['Code', 'Guides'];
+        $tags = [
+            'Tech',
+            'App',
+            'Social',
+            'Gadget',
+            'Videogiochi',
+            'Sicurezza',
+            'Casa',
+            'Auto',
+            'Notizie',
+            'Curiosità',
+            'Fotografia',
+            'Computer',
+            'Salute'
+        ];
 
         foreach($tags as $tag) {
             $new_tag = New Tag();
 
             $new_tag->name = $tag;
+            
 
             $new_tag->save();
         };
