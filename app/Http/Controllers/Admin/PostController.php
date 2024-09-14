@@ -194,14 +194,4 @@ class PostController extends Controller
         return view('posts.drafts', compact('drafts'));
     }
 
-    // public function publish(Post $post)
-    // {
-    //     $this->authorize('publish', $post); // Verifica che l'utente abbia i permessi necessari
-
-    //     $post->update(['status' => 'published']);
-
-    //     return to_route('posts.index')->with('success', 'Post pubblicato con successo!');
-    // }
-
-
 }
