@@ -46,6 +46,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        // Assegna un ruolo predefinito all'utente
+        $user->assignRole('author');
+
         return redirect(RouteServiceProvider::HOME);
     }
 }
