@@ -4,21 +4,24 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 use App\Http\Requests\StoreTagRequest;
-
 use App\Models\Tag;
 
 class TagController extends Controller
 {
+    public function __construct()
+    {
+        // Solo utenti con permesso
+         $this->middleware('permission:manage tags');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $tags = Tag::orderBy('id', 'asc')->get();
-
-        return view('tags.index',compact('tags'));
+        return view('tags.index', compact('tags'));
     }
 
     /**
@@ -26,9 +29,7 @@ class TagController extends Controller
      */
     public function create()
     {
-        $tags = Tag::orderBy('id', 'asc')->get();
-
-        return view('tags.create',compact('tags'));
+        return view('tags.create');
     }
 
     /**
@@ -37,9 +38,7 @@ class TagController extends Controller
     public function store(StoreTagRequest $request)
     {
         $form_data = $request->validated();
-
-        $new_tag = Tag::create($form_data);
-
+        Tag::create($form_data);
         return to_route('tags.index');
     }
 
@@ -49,7 +48,6 @@ class TagController extends Controller
     public function destroy(Tag $tag)
     {
         $tag->delete();
-
         return to_route('tags.index');
     }
 }

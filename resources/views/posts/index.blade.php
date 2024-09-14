@@ -12,6 +12,9 @@
         <th scope="col">#</th>
         <th scope="col">Title</th>
         <th scope="col">tags</th>
+        @can('approve posts')
+        <th scope="col">Status</th>
+        @endcan
         <th scope="col" colspan="3">actions</th>
       </tr>
     </thead>
@@ -25,7 +28,16 @@
               @foreach($post->tags as $tag)
               {{$tag->name}}
               @endforeach
-          </td>
+            </td>
+            @can('approve posts')
+            <td>
+                @if ($post->status === 'draft')
+                    Bozza
+                @else
+                    Pubblicato
+                @endif
+            </td>
+            @endcan
             <td><a href="{{route('posts.show',$post)}}" class="btn btn-primary">Show</a></td>
             <td><a href="{{route('posts.edit', $post)}}" class="btn btn-primary">Modify</a></td> <!-- MODIFY -->
             <td>

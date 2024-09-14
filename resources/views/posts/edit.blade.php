@@ -7,6 +7,8 @@
     @csrf
     @method('PUT')
 
+    <input type="hidden" name="redirect_from" value="{{ url()->previous() }}">
+
     {{-- Title --}}
     <div class="form-floating mb-3">
         <input type="text" class="form-control" id="title" name="title" value="{{ old('title', $post->title) }}" placeholder="Write title here">
@@ -32,13 +34,13 @@
         <input type="hidden" name="status" value="{{ $post->status }}">
     @else
         <!-- Gli editor e amministratori possono modificare lo stato -->
-        <div class="form-floating mb-3">
-            <select class="form-select" id="status" name="status">
-                <option value="draft" @selected(old('status', $post->status) == 'draft')>Bozza</option>
-                <option value="published" @selected(old('status', $post->status) == 'published')>Pubblicato</option>
-            </select>
-            <label for="status">Status</label>
-        </div>
+    <div class="form-floating mb-3">
+                <select class="form-select" id="status" name="status">
+                    <option value="draft" @selected(old('status', $post->status) == 'draft')>Bozza</option>
+                    <option value="published" @selected(old('status', $post->status) == 'published')>Pubblicato</option>
+                </select>
+                <label for="status">Status</label>
+            </div>
     @endif
 
     {{-- Tags --}}

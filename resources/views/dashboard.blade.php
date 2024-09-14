@@ -17,40 +17,44 @@
                     </div>
                     @endif
 
-                    <h5>Benvenuto <span class="text-danger text-uppercase bold">{{$user->name}}</span></h5>
+                    <h5>Benvenuto <span class="text-danger text-uppercase bold">{{ Auth::user()->name }}</span></h5>
 
                     {{-- {{ __('You are logged in!') }} --}}
-                    {{-- create posts --}}
-                    @if(isset($posts))
+                    
                     <div class="d-flex column-gap-3">
-                        <a href="{{route('posts.index')}}"> POSTS</a>
-                        <a href="{{route('tags.index')}}">TAGS</a>
-                        @if (Auth::user()->can('view drafts'))
-                        <a href="{{ route('posts.drafts') }}">Bozze</a>
-                    @endif
+                        <a href="{{ route('posts.index') }}">POSTS</a>
+                        {{-- Mostra il link ai tag solo se l'utente ha il permesso --}}
+                        @can('manage tags')
+                        <a href="{{ route('tags.index') }}">TAGS</a>
+                        @endcan
+                        @can('approve posts')
+                        <a href="{{ route('posts.drafts') }}">BOZZE</a>
+                        @endcan 
                     </div>
+                    
+                    @if(isset($posts))
                     <h6 class="pt-3">Last posts</h6>
                     <table class="table">
                         <thead>
                           <tr>
                             <th scope="col">Title</th>
-                            <th scope="col">tags</th>
+                            <th scope="col">Tags</th>
                           </tr>
                         </thead>
                         <tbody>
                             @foreach($posts as $post)
                             <tr>
-                                <td>{{$post->title}}</td>
+                                <td>{{ $post->title }}</td>
                                 <td>
                                   @foreach($post->tags as $tag)
-                                  {{$tag->name}}
+                                  {{ $tag->name }}
                                   @endforeach
                               </td>
                             </tr>
                             @endforeach
                       </table>
                       @else
-                      <h6>Create your first <a href="{{route('posts.create')}}">post</a></h6>
+                      <h6>Create your first <a href="{{ route('posts.create') }}">post</a></h6>
                       @endif
                 </div>
             </div>

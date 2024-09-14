@@ -60,8 +60,8 @@ class PostController extends Controller
         // Assegna l'ID dell'utente al campo 'user_id'
         $form_data['user_id'] = Auth::id();
 
-        // Imposta lo stato su 'draft' se l'utente è un autore, altrimenti su 'published'
-        $form_data['status'] = Auth::user()->hasRole('author') ? 'draft' : 'published';
+        // Imposta lo stato su draft
+        $form_data['status'] = 'draft';
 
         // Creazione slug univoco
         $base_slug = Str::slug($form_data['title']);
@@ -139,16 +139,38 @@ class PostController extends Controller
     {
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
-
+    
+        // Aggiorna il titolo e crea un nuovo slug se il titolo è cambiato
+        if ($post->title !== $form_data['title']) {
+            $base_slug = Str::slug($form_data['title']);
+            $slug = $base_slug;
+            $n = 0;
+            // Assicurati che il nuovo slug sia unico
+            while (Post::where('slug', $slug)->where('id', '!=', $post->id)->exists()) {
+                $n++;
+                $slug = $base_slug . '-' . $n;
+            }
+            $form_data['slug'] = $slug;
+        }
+        
         // Aggiorna il post con i dati validati
         $post->update($form_data);
-
-        // Sincronizza le tecnologie e i tag con i dati validati
+    
+        // Sincronizza i tag
         $post->tags()->sync($request->input('tag_id', []));
 
+        $redirectFrom = $request->input('redirect_from');
+        
+        if ($redirectFrom && str_contains($redirectFrom, '/drafts')) {
+            // Se l'URL di origine contiene /drafts, reindirizza a drafts
+            return redirect()->route('posts.drafts');
+        }
+      
         // Redireziona alla lista dei post
-        return to_route('posts.index', $post);
+        return redirect()->route('posts.index');
+
     }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -162,18 +184,24 @@ class PostController extends Controller
 
     public function drafts()
     {
+        $user = Auth::user();
+        if (!$user->hasRole('editor') && !$user->hasRole('admin')) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Recupera i draft
         $drafts = Post::where('status', 'draft')->get();
         return view('posts.drafts', compact('drafts'));
     }
 
-    public function publish(Post $post)
-    {
-        $this->authorize('publish', $post); // Verifica che l'utente abbia i permessi necessari
+    // public function publish(Post $post)
+    // {
+    //     $this->authorize('publish', $post); // Verifica che l'utente abbia i permessi necessari
 
-        $post->update(['status' => 'published']);
+    //     $post->update(['status' => 'published']);
 
-        return to_route('posts.index')->with('success', 'Post pubblicato con successo!');
-    }
+    //     return to_route('posts.index')->with('success', 'Post pubblicato con successo!');
+    // }
 
 
 }
