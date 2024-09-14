@@ -2,12 +2,11 @@
 
 @section('content')
 <div class="container">
-    <h2 class="fs-4 text-secondary my-4">{{ __('Dashboard') }}</h2>
 
     <div class="row justify-content-center my-5">
         <div class="col-lg-8">
             <div class="card">
-                {{-- <div class="card-header">Dashboard</div> --}}
+                <div class="card-header text-center">Dashboard</div>
                 <div class="card-body">
                     @if (session('status'))
                     <div class="alert alert-success" role="alert">
