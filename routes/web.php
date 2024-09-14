@@ -39,4 +39,14 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::resource('/tags', TagController::class)->except('show','edit');
 });
 
+Route::middleware(['auth', 'role:editor|admin'])->group(function () {
+    Route::get('/posts/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
+});
+
+// routes/web.php
+Route::middleware(['auth', 'role:editor|admin'])->group(function () {
+    Route::post('/posts/{post}/publish', [PostController::class, 'publish'])->name('posts.publish');
+});
+
+
 require __DIR__.'/auth.php';

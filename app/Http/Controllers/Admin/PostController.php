@@ -60,6 +60,9 @@ class PostController extends Controller
         // Assegna l'ID dell'utente al campo 'user_id'
         $form_data['user_id'] = Auth::id();
 
+        // Imposta lo stato su 'draft' se l'utente è un autore, altrimenti su 'published'
+        $form_data['status'] = Auth::user()->hasRole('author') ? 'draft' : 'published';
+
         // Creazione slug univoco
         $base_slug = Str::slug($form_data['title']);
         $slug = $base_slug;
@@ -73,8 +76,6 @@ class PostController extends Controller
         } while ($find !== null);
         $form_data['slug'] = $slug;
 
-        // Logica immagini
-
         // Creazione nuovo post
         $new_post = Post::create($form_data);
 
@@ -85,7 +86,7 @@ class PostController extends Controller
             
             // Converti l'immagine in formato webp
             $convertedImage = InterventionImage::make($image)
-            ->encode('webp', 90);
+                ->encode('webp', 90);
 
             $path = $image->storeAs('/images', $fileName);
 
@@ -96,11 +97,15 @@ class PostController extends Controller
             ]);
         }   
 
-        $new_post->tags()->sync($form_data['tag_id']);
+        // Assegna i tag al post
+        if (isset($form_data['tag_id'])) {
+            $new_post->tags()->sync($form_data['tag_id']);
+        }
 
         // Ritorna alla pagina degli indici dei post
         return to_route('posts.index');
     }
+
 
     /**
      * Display the specified resource.
@@ -154,4 +159,21 @@ class PostController extends Controller
 
         return to_route('posts.index');
     }
+
+    public function drafts()
+    {
+        $drafts = Post::where('status', 'draft')->get();
+        return view('posts.drafts', compact('drafts'));
+    }
+
+    public function publish(Post $post)
+    {
+        $this->authorize('publish', $post); // Verifica che l'utente abbia i permessi necessari
+
+        $post->update(['status' => 'published']);
+
+        return to_route('posts.index')->with('success', 'Post pubblicato con successo!');
+    }
+
+
 }

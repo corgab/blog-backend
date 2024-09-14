@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->mediumText('content');
             $table->boolean('featured');
+            $table->string('status')->default('draft');
             $table->timestamps();
             $table->softDeletes();
 

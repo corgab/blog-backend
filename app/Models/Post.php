@@ -18,6 +18,7 @@ class Post extends Model
         'difficulty',
         'featured',
         'user_id',
+        'status',
     ];
 
     public function user()

@@ -1,8 +1,9 @@
 @extends('layouts.app')
+
 @section('content')
     <h1 class="text-center text-body">Creazione Post</h1>
 
-    <form action="{{route('posts.store')}}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         {{-- Title --}}
         <div class="form-floating mb-3">
@@ -14,14 +15,6 @@
             <textarea class="form-control" placeholder="Write content here" id="content" name="content">{{ old('content') }}</textarea>
             <label for="content">Content</label>
         </div>
-        {{-- Difficulty --}}
-        {{-- <div class="mb-3">
-            <select class="form-select" id="difficulty" name="difficulty" multiple>
-                <option value="1" {{ old('difficulty') == 1 ? 'selected' : '' }}>Easy</option>
-                <option value="2" {{ old('difficulty') == 2 ? 'selected' : '' }}>Medium</option>
-                <option value="3" {{ old('difficulty') == 3 ? 'selected' : '' }}>Hard</option>
-            </select>
-        </div> --}}
         {{-- Featured --}}
         <div class="form-check form-switch form-check-reverse">
             <input type="hidden" value="0" id="featured-hidden" name="featured">
@@ -38,22 +31,37 @@
             @endforeach
         </div>
 
-        <h1>image</h1>
+        {{-- Image --}}
         <div class="mb-3">
             <label for="image" class="form-label">Image</label>
             <input class="form-control" type="file" id="image" name="image">
-          </div>
-        
-        <button type="submit">Invia</button>
+        </div>
+
+        {{-- Status --}}
+        @if (Auth::user()->hasRole('author'))
+            <!-- Gli autori possono solo salvare come bozza -->
+            <input type="hidden" name="status" value="draft">
+        @else
+            <!-- Gli editor e amministratori possono scegliere lo stato -->
+            <div class="form-floating mb-3">
+                <select class="form-select" id="status" name="status">
+                    <option value="draft" @selected(old('status') == 'draft')>Bozza</option>
+                    <option value="published" @selected(old('status') == 'published')>Pubblicato</option>
+                </select>
+                <label for="status">Status</label>
+            </div>
+        @endif
+
+        <button type="submit" class="btn btn-primary">Invia</button>
     </form>
 
     @if ($errors->any())
-    <div class="alert alert-danger">
+    <div class="alert alert-danger mt-3">
         <ul>
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
         </ul>
     </div>
-@endif
+    @endif
 @endsection

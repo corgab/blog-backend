@@ -25,6 +25,9 @@
                     <div class="d-flex column-gap-3">
                         <a href="{{route('posts.index')}}"> POSTS</a>
                         <a href="{{route('tags.index')}}">TAGS</a>
+                        @if (Auth::user()->can('view drafts'))
+                        <a href="{{ route('posts.drafts') }}">Bozze</a>
+                    @endif
                     </div>
                     <h6 class="pt-3">Last posts</h6>
                     <table class="table">

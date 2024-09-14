@@ -18,6 +18,7 @@ class RolePermissionSeeder extends Seeder
         $approvePosts = Permission::findByName('approve posts');
         $publishPosts = Permission::findByName('publish posts');
         $editPosts = Permission::findByName('edit posts');
+        $manageTags = Permission::findByName('manage tags');
 
         // Trova i ruoli
         $adminRole = Role::findByName('admin');
@@ -25,7 +26,7 @@ class RolePermissionSeeder extends Seeder
         $authorRole = Role::findByName('author');
 
         // Assegna permessi ai ruoli
-        $adminRole->givePermissionTo([$approvePosts, $publishPosts, $editPosts]);
+        $adminRole->givePermissionTo([$approvePosts, $publishPosts, $editPosts, $manageTags]);
         $editorRole->givePermissionTo([$approvePosts, $editPosts]);
         $authorRole->givePermissionTo($editPosts);
     }
