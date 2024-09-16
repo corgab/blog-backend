@@ -1,12 +1,2 @@
 name,email,password
 admin,admin@admin.it,admin
-User 1,user1@example.com,admin
-User 2,user2@example.com,admin
-User 3,user3@example.com,admin
-User 4,user4@example.com,admin
-User 5,user5@example.com,admin
-User 6,user6@example.com,admin
-User 7,user7@example.com,admin
-User 8,user8@example.com,admin
-User 9,user9@example.com,admin
-User 10,user10@example.com,admin

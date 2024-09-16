@@ -20,14 +20,16 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
+            // Production
             UserSeeder::class,
             RoleSeeder::class,
             PermissionSeeder::class,
             RolePermissionSeeder::class,
             UserRoleSeeder::class,
             TagSeeder::class,
-            PostSeeder::class,
-            ImageSeeder::class
+
+            // PostSeeder::class,
+            // ImageSeeder::class,
          ]);
     }
 }
