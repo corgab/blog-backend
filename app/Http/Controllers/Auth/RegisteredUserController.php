@@ -44,11 +44,12 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
 
         // Assegna un ruolo predefinito all'utente
         $user->assignRole('author');
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect()->route('dashboard')->with('status', 'Utente creato con successo');
+
     }
 }

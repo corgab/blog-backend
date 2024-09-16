@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="container">
-    <h1 class="my-4">Bozze</h1>
-    <div class="card">
-        <div class="card-header">
-            Elenco Bozze
+    {{-- <h1 class="my-4">Bozze</h1> --}}
+    <div class="card my-5">
+        <div class="card-header text-center">
+            Bozze
         </div>
         <div class="card-body">
             <table class="table table-striped">

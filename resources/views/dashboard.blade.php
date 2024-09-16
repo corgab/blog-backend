@@ -3,17 +3,17 @@
 @section('content')
 <div class="container">
 
+
     <div class="row justify-content-center my-5">
         <div class="col-lg-8">
+            @if (session('status'))
+            <div class="alert alert-success" role="alert">
+                {{ session('status') }}
+            </div>
+            @endif
             <div class="card">
                 <div class="card-header text-center">Dashboard</div>
                 <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
-                    </div>
-                    @endif
-
                     <h5>Benvenuto <span class="text-danger text-uppercase fw-bold">{{ Auth::user()->name }}</span></h5>
 
                     <div class="d-flex gap-3 mb-3">
