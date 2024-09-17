@@ -9,6 +9,7 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Image;
+use App\Models\PostSection;
 
 use Intervention\Image\Facades\Image as InterventionImage; 
 
@@ -25,8 +26,15 @@ class PostController extends Controller
 
     {
         $user = Auth::user();
-        // $posts = Post::all();
-        $posts = Post::orderBy('created_at', 'desc')->where('user_id', $user->id)->with('user','tags')->get();
+        if($user->hasRole('admin') || $user->hasRole('editor')) {
+            $posts = Post::orderBy('created_at', 'desc')
+            ->with('user','tags')
+            ->get();
+
+        } else {
+            $posts = Post::orderBy('created_at', 'desc')->where('user_id', $user->id)->with('user','tags')->get();
+
+        }
 
         // dd($posts);
 
@@ -54,13 +62,8 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
-
-        // Assegna l'ID dell'utente al campo 'user_id'
         $form_data['user_id'] = Auth::id();
-
-        // Imposta lo stato su draft
         $form_data['status'] = 'draft';
 
         // Creazione slug univoco
@@ -76,48 +79,56 @@ class PostController extends Controller
         } while ($find !== null);
         $form_data['slug'] = $slug;
 
-        // Creazione nuovo post
+        // Creazione del nuovo post
         $new_post = Post::create($form_data);
+
+        // Gestione delle sezioni
+        if ($request->has('sections')) {
+            foreach ($request->input('sections') as $index => $section) {
+                PostSection::create([
+                    'post_id' => $new_post->id,
+                    'title' => $section['title'] ?? null,
+                    'content' => $section['content'],
+                    'order' => $index
+                ]);
+            }
+        }
 
         // Gestione dell'immagine
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $fileName = Str::uuid() . '.webp';
-            
-            // Converti l'immagine in formato webp
             $convertedImage = InterventionImage::make($image)
                 ->encode('webp', 90);
-
             $path = $image->storeAs('/images', $fileName);
-
             Image::create([
                 'post_id' => $new_post->id,
                 'path' => $path,
                 'is_featured' => true,
             ]);
-        }   
+        }
 
         // Assegna i tag al post
         if (isset($form_data['tag_id'])) {
             $new_post->tags()->sync($form_data['tag_id']);
         }
 
-        // Ritorna alla pagina degli indici dei post
         return to_route('posts.index');
     }
 
-
+    
     /**
      * Display the specified resource.
      */
     public function show(Post $post)
     {
+        $sections = PostSection::where('post_id', $post->id)
+        ->orderBy('order')
+        ->get();
 
-        $post->load('images', 'tags');
-
-        return view('posts.show', compact('post'));
+        return view('posts.show', compact('post', 'sections'));
     }
-
+    
     /**
      * Show the form for editing the specified resource.
      */
@@ -139,6 +150,14 @@ class PostController extends Controller
     {
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
+
+            // Controllo del ruolo utente
+        if (Auth::user()->hasRole('author')) {
+            // Se l'utente è un autore, forza lo status a "draft"
+            $form_data['status'] = 'draft';
+        } elseif(!in_array($form_data['status'], ['draft', 'published'])) {
+            return redirect()->back()->withErrors(['status' => 'Stato non valido']);
+        }
     
         // Aggiorna il titolo e crea un nuovo slug se il titolo è cambiato
         if ($post->title !== $form_data['title']) {
@@ -152,24 +171,57 @@ class PostController extends Controller
             }
             $form_data['slug'] = $slug;
         }
-        
+    
         // Aggiorna il post con i dati validati
         $post->update($form_data);
     
         // Sincronizza i tag
         $post->tags()->sync($request->input('tag_id', []));
-
+    
+        // Aggiorna o crea le sezioni del post
+        if ($request->has('sections')) {
+            // Elimina le sezioni esistenti
+            $post->sections()->delete();
+    
+            // Crea nuove sezioni
+            foreach ($request->input('sections') as $index => $section) {
+                PostSection::create([
+                    'post_id' => $post->id,
+                    'title' => $section['title'] ?? null,
+                    'content' => $section['content'],
+                    'order' => $index + 1,
+                ]);
+            }
+        }
+    
+        // Gestione dell'immagine se aggiornata
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $fileName = Str::uuid() . '.webp';
+    
+            // Converti l'immagine in formato webp
+            $convertedImage = InterventionImage::make($image)
+                ->encode('webp', 90);
+    
+            $path = $image->storeAs('/images', $fileName);
+    
+            // Se è presente un'immagine in evidenza, la aggiorna
+            $post->images()->updateOrCreate(
+                ['is_featured' => true],
+                ['path' => $path, 'is_featured' => true]
+            );
+        }
+    
         $redirectFrom = $request->input('redirect_from');
-        
+    
         if ($redirectFrom && str_contains($redirectFrom, '/drafts')) {
             // Se l'URL di origine contiene /drafts, reindirizza a drafts
             return redirect()->route('posts.drafts');
         }
-      
-        // Redireziona alla lista dei post
+    
         return redirect()->route('posts.index');
-
     }
+    
     
 
     /**
@@ -180,18 +232,6 @@ class PostController extends Controller
         $post->delete();
 
         return to_route('posts.index');
-    }
-
-    public function drafts()
-    {
-        $user = Auth::user();
-        if (!$user->hasRole('editor') && !$user->hasRole('admin')) {
-            abort(403, 'Unauthorized');
-        }
-
-        // Recupera i draft
-        $drafts = Post::where('status', 'draft')->get();
-        return view('posts.drafts', compact('drafts'));
     }
 
 }

@@ -13,13 +13,14 @@ class ImageSeeder extends Seeder
      */
     public function run(): void
     {
-        $imagePath = 'images/927d6381-885e-4e1c-8c1f-fc575907cfa9.webp';
+        $imagePath = 'images/test-post.webp';
 
         for($i = 1; $i <= 100; $i++) {
             $newImage = New Image();
 
             $newImage->path = $imagePath;
             $newImage->post_id = $i;
+            $newImage->alt = 'test-img';
             $newImage->is_featured = 1;
 
             $newImage->save();

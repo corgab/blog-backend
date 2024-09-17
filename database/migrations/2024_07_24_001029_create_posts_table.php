@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('title')->unique();
             $table->string('slug')->unique();
-            $table->mediumText('content');
             $table->boolean('featured');
-            $table->string('status')->default('draft');
+            $table->enum('status', ['draft', 'published'])->default('draft');
             $table->timestamps();
             $table->softDeletes();
 

@@ -1,2 +1,5 @@
 name,email,password
 admin,admin@admin.it,admin
+user1,user1@test.it,admin
+user2,user2@test.it,admin
+user3,user3@test.it,admin

@@ -24,11 +24,12 @@ class StorePostRequest extends FormRequest
         return [
             'title' => 'required|string|max:255|unique:posts,title',
             'slug' => 'nullable|string|unique:posts,slug',
-            'content' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:5000',
+            'image' => ' nullable|image|mimes:jpeg,png,webp|max:2048', // Required
             'featured' => 'required|boolean',
             'tag_id' => 'required|array',
             'tag_id.*' => 'exists:tags,id',
+            'sections.*.title' => 'required|string|max:255',
+            'sections.*.content' => 'required|string',
 
         ];
     }

@@ -42,26 +42,22 @@ class PostSeeder extends Seeder
         foreach($data as $index=>$row) {
             if($index !== 0) {
 
-                $user_id = $faker->numberBetween(1, 11);;
+                $user_id = $faker->numberBetween(1, 4);;
 
                 $new_post = new Post();
 
                 $new_post->user_id = $user_id;
                 $new_post->title = $row[0];
                 $new_post->slug = Str::slug($new_post->title, '-');
-                $new_post->content = $row[1];
                 $new_post->created_at = $row[2];
-                // $new_post->difficulty = $row[4];
                 $new_post->featured = $row[5];
 
                 $new_post->save();
 
                 // Recupera gli ID di tutti i tags in un array
                 $tags_id = Tag::all()->pluck('id')->all();
-                // $technologies_id = Technology::all()->pluck('id')->all();
 
                 $random_tag = $faker->randomElements($tags_id, 1);
-                // $random_tech = $faker->randomElements($technologies_id, 2);
 
                 $new_post->tags()->attach($random_tag);
                 // $new_post->technologies()->attach($random_tech);

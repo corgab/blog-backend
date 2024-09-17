@@ -26,10 +26,10 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             RolePermissionSeeder::class,
             UserRoleSeeder::class,
+            
             TagSeeder::class,
-
-            // PostSeeder::class,
-            // ImageSeeder::class,
+            PostSeeder::class,
+            ImageSeeder::class,
          ]);
     }
 }

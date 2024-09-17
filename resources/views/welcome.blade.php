@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Zento') }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -14,8 +14,6 @@
     <!-- Usando Vite -->
     @vite(['resources/js/app.js'])
 
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
@@ -34,10 +32,13 @@
 
         <!-- Pulsanti di navigazione -->
         <div class="btn-group mt-4" role="group" aria-label="Navigazione blog">
-            <a href="{{ route('login') }}" class="btn btn-primary btn-lg me-2">{{ __('Login') }}</a>
-            @auth
-            <a href="{{ url('/dashboard') }}" class="btn btn-success btn-lg">{{ __('Go to Dashboard') }}</a>
-            @endauth
+            @if (Auth::check())
+                <!-- Solo se l'utente è loggato -->
+                <a href="{{ url('/dashboard') }}" class="btn btn-success btn-lg">{{ __('Go to Dashboard') }}</a>
+            @else
+                <!-- Solo se l'utente non è loggato -->
+                <a href="{{ route('login') }}" class="btn btn-primary btn-lg">{{ __('Login') }}</a>
+            @endif
         </div>
     </div>
 

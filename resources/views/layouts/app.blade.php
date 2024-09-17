@@ -16,15 +16,18 @@
 
     <!-- Usando Vite -->
     @vite(['resources/js/app.js'])
+
+    @stack('styles')
+
 </head>
 
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm align-items-center">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container">
                 <!-- Navbar brand con logo -->
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-                    <img src="{{ asset('images/logo.svg') }}" alt="Logo" width="60" height="54">
+                    <img src="{{ asset('images/logo.svg') }}" alt="Logo" width="60" height="54" class="me-2">
                     <span class="h1 mb-0" style="font-size: 1.75rem;">{{ config('app.name') }}</span>
                 </a>
 
@@ -37,8 +40,8 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         @auth
-                        <li>
-                            <a class="nav-link" href="{{ url('/dashboard')}}">{{_('Dashboard')}}</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/dashboard') }}">{{ __('Dashboard') }}</a>
                         </li>
                         @if (Route::has('register'))
                         @role('admin')
@@ -54,9 +57,12 @@
                     <ul class="navbar-nav ms-auto">
                         <!-- Authentication Links -->
                         @guest
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                        </li>
                         @else
                         <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {{ Auth::user()->name }}
                             </a>
 
@@ -84,6 +90,8 @@
             </div>
         </main>
     </div>
+
+    @yield('scripts')
 </body>
 
 </html>

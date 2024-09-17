@@ -24,11 +24,13 @@ class UpdatePostRequest extends FormRequest
         return [
             'title' =>'required|string|max:255',
             'slug' =>'nullable|string',
-            'content' => 'required|string',
+            'image' => ' nullable|image|mimes:jpeg,png,webp|max:2048', // Required
             'featured' => 'required|boolean',
             'status' => 'required|in:draft,published',
             'tag_id' => 'required|array',
             'tag_id.*' => 'exists:tags,id',
+            'sections.*.title' => 'required|string|max:255',
+            'sections.*.content' => 'required|string',
         ];
     }
 }

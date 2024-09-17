@@ -31,6 +31,11 @@ class Post extends Model
         return $this->belongsToMany(Tag::class);
     }
 
+    public function sections()
+    {
+        return $this->hasMany(PostSection::class)->orderBy('order');
+    }
+
     public function images()
     {
         return $this->hasMany(Image::class);

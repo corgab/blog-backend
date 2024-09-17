@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
             $table->string('path'); // Percorso
+            $table->string('alt')->nullable();
             $table->boolean('is_featured')->default(false); // Immagine principale
             $table->timestamps();
         });
