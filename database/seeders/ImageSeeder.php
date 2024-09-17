@@ -15,7 +15,7 @@ class ImageSeeder extends Seeder
     {
         $imagePath = 'images/test-post.webp';
 
-        for($i = 1; $i <= 100; $i++) {
+        for($i = 1; $i <= 75; $i++) {
             $newImage = New Image();
 
             $newImage->path = $imagePath;
