@@ -48,7 +48,7 @@
             @forelse($post->images as $image)
                 @if($image->is_featured)
                     <div class="position-relative">
-                        <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $image->alt }}" class="img-fluid rounded shadow-sm">
+                        <img src="{{ url('storage/' . $image->path) }}" alt="{{ $image->alt }}" class="img-fluid rounded shadow-sm">
                         <div class="position-absolute top-0 start-0 bg-dark text-white px-2 py-1 rounded-end">
                             Immagine Copertina
                         </div>
