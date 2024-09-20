@@ -27,9 +27,12 @@
             <a href="{{ route('dashboard') }}">Home</a>
             <a href="{{ route('posts.index')}}">All Posts</a>
             <a href="{{ route('posts.create') }}">Create New Post</a>
-            @can('approve posts')
+            @if (Auth::user()->hasRole('admin') || $user->hasRole('editor'))
             <a href="{{ route('posts.drafts') }}">Draft Posts</a>
-            @endcan
+            @endif
+            @if (Auth::user()->hasRole('admin'))
+            <a href="{{ route('register')}}">Registra un Utente</a>
+            @endif
 
             <!-- User Info -->
             <div class="user-info">
