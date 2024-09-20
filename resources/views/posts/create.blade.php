@@ -20,7 +20,29 @@
 
                 {{-- Sezioni --}}
                 <h4 class="mb-3 text-secondary">Sezioni</h4>
-                <div id="sections-container"></div>
+                <div id="sections-container">
+                    @foreach (old('sections', []) as $index => $section)
+                    <div class="card mb-3 section-block">
+                        <div class="card-body">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control @error('sections.' . $index . '.title') is-invalid @enderror" name="sections[{{ $index }}][title]" value="{{ $section['title'] ?? '' }}" placeholder="Titolo della sezione" required>
+                                <label for="section-title-{{ $index }}">Titolo della sezione</label>
+                                @error('sections.' . $index . '.title')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-floating mb-2">
+                                <textarea class="form-control @error('sections.' . $index . '.content') is-invalid @enderror" name="sections[{{ $index }}][content]" placeholder="Contenuto della sezione" rows="4" required>{{ $section['content'] ?? '' }}</textarea>
+                                <label for="section-content-{{ $index }}">Contenuto della sezione</label>
+                                @error('sections.' . $index . '.content')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm mt-2 remove-section">Rimuovi Sezione</button>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
                 <button type="button" id="add-section" class="btn btn-outline-primary mb-4">Aggiungi Sezione</button>
             </div>
 
@@ -31,7 +53,7 @@
                     <div class="col row row-cols-2">
                         @foreach ($tags as $tag)
                         <div class="form-check">
-                            <input class="form-check-input @error('tag_id') is-invalid @enderror" name="tag_id[]" type="checkbox" value="{{ $tag->id }}" id="tag-{{ $tag->id }}">
+                            <input class="form-check-input @error('tag_id') is-invalid @enderror" name="tag_id[]" type="checkbox" value="{{ $tag->id }}" id="tag-{{ $tag->id }}" @checked(in_array($tag->id, old('tag_id', [])))>
                             <label class="form-check-label" for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
                         </div>
                         @endforeach
@@ -85,7 +107,7 @@
 
 @section('scripts')
 <script>
-    let sectionIndex = 0;
+    let sectionIndex = {{ count(old('sections', [])) }};
 
     document.getElementById('add-section').addEventListener('click', function() {
         const newSection = document.createElement('div');
@@ -112,5 +134,6 @@
             event.target.closest('.section-block').remove();
         }
     });
+
 </script>
 @endsection
