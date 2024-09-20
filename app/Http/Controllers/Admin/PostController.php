@@ -234,4 +234,21 @@ class PostController extends Controller
         return to_route('posts.index');
     }
 
+    public function drafts()
+    {
+        $drafts = Post::where('status', 'draft')->get();
+        
+        return view('posts.drafts',compact('drafts'));
+    }
+
+    public function publish(Post $post)
+    {
+        $post->status = 'published';
+
+        $post->save();
+
+        return redirect()->route('posts.drafts')->with('success', 'Post published successfully!');
+
+    }
+
 }

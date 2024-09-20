@@ -92,10 +92,8 @@
 
                 {{-- Stato --}}
                 @if (Auth::user()->hasRole('author'))
-                <!-- Gli autori possono solo salvare come bozza -->
                 <input type="hidden" name="status" value="draft">
                 @else
-                <!-- Gli editor e amministratori possono scegliere lo stato -->
                 <div class="form-floating mb-4">
                     <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
                         <option value="draft" @selected(old('status') == 'draft')>Bozza</option>
@@ -112,7 +110,7 @@
     </form>
 
     {{-- Pulsante Salva sempre visibile --}}
-    <div class="text-center fixed-bottom bg-light py-2">
+    <div class="text-center fixed-bottom py-2">
         <button type="submit" form="post-form" class="btn btn-primary">Salva</button>
     </div>
 </div>
@@ -123,7 +121,6 @@
     let sectionIndex = @json(count(old('sections', [])));
 
     document.getElementById('add-section').addEventListener('click', function() {
-        // Crea una nuova sezione
         const newSection = document.createElement('div');
         newSection.classList.add('card', 'mb-3', 'section-block');
         newSection.innerHTML = `

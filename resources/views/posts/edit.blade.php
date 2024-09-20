@@ -122,7 +122,7 @@
     </form>
 
     {{-- Pulsante Salva sempre visibile --}}
-    <div class="text-center fixed-bottom bg-light py-2">
+    <div class="text-center fixed-bottom py-2">
         <button type="submit" form="post-form" class="btn btn-primary btn-lg">Modifica</button>
     </div>
 </div>

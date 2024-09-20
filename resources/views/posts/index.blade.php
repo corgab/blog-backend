@@ -2,12 +2,9 @@
 
 @section('content')
 <div class="container">
-    <h1 class="text-center my-3">Posts</h1>
+    <h1 class="text-center my-4">Posts</h1>
 
     @if(isset($posts) && $posts->count() > 0)
-    <div class="mb-3 d-flex justify-content-end">
-        <a href="{{ route('posts.create') }}" class="btn btn-dark">Create New Post</a>
-    </div>
 
     <div class="row">
         @foreach($posts as $post)

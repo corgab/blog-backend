@@ -16,34 +16,22 @@
                 <h1 class="display-4 text-center">Benvenuto, <span class="text-primary">{{ $user->name }}</span></h1>
             </div>
 
-            <!-- Navigation Buttons -->
-            <div class="d-flex justify-content-center gap-3 mb-4">
-                <a href="{{ route('posts.index') }}" class="btn btn-primary">Posts</a>
-                @can('manage tags')
-                <a href="{{ route('tags.index') }}" class="btn btn-secondary">Tags</a>
-                @endcan
-            </div>
-
             <!-- Dashboard Statistics -->
-            <div class="row mb-4">
-                <div class="col-md-4">
+            <div class="row mb-4 justify-content-center">
+                <a href="{{ route('posts.index') }}" class="col-12 col-md text-decoration-none">
                     <div class="p-3 border bg-light rounded text-center">
                         <h5>{{ $totalPosts }}</h5>
                         <p>Post Totali</p>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3 border bg-light rounded text-center">
-                        <h5>{{ $totalTags }}</h5>
-                        <p>Tags Totali</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
+                </a>
+                @if (Auth::user()->hasRole('admin') || $user->hasRole('editor'))
+                <a href="{{ route('posts.drafts') }}" class="col-12 col-md text-decoration-none">
                     <div class="p-3 border bg-light rounded text-center">
                         <h5>{{ $totalDrafts }}</h5>
                         <p>Bozze</p>
                     </div>
-                </div>
+                </a>
+                @endif
             </div>
 
             <!-- Latest Posts -->

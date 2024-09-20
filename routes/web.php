@@ -31,6 +31,13 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::resource('/posts', PostController::class);
     Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
 
+
+    Route::middleware('role:admin|editor')->group(function () {
+        Route::get('/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
+        Route::get('/posts/publish/{post:slug}', [PostController::class, 'publish'])->name('posts.publish');
+
+    });
+
     // Rotte per Profilo
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

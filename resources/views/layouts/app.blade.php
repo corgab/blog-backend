@@ -1,6 +1,5 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,81 +16,46 @@
     <!-- Usando Vite -->
     @vite(['resources/js/app.js'])
 
+    <!-- Custom CSS -->    
     @stack('styles')
-
 </head>
-
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-            <div class="container">
-                <!-- Navbar brand con logo -->
-                <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-                    <img src="{{ asset('images/logo.svg') }}" alt="Logo" width="60" height="54" class="me-2">
-                    <span class="h1 mb-0" style="font-size: 1.75rem;">{{ config('app.name') }}</span>
-                </a>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h4 class="p-3">Dashboard</h4>
+            <a href="{{ route('dashboard') }}">Home</a>
+            <a href="{{ route('posts.index')}}">All Posts</a>
+            <a href="{{ route('posts.create') }}">Create New Post</a>
+            @can('approve posts')
+            <a href="{{ route('posts.drafts') }}">Draft Posts</a>
+            @endcan
 
-                <!-- Toggler per dispositivi mobili -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
-                        @auth
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/dashboard') }}">{{ __('Dashboard') }}</a>
-                        </li>
-                        @if (Route::has('register'))
-                        @role('admin')
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">{{ __('Registra Utente') }}</a>
-                        </li>
-                        @endrole
-                        @endif
-                        @endauth
-                    </ul>
-
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
-                        @guest
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                        </li>
-                        @else
-                        <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{ Auth::user()->name }}
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ url('profile') }}">{{ __('Profile') }}</a>
-                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                    {{ __('Logout') }}
-                                </a>
-
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </div>
-                        </li>
-                        @endguest
-                    </ul>
-                </div>
+            <!-- User Info -->
+            <div class="user-info">
+                @guest
+                    <a href="{{ route('login') }}">Login</a>
+                @else
+                    <a href="{{ route('profile.edit') }}">Gestisci Profilo</a>
+                    <a href="{{ route('logout') }}"
+                       onclick="event.preventDefault();
+                                 document.getElementById('logout-form').submit();">
+                        Logout
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
+                @endguest
             </div>
-        </nav>
+        </div>
 
-        <main class="py-4">
-            <div class="container">
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
                 @yield('content')
             </div>
-        </main>
+        </div>
     </div>
-
-    @yield('scripts')
 </body>
-
+@yield('scripts')
 </html>
