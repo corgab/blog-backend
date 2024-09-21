@@ -4,6 +4,12 @@
 <div class="container py-4">
     <h1 class="text-center mb-4">Crea Nuovo Post</h1>
 
+    @if ($errors->has('sections'))
+    <div class="alert alert-danger">
+        {{ $errors->first('sections') }}
+    </div>
+    @endif
+
     <form id="post-form" action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
@@ -11,7 +17,7 @@
             <div class="col-lg-8 col-md-12">
                 {{-- Titolo --}}
                 <div class="form-floating mb-4">
-                    <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title') }}" placeholder="Scrivi il titolo qui" required>
+                    <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title') }}" placeholder="Scrivi il titolo qui">
                     <label for="title">Titolo</label>
                     @error('title')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -21,28 +27,56 @@
                 {{-- Sezioni --}}
                 <h4 class="mb-3 text-secondary">Sezioni</h4>
                 <div id="sections-container">
-                    @foreach (old('sections', []) as $index => $section)
+                    {{-- Prima sezione predefinita --}}
                     <div class="card mb-3 section-block">
                         <div class="card-body">
+                            {{-- Titolo della prima sezione --}}
                             <div class="form-floating mb-2">
-                                <input type="text" class="form-control @error('sections.' . $index . '.title') is-invalid @enderror" name="sections[{{ $index }}][title]" value="{{ $section['title'] ?? '' }}" placeholder="Titolo della sezione" required>
-                                <label for="section-title-{{ $index }}">Titolo della sezione</label>
-                                @error('sections.' . $index . '.title')
+                                <input type="text" class="form-control @error('sections.0.title') is-invalid @enderror" name="sections[0][title]" value="{{ old('sections.0.title') }}" placeholder="Titolo della sezione" >
+                                <label for="section-title-0">Titolo della sezione</label>
+                                @error('sections.0.title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            {{-- Contenuto della prima sezione --}}
                             <div class="form-floating mb-2">
-                                <textarea class="form-control @error('sections.' . $index . '.content') is-invalid @enderror" name="sections[{{ $index }}][content]" placeholder="Contenuto della sezione" rows="4" required>{{ $section['content'] ?? '' }}</textarea>
-                                <label for="section-content-{{ $index }}">Contenuto della sezione</label>
-                                @error('sections.' . $index . '.content')
+                                <textarea class="form-control @error('sections.0.content') is-invalid @enderror" name="sections[0][content]" placeholder="Contenuto della sezione" rows="4" >{{ old('sections.0.content') }}</textarea>
+                                <label for="section-content-0">Contenuto della sezione</label>
+                                @error('sections.0.content')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <button type="button" class="btn btn-danger btn-sm mt-2 remove-section">Rimuovi Sezione</button>
                         </div>
                     </div>
+
+                    {{-- Le altre sezioni --}}
+                    @foreach (old('sections', []) as $index => $section)
+                        @if ($index > 0)
+                            <div class="card mb-3 section-block">
+                                <div class="card-body">
+                                    <div class="form-floating mb-2">
+                                        <input type="text" class="form-control @error('sections.' . $index . '.title') is-invalid @enderror" name="sections[{{ $index }}][title]" value="{{ $section['title'] ?? '' }}" placeholder="Titolo della sezione" >
+                                        <label for="section-title-{{ $index }}">Titolo della sezione</label>
+                                        @error('sections.' . $index . '.title')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-floating mb-2">
+                                        <textarea class="form-control @error('sections.' . $index . '.content') is-invalid @enderror" name="sections[{{ $index }}][content]" placeholder="Contenuto della sezione" rows="4" >{{ $section['content'] ?? '' }}</textarea>
+                                        <label for="section-content-{{ $index }}">Contenuto della sezione</label>
+                                        @error('sections.' . $index . '.content')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <button type="button" class="btn btn-danger btn-sm mt-2 remove-section">Rimuovi Sezione</button>
+                                </div>
+                            </div>
+                        @endif
                     @endforeach
                 </div>
+
+                {{-- Pulsante per aggiungere nuove sezioni --}}
                 <button type="button" id="add-section" class="btn btn-outline-primary mb-4">Aggiungi Sezione</button>
             </div>
 
@@ -107,19 +141,20 @@
 
 @section('scripts')
 <script>
-    let sectionIndex = {{ count(old('sections', [])) }};
+    let sectionIndex = {{ count(old('sections', [])) > 0 ? count(old('sections', [])) : 1 }}; // Inizia da 1
 
+    // Aggiungi nuova sezione
     document.getElementById('add-section').addEventListener('click', function() {
         const newSection = document.createElement('div');
         newSection.classList.add('card', 'mb-3', 'section-block');
         newSection.innerHTML = `
             <div class="card-body">
                 <div class="form-floating mb-2">
-                    <input type="text" class="form-control" name="sections[${sectionIndex}][title]" placeholder="Titolo della sezione" required>
+                    <input type="text" class="form-control" name="sections[${sectionIndex}][title]" placeholder="Titolo della sezione" >
                     <label for="section-title-${sectionIndex}">Titolo della sezione</label>
                 </div>
                 <div class="form-floating mb-2">
-                    <textarea class="form-control" name="sections[${sectionIndex}][content]" placeholder="Contenuto della sezione" rows="4" required></textarea>
+                    <textarea class="form-control" name="sections[${sectionIndex}][content]" placeholder="Contenuto della sezione" rows="4" ></textarea>
                     <label for="section-content-${sectionIndex}">Contenuto della sezione</label>
                 </div>
                 <button type="button" class="btn btn-danger btn-sm mt-2 remove-section">Rimuovi Sezione</button>
@@ -129,6 +164,7 @@
         sectionIndex++;
     });
 
+    // Rimozione sezione aggiuntiva
     document.getElementById('sections-container').addEventListener('click', function(event) {
         if (event.target.classList.contains('remove-section')) {
             event.target.closest('.section-block').remove();

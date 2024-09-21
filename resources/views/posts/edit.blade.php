@@ -4,6 +4,12 @@
 <div class="container py-4">
     <h1 class="text-center mb-4">Modifica Post</h1>
 
+    @if ($errors->has('sections'))
+    <div class="alert alert-danger">
+        {{ $errors->first('sections') }}
+    </div>
+    @endif
+
     <form id="post-form" action="{{ route('posts.update', $post->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -26,14 +32,14 @@
                     <div class="card mb-3 section-block">
                         <div class="card-body">
                             <div class="form-floating mb-2">
-                                <input type="text" class="form-control @error('sections.' . $index . '.title') is-invalid @enderror" name="sections[{{ $index }}][title]" value="{{ $section['title'] ?? '' }}" placeholder="Titolo della sezione" required>
+                                <input type="text" class="form-control @error('sections.' . $index . '.title') is-invalid @enderror" name="sections[{{ $index }}][title]" value="{{ old('sections.' . $index . '.title', $section['title']) }}" placeholder="Titolo della sezione" required>
                                 <label for="section-title-{{ $index }}">Titolo della sezione</label>
                                 @error('sections.' . $index . '.title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="form-floating mb-2">
-                                <textarea class="form-control @error('sections.' . $index . '.content') is-invalid @enderror" name="sections[{{ $index }}][content]" placeholder="Contenuto della sezione" rows="4" required>{{ $section['content'] ?? '' }}</textarea>
+                                <textarea class="form-control @error('sections.' . $index . '.content') is-invalid @enderror" name="sections[{{ $index }}][content]" placeholder="Contenuto della sezione" rows="4" required>{{ old('sections.' . $index . '.content', $section['content']) }}</textarea>
                                 <label for="section-content-{{ $index }}">Contenuto della sezione</label>
                                 @error('sections.' . $index . '.content')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -76,7 +82,7 @@
                 {{-- Featured --}}
                 <div class="form-check form-switch my-3">
                     <input type="hidden" value="0" id="featured-hidden" name="featured">
-                    <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured" value="1" {{ $post->featured ? 'checked' : '' }}>
+                    <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured" value="1" {{ old('featured', $post->featured) ? 'checked' : '' }}>
                     <label class="form-check-label ms-2" for="featured">In Evidenza</label>
                 </div>
 

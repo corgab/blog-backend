@@ -34,7 +34,7 @@
         <div class="btn-group mt-4" role="group" aria-label="Navigazione blog">
             @if (Auth::check())
                 <!-- Solo se l'utente è loggato -->
-                <a href="{{ url('/dashboard') }}" class="btn btn-success btn-lg">{{ __('Go to Dashboard') }}</a>
+                <a href="{{ url('/dashboard') }}" class="btn btn-primary btn-lg">{{ __('Go to Dashboard') }}</a>
             @else
                 <!-- Solo se l'utente non è loggato -->
                 <a href="{{ route('login') }}" class="btn btn-primary btn-lg">{{ __('Login') }}</a>
