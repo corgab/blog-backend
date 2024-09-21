@@ -40,25 +40,34 @@ class Post extends Model
     {
         return $this->hasMany(Image::class);
     }
-
-    // Tempo di lettura
+    
+    // Funzione per calcolare il tempo di lettura
     public function getReadingTimeAttribute()
     {
-        // Calcola il numero di parole nel contenuto del post
-        $wordCount = str_word_count(strip_tags($this->content));
-        
-        // Considera una velocità di lettura di 200 parole al minuto
+        // Inizializza il conteggio delle parole
+        $wordCount = 0;
+
+        // Recupera le sezioni del post corrente, ordinate per 'order'
+        $sections = PostSection::where('post_id', $this->id)
+            ->orderBy('order')
+            ->get();
+
+        // Calcola il numero di parole per ciascuna sezione
+        foreach ($sections as $section) {
+            $wordCount += str_word_count(strip_tags($section->content));
+        }
+
+        // Considera una velocità di lettura di 220 parole al minuto
         $wordsPerMinute = 220;
 
         // Calcola il tempo di lettura
         $minutes = ceil($wordCount / $wordsPerMinute);
 
-        if($minutes <= 1) {
-            return 'Less than 1 minute';    
-        } else
+        if ($minutes <= 1) {
+            return 'Less than 1 minute';
+        } else {
             return "{$minutes} minutes";
+        }
     }
-
-    protected $appends = ['reading_time'];
 
 }
