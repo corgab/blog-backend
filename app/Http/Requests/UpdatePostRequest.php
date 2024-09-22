@@ -22,7 +22,7 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' =>'required|string|max:255',
+            'title' =>'required|string|max:255|unique:posts,title', // Togliere unique'
             'slug' =>'nullable|string',
             'image' => ' nullable|image|mimes:jpeg,png,webp|max:2048', // Required
             'featured' => 'required|boolean',
@@ -41,6 +41,7 @@ class UpdatePostRequest extends FormRequest
             'title.required' => 'Il titolo è obbligatorio.',
             'title.string' => 'Il titolo deve essere una stringa.',
             'title.max' => 'Il titolo non può superare i :max caratteri.',
+            'title.unique' => 'Il titolo è già stato utilizzato.',
 
             'image.image' => 'Il file caricato deve essere un\'immagine.',
             'image.mimes' => 'Il file deve essere un\'immagine nei formati: jpeg, png, webp.',

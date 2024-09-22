@@ -22,7 +22,7 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255|unique:posts,title',
+            'title' => 'required|string|max:255|unique:posts,title', // Togliere unique
             'slug' => 'nullable|string|unique:posts,slug',
             'image' => ' nullable|image|mimes:jpeg,png,webp|max:2048', // Required
             'featured' => 'required|boolean',

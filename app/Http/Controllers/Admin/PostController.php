@@ -122,11 +122,12 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        $user = Auth::user();
         $sections = PostSection::where('post_id', $post->id)
         ->orderBy('order')
         ->get();
 
-        return view('posts.show', compact('post', 'sections'));
+        return view('posts.show', compact('post','user','sections'));
     }
     
     /**
@@ -135,12 +136,13 @@ class PostController extends Controller
     public function edit(Post $post)
     {
 
+        $user = Auth::user();
         // Carica le relazioni tags
         $post->load('tags');
         
         $tags = Tag::orderBy('name', 'asc')->get();
 
-        return view('posts.edit', compact('post','tags'));
+        return view('posts.edit', compact('user','post','tags'));
     }
 
     /**
