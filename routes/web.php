@@ -36,6 +36,10 @@ Route::middleware('auth', 'verified')->group(function () {
         Route::get('/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
         Route::get('/posts/publish/{post:slug}', [PostController::class, 'publish'])->name('posts.publish');
 
+        Route::get('/trash', [PostController::class, 'trash'])->name('posts.trash');
+        Route::put('/trash/restore/{post:slug}', [PostController::class, 'restore'])->name('posts.restore');
+
+
     });
 
     // Rotte per Profilo
@@ -47,7 +51,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::resource('/tags', TagController::class)->except(['show', 'edit']);
     });
-    
+
 
 });
 

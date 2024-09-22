@@ -11,6 +11,7 @@ use App\Models\Tag;
 use App\Models\Image;
 use App\Models\PostSection;
 
+
 use Intervention\Image\Facades\Image as InterventionImage; 
 
 use Illuminate\Support\Facades\Auth;
@@ -253,4 +254,27 @@ class PostController extends Controller
 
     }
 
+    public function trash()
+    {
+        $user = Auth::user();
+        $posts = Post::onlyTrashed()
+        ->orderBy('created_at','desc')
+        // ->where('user_id', $user->id)
+        ->get();
+
+        return view('posts.trash', compact('posts'));
+    }
+
+    public function restore($slug)
+    {
+        // Trova il post soft deleted usando lo slug
+        $post = Post::withTrashed()->where('slug', $slug)->first();
+    
+        if ($post) {
+            $post->restore(); // Ripristina il post
+            return redirect()->route('posts.trash')->with('success', 'Post ripristinato correttamente!');
+        }
+    
+        abort(404);
+    }
 }

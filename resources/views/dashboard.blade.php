@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-4">
+<div class="container ">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <!-- Success Message -->
@@ -12,7 +12,7 @@
             @endif
 
             <!-- Dashboard Welcome -->
-            <div class="mb-4">
+            <div class="mb-2">
                 <h1 class="display-4 text-center">Benvenuto, <span class="text-primary">{{ $user->name }}</span></h1>
             </div>
 
