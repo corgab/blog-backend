@@ -22,7 +22,7 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255|unique:posts,title', // Togliere unique
+            'title' => 'required|string|max:255', // Togliere unique
             'slug' => 'nullable|string|unique:posts,slug',
             'image' => ' nullable|image|mimes:jpeg,png,webp|max:2048', // Required
             'featured' => 'required|boolean',
@@ -40,7 +40,6 @@ class StorePostRequest extends FormRequest
             'title.required' => 'Il titolo è obbligatorio.',
             'title.string' => 'Il titolo deve essere una stringa.',
             'title.max' => 'Il titolo non può superare i :max caratteri.',
-            'title.unique' => 'Il titolo è già stato utilizzato.',
     
             'slug.string' => 'Lo slug deve essere una stringa.',
             'slug.unique' => 'Lo slug è già stato utilizzato.',
