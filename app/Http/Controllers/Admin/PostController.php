@@ -239,9 +239,11 @@ class PostController extends Controller
 
     public function drafts()
     {
+        $user = Auth::user();
+    
         $drafts = Post::where('status', 'draft')->get();
         
-        return view('posts.drafts',compact('drafts'));
+        return view('posts.drafts',compact('drafts', 'user'));
     }
 
     public function publish(Post $post)
@@ -257,12 +259,28 @@ class PostController extends Controller
     public function trash()
     {
         $user = Auth::user();
-        $posts = Post::onlyTrashed()
-        ->orderBy('created_at','desc')
-        // ->where('user_id', $user->id)
-        ->get();
 
-        return view('posts.trash', compact('posts'));
+        if($user->hasRole('admin')) {
+
+            $user = Auth::user();
+            $posts = Post::onlyTrashed()
+            ->orderBy('created_at','desc')
+            // ->where('user_id', $user->id)
+            ->get();
+
+            return view('posts.trash', compact('posts','user'));
+        } else {
+
+            $user = Auth::user();
+            $posts = Post::onlyTrashed()
+            ->orderBy('created_at','desc')
+            ->where('user_id', $user->id)
+            ->get();
+
+            return view('posts.trash', compact('posts','user'));
+        } 
+
+
     }
 
     public function restore($slug)
