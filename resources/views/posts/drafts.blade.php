@@ -30,7 +30,7 @@
                             <td>{{ ucfirst($post->created_at->translatedFormat('M d, Y')) }}</td>
                             <td>{{ $post->user->name }}</td>
                             <td class="text-center">
-                                <a href="{{ route('posts.edit', $post) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="{{ route('posts.show', $post) }}" class="btn btn-warning btn-sm">View</a>
                                 <a href="{{ route('posts.publish', $post) }}" class="btn btn-success btn-sm">Publish</a>
                             </td>
                         </tr>
