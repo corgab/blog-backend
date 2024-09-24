@@ -60,7 +60,6 @@ class PostSeeder extends Seeder
                 $random_tag = $faker->randomElements($tags_id, 1);
 
                 $new_post->tags()->attach($random_tag);
-                // $new_post->technologies()->attach($random_tech);
 
             }
         }

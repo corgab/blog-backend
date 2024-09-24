@@ -24,5 +24,5 @@ Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{post:slug}', [PostController::class, 'show']);
 
 Route::get('/tags', [TagController::class, 'index']);
-Route::get('/tags/{tag}', [TagController::class, 'show']);
+Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
 
