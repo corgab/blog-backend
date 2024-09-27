@@ -14,6 +14,7 @@ class TagController extends Controller
         $perPage = $request->input('per_page', 5);
 
         $tags = Tag::with('posts')->paginate($perPage);
+        
 
         return response()->json($tags);
 
@@ -21,7 +22,10 @@ class TagController extends Controller
 
     public function show(Tag $tag)
     {
-        $tag->load('posts');
+        $tag->load(['posts' => function ($query) {
+            $query->where('status', 'published');
+        }]);
+        
         return response()->json($tag);
     }
 }

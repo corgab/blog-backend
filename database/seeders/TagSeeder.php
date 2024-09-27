@@ -15,19 +15,16 @@ class TagSeeder extends Seeder
     public function run(): void
     {
         $tags = [
-            'Tech',
-            'App',
-            'Social',
-            'Gadget',
-            'Videogiochi',
-            'Sicurezza',
-            'Casa',
-            'Auto',
-            'Notizie',
-            'Curiosità',
-            'Fotografia',
-            'Computer',
-            'Salute'
+            'Alimentazione Consapevole',
+            'Mindfulness e Meditazione',
+            'Fitness e Movimento',
+            'Salute Mentale',
+            'Rimedi Naturali e Fitoterapia',
+            'Spiritualità e Crescita Personale',
+            'Sostenibilità e Stili di Vita',
+            'Comunità e Supporto',
+            'Eventi e Attività Olistiche',
+            'Lifestyle e Produttività',
         ];
 
         foreach($tags as $tag) {
