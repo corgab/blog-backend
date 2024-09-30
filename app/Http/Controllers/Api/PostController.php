@@ -19,7 +19,7 @@ class PostController extends Controller
         $perPage = $request->input('per_page', 5);
     
         // Inizializza la query per i post
-        $postsQuery = Post::with('user','images','tags')->where('status','published')->orderBy('id','desc');
+        $postsQuery = Post::with('user','images','tags','sections')->where('status','published')->orderBy('id','desc');
 
     
         // Logiche aggiuntive per ricerca
@@ -61,7 +61,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
         // Carica le immagini con il post
-        $post->load('images','tags','technologies');
+        $post->load('images','tags','sections');
 
         // Costruisci la risposta
         $response = [
@@ -69,13 +69,18 @@ class PostController extends Controller
             'title' => $post->title,
             'reading_time' => $post->reading_time,
             'featured' => $post->featured ? 'True' : 'False',
-            'tags' => $post->tags->pluck('name'),
-            'technologies' => $post->technologies->pluck('name'),
+            'tags' => $post->tags,
+            'sections' => $post->sections->map(function($section) {
+                return [
+                    'title' => $section->title,
+                    'content' => $section->content,
+                ];
+            }),
             'created_at' => $post->created_at->translatedFormat('d F Y '),
             'images' => $post->images->map(function($image) {
                 return [
-                    url('storage/' . $image->path), // URL Immagine
-                    'is_featured' => $image->is_featured ? 'True' : 'False', // Copertina
+                    'url' =>url('storage/' . $image->path), // URL Immagine
+                    'is_featured' => $image->is_featured ? 1 : 2, // Copertina
                     //Alt
                 ];
             }),
