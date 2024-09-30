@@ -65,7 +65,7 @@ class PostController extends Controller
     {
         $form_data = $request->validated();
         $form_data['user_id'] = Auth::id();
-        $form_data['status'] = 'draft';
+        $form_data['status'] = $request->input('status', 'draft');
 
         // Creazione slug univoco
         $base_slug = Str::slug($form_data['title']);
