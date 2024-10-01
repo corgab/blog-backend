@@ -30,6 +30,7 @@ class StorePostRequest extends FormRequest
             'tag_id.*' => 'exists:tags,id',
             'sections.*.title' => 'required|string|max:255',
             'sections.*.content' => 'required|string',
+            'sections.*.image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
 
         ];
     }

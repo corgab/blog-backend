@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
+            $table->foreignId('section_id')->nullable()->constrained('post_sections')->onDelete('cascade');
             $table->string('path'); // Percorso
             $table->string('alt')->nullable();
             $table->boolean('is_featured')->default(false); // Immagine principale

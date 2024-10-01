@@ -63,58 +63,85 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
+        // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
-        $form_data['user_id'] = Auth::id();
-        $form_data['status'] = $request->input('status', 'draft');
-
+        $form_data['user_id'] = Auth::id(); // Assegna l'ID dell'utente autenticato
+        $form_data['status'] = $request->input('status', 'draft'); // Imposta lo stato, predefinito a 'draft'
+    
         // Creazione slug univoco
         $base_slug = Str::slug($form_data['title']);
         $slug = $base_slug;
         $n = 0;
+    
         do {
             $find = Post::where('slug', $slug)->first();
             if ($find !== null) {
                 $n++;
-                $slug = $base_slug . '-' . $n;
+                $slug = $base_slug . '-' . $n; // Incrementa lo slug se già esistente
             }
         } while ($find !== null);
+    
         $form_data['slug'] = $slug;
-
+    
         // Creazione del nuovo post
         $new_post = Post::create($form_data);
-
+    
         // Gestione delle sezioni
         if ($request->has('sections')) {
-            foreach ($request->input('sections') as $index => $section) {
-                PostSection::create([
+            foreach ($request->input('sections') as $index => $sectionData) {
+                // Crea la sezione e recupera l'ID
+                $section = PostSection::create([
                     'post_id' => $new_post->id,
-                    'title' => $section['title'] ?? null,
-                    'content' => $section['content'],
-                    'order' => $index
+                    'title' => $sectionData['title'] ?? null,
+                    'content' => $sectionData['content'],
+                    'order' => $index + 1,
                 ]);
-            }
+                
+
+                if ($request->hasFile('sections.' . $index . '.image')) {
+                    $image = $request->file('sections.' . $index . '.image'); 
+                    if ($image->isValid()) {
+                        // Procedi con la conversione e il salvataggio
+                        $fileName = Str::uuid() . '.webp';
+                        $convertedImage = InterventionImage::make($image)->encode('webp', 90);
+                        $path = $image->storeAs('/images', $fileName);
+                        // Crea l'immagine della sezione
+                        Image::create([
+                            'post_id' => $new_post->id,
+                            'section_id' => $section->id,
+                            'path' => $path,
+                            'is_featured' => false, // Section
+                        ]);
+                    }
+                }
         }
 
-        // Gestione dell'immagine
+        // Gestione dell'immagine di copertura
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $fileName = Str::uuid() . '.webp';
             $convertedImage = InterventionImage::make($image)
                 ->encode('webp', 90);
             $path = $image->storeAs('/images', $fileName);
+            
+            // Crea l'immagine di copertura
             Image::create([
                 'post_id' => $new_post->id,
                 'path' => $path,
-                'is_featured' => true,
+                'is_featured' => true, // Copertina
             ]);
         }
-
+    
         // Assegna i tag al post
         if (isset($form_data['tag_id'])) {
             $new_post->tags()->sync($form_data['tag_id']);
         }
 
-        return to_route('posts.index');
+        // dd($form_data);
+    
+        // Reindirizza all'indice dei post con un messaggio di successo
+        return to_route('posts.index')->with('success', 'Post creato con successo!');
+        }
     }
 
     

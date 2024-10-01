@@ -11,6 +11,7 @@ class Image extends Model
 
     protected $fillable = [
         'post_id',
+        'section_id',
         'path', 
         'is_featured'
     ];
@@ -18,5 +19,10 @@ class Image extends Model
     public function post()
     {
         return $this->belongsTo(Post::class);
+    }
+    
+    public function postSection()
+    {
+        return $this->belongsTo(PostSection::class);
     }
 }

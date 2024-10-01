@@ -15,4 +15,9 @@ class PostSection extends Model
     {
         return $this->belongsTo(Post::class);
     }
+
+    public function image()
+    {
+        return $this->hasOne(Image::class);
+    }
 }
