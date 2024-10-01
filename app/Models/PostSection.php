@@ -16,8 +16,8 @@ class PostSection extends Model
         return $this->belongsTo(Post::class);
     }
 
-    public function image()
+    public function images()
     {
-        return $this->hasOne(Image::class);
+        return $this->hasMany(Image::class, 'section_id');
     }
 }

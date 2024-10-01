@@ -151,12 +151,15 @@ class PostController extends Controller
     public function show(Post $post)
     {
         $user = Auth::user();
-        $sections = PostSection::where('post_id', $post->id)
-        ->orderBy('order')
-        ->get();
-
-        return view('posts.show', compact('post','user','sections'));
+        
+        $sections = PostSection::with('images')
+            ->where('post_id', $post->id)
+            ->orderBy('order')
+            ->get();
+    
+        return view('posts.show', compact('post', 'user', 'sections'));
     }
+    
     
     /**
      * Show the form for editing the specified resource.

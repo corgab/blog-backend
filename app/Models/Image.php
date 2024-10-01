@@ -13,7 +13,8 @@ class Image extends Model
         'post_id',
         'section_id',
         'path', 
-        'is_featured'
+        'is_featured',
+        'alt',
     ];
 
     public function post()
@@ -23,6 +24,6 @@ class Image extends Model
     
     public function postSection()
     {
-        return $this->belongsTo(PostSection::class);
+        return $this->belongsTo(PostSection::class, 'section_id');
     }
 }
