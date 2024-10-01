@@ -32,6 +32,7 @@ class UpdatePostRequest extends FormRequest
             'sections' => 'required|array|min:1',
             'sections.*.title' => 'required|string|max:255',
             'sections.*.content' => 'required|string',
+            'sections.*.image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 

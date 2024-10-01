@@ -13,7 +13,7 @@ use App\Models\PostSection;
 
 
 use Intervention\Image\Facades\Image as InterventionImage; 
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -169,7 +169,8 @@ class PostController extends Controller
 
         $user = Auth::user();
         // Carica le relazioni tags
-        $post->load('tags');
+        $post->load('tags','sections.images','images');
+        // dd($post);
         
         $tags = Tag::orderBy('name', 'asc')->get();
 
@@ -180,80 +181,115 @@ class PostController extends Controller
      * Update the specified resource in storage.
      */
     public function update(UpdatePostRequest $request, Post $post)
-    {
-        // Ottieni i dati validati dalla richiesta
-        $form_data = $request->validated();
+{
+    // Ottieni i dati validati dalla richiesta
+    $form_data = $request->validated();
 
-            // Controllo del ruolo utente
-        if (Auth::user()->hasRole('author')) {
-            // Se l'utente è un autore, forza lo status a "draft"
-            $form_data['status'] = 'draft';
-        } elseif(!in_array($form_data['status'], ['draft', 'published'])) {
-            return redirect()->back()->withErrors(['status' => 'Stato non valido']);
-        }
-    
-        // Aggiorna il titolo e crea un nuovo slug se il titolo è cambiato
-        if ($post->title !== $form_data['title']) {
-            $base_slug = Str::slug($form_data['title']);
-            $slug = $base_slug;
-            $n = 0;
-            // Assicurati che il nuovo slug sia unico
-            while (Post::where('slug', $slug)->where('id', '!=', $post->id)->exists()) {
-                $n++;
-                $slug = $base_slug . '-' . $n;
-            }
-            $form_data['slug'] = $slug;
-        }
-    
-        // Aggiorna il post con i dati validati
-        $post->update($form_data);
-    
-        // Sincronizza i tag
-        $post->tags()->sync($request->input('tag_id', []));
-    
-        // Aggiorna o crea le sezioni del post
-        if ($request->has('sections')) {
-            // Elimina le sezioni esistenti
-            $post->sections()->delete();
-    
-            // Crea nuove sezioni
-            foreach ($request->input('sections') as $index => $section) {
-                PostSection::create([
-                    'post_id' => $post->id,
-                    'title' => $section['title'] ?? null,
-                    'content' => $section['content'],
-                    'order' => $index + 1,
-                ]);
-            }
-        }
-    
-        // Gestione dell'immagine se aggiornata
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $fileName = Str::uuid() . '.webp';
-    
-            // Converti l'immagine in formato webp
-            $convertedImage = InterventionImage::make($image)
-                ->encode('webp', 90);
-    
-            $path = $image->storeAs('/images', $fileName);
-    
-            // Se è presente un'immagine in evidenza, la aggiorna
-            $post->images()->updateOrCreate(
-                ['is_featured' => true],
-                ['path' => $path, 'is_featured' => true]
-            );
-        }
-    
-        $redirectFrom = $request->input('redirect_from');
-    
-        if ($redirectFrom && str_contains($redirectFrom, '/drafts')) {
-            // Se l'URL di origine contiene /drafts, reindirizza a drafts
-            return redirect()->route('posts.drafts');
-        }
-    
-        return redirect()->route('posts.index');
+    // Controllo del ruolo utente
+    if (Auth::user()->hasRole('author')) {
+        // Se l'utente è un autore, forza lo status a "draft"
+        $form_data['status'] = 'draft';
+    } elseif (!in_array($form_data['status'], ['draft', 'published'])) {
+        return redirect()->back()->withErrors(['status' => 'Stato non valido']);
     }
+
+    // Aggiorna il titolo e crea un nuovo slug se il titolo è cambiato
+    if ($post->title !== $form_data['title']) {
+        $base_slug = Str::slug($form_data['title']);
+        $slug = $base_slug;
+        $n = 0;
+        // Assicurati che il nuovo slug sia unico
+        while (Post::where('slug', $slug)->where('id', '!=', $post->id)->exists()) {
+            $n++;
+            $slug = $base_slug . '-' . $n;
+        }
+        $form_data['slug'] = $slug;
+    }
+
+    // Aggiorna il post con i dati validati
+    $post->update($form_data);
+
+    // Sincronizza i tag
+    $post->tags()->sync($request->input('tag_id', []));
+
+    // Gestione delle sezioni del post
+    if ($request->has('sections')) {
+        $existingSectionIds = [];
+
+        foreach ($request->input('sections') as $index => $section) {
+            // Trova la sezione esistente o crea una nuova
+            $postSection = isset($section['id']) 
+                ? $post->sections()->find($section['id']) 
+                : new PostSection();
+
+            // Aggiorna i campi della sezione
+            $postSection->fill([
+                'post_id' => $post->id,
+                'title' => $section['title'] ?? null,
+                'content' => $section['content'],
+                'order' => $index + 1,
+            ]);
+
+            // Gestione dell'immagine se fornita
+            if ($request->hasFile("sections.$index.image")) {
+                $image = $request->file("sections.$index.image");
+                $fileName = Str::uuid() . '.webp';
+
+                // Converti l'immagine in formato webp
+                $convertedImage = InterventionImage::make($image)
+                    ->encode('webp', 90);
+
+                // Salva l'immagine
+                $path = $image->storeAs('/images', $fileName);
+
+                // Aggiorna o crea l'immagine per la sezione con is_featured a false
+                $postSection->images()->updateOrCreate(
+                    ['post_id' => $post->id, 'is_featured' => false], // Aggiungi la condizione is_featured
+                    ['path' => $path] // Non impostare is_featured qui
+                );
+            }
+
+            // Salva la sezione
+            $postSection->save();
+            // Aggiungi l'ID della sezione esistente all'array
+            if (isset($section['id'])) {
+                $existingSectionIds[] = $section['id'];
+            }
+        }
+
+        // Rimuovi le sezioni che non sono più presenti nel request
+        $post->sections()->whereNotIn('id', $existingSectionIds)->delete();
+    }
+
+    // Gestione dell'immagine principale se aggiornata
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+        $fileName = Str::uuid() . '.webp';
+
+        // Converti l'immagine in formato webp
+        $convertedImage = InterventionImage::make($image)
+            ->encode('webp', 90);
+        
+        // Salva l'immagine
+        $path = $image->storeAs('/images', $fileName);
+
+        // Se è presente un'immagine in evidenza 
+        $post->images()->updateOrCreate(
+            ['is_featured' => true], 
+            ['path' => $path, 'is_featured' => true]
+        );
+    }
+
+    $redirectFrom = $request->input('redirect_from');
+
+    if ($redirectFrom && str_contains($redirectFrom, '/drafts')) {
+        // Se l'URL di origine contiene /drafts, reindirizza a drafts
+        return redirect()->route('posts.drafts');
+    }
+
+    return redirect()->route('posts.index');
+}
+
     
     
 
