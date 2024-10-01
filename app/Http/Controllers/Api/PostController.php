@@ -20,7 +20,6 @@ class PostController extends Controller
     
         // Inizializza la query per i post
         $postsQuery = Post::with('user','images','tags','sections')->where('status','published')->orderBy('id','desc');
-
     
         // Logiche aggiuntive per ricerca
         $tag = $request->input('tag');
@@ -61,8 +60,11 @@ class PostController extends Controller
     public function show(Post $post)
     {
         // Carica le immagini con il post
-        $post->load('images','tags','sections');
-
+        $post->load('images', 'tags', 'sections');
+    
+        // Ordina le immagini, mettendo quelle con is_featured = 1 per prime
+        $post->images = $post->images->sortByDesc('is_featured')->values(); // Aggiungi values() per ripristinare le chiavi
+    
         // Costruisci la risposta
         $response = [
             'id' => $post->id,
@@ -76,18 +78,19 @@ class PostController extends Controller
                     'content' => $section->content,
                 ];
             }),
-            'created_at' => $post->created_at->translatedFormat('d F Y '),
+            'created_at' => $post->created_at->translatedFormat('d F Y'),
             'images' => $post->images->map(function($image) {
                 return [
-                    'url' =>url('storage/' . $image->path), // URL Immagine
-                    'is_featured' => $image->is_featured ? 1 : 2, // Copertina
-                    //Alt
+                    'url' => url('storage/' . $image->path), // URL Immagine
+                    'is_featured' => $image->is_featured ? 1 : 0, // Copertina
                 ];
             }),
         ];
-
+    
         return response()->json($response);
     }
+    
+
 
     /**
      * Show the form for editing the specified resource.
