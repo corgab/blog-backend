@@ -74,7 +74,7 @@ class PostController extends Controller
         $n = 0;
     
         do {
-            $find = Post::where('slug', $slug)->first();
+            $find = Post::where('slug', $slug)->withTrashed()->first();
             if ($find !== null) {
                 $n++;
                 $slug = $base_slug . '-' . $n; // Incrementa lo slug se già esistente
@@ -187,77 +187,79 @@ class PostController extends Controller
 
     // Controllo del ruolo utente
     if (Auth::user()->hasRole('author')) {
-        // Se l'utente è un autore, forza lo status a "draft"
-        $form_data['status'] = 'draft';
+        $form_data['status'] = 'draft'; // Forza lo stato a "draft"
     } elseif (!in_array($form_data['status'], ['draft', 'published'])) {
         return redirect()->back()->withErrors(['status' => 'Stato non valido']);
     }
 
-    // Aggiorna il titolo e crea un nuovo slug se il titolo è cambiato
+    // Aggiornamento del titolo e generazione dello slug
     if ($post->title !== $form_data['title']) {
         $base_slug = Str::slug($form_data['title']);
         $slug = $base_slug;
         $n = 0;
-        // Assicurati che il nuovo slug sia unico
-        while (Post::where('slug', $slug)->where('id', '!=', $post->id)->exists()) {
+
+        while (Post::where('slug', $slug)->where('id', '!=', $post->id)->withTrashed()->exists()) {
             $n++;
             $slug = $base_slug . '-' . $n;
         }
         $form_data['slug'] = $slug;
     }
 
-    // Aggiorna il post con i dati validati
+    // Aggiorna il post
     $post->update($form_data);
+    $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
 
-    // Sincronizza i tag
-    $post->tags()->sync($request->input('tag_id', []));
-
-    // Gestione delle sezioni del post
+    // Gestione delle sezioni
     if ($request->has('sections')) {
         $existingSectionIds = [];
+        $nextOrder = $post->sections()->max('order') + 1; // Trova il prossimo ordine disponibile
 
         foreach ($request->input('sections') as $index => $section) {
-            // Trova la sezione esistente o crea una nuova
-            $postSection = isset($section['id']) 
-                ? $post->sections()->find($section['id']) 
-                : new PostSection();
-
-            // Aggiorna i campi della sezione
-            $postSection->fill([
-                'post_id' => $post->id,
-                'title' => $section['title'] ?? null,
-                'content' => $section['content'],
-                'order' => $index + 1,
-            ]);
+            // Verifica se la sezione ha un ID per determinare se è esistente o nuova
+            if (isset($section['id'])) {
+                // Trova la sezione esistente
+                $postSection = $post->sections()->find($section['id']);
+                if ($postSection) {
+                    // Aggiorna la sezione esistente
+                    $postSection->fill([
+                        'title' => $section['title'] ?? null,
+                        'content' => $section['content'],
+                        'order' => $postSection->order, // Mantieni l'ordine esistente
+                    ]);
+                }
+            } else {
+                // Crea una nuova sezione
+                $postSection = new PostSection();
+                $postSection->fill([
+                    'post_id' => $post->id,
+                    'title' => $section['title'] ?? null,
+                    'content' => $section['content'],
+                    'order' => $nextOrder++, // Assegna il nuovo ordine
+                ]);
+            }
 
             // Gestione dell'immagine se fornita
             if ($request->hasFile("sections.$index.image")) {
                 $image = $request->file("sections.$index.image");
                 $fileName = Str::uuid() . '.webp';
 
-                // Converti l'immagine in formato webp
-                $convertedImage = InterventionImage::make($image)
-                    ->encode('webp', 90);
-
-                // Salva l'immagine
+                // Converti l'immagine
+                $convertedImage = InterventionImage::make($image)->encode('webp', 90);
                 $path = $image->storeAs('/images', $fileName);
 
-                // Aggiorna o crea l'immagine per la sezione con is_featured a false
+                // Salva l'immagine per la sezione
                 $postSection->images()->updateOrCreate(
-                    ['post_id' => $post->id, 'is_featured' => false], // Aggiungi la condizione is_featured
-                    ['path' => $path] // Non impostare is_featured qui
+                    ['post_id' => $post->id, 'is_featured' => false], 
+                    ['path' => $path]
                 );
             }
 
             // Salva la sezione
             $postSection->save();
-            // Aggiungi l'ID della sezione esistente all'array
-            if (isset($section['id'])) {
-                $existingSectionIds[] = $section['id'];
-            }
+            $existingSectionIds[] = $postSection->id; // Aggiungi l'ID della sezione salvata
         }
 
-        // Rimuovi le sezioni che non sono più presenti nel request
+        // Rimuovi le sezioni non più presenti
         $post->sections()->whereNotIn('id', $existingSectionIds)->delete();
     }
 
@@ -265,32 +267,25 @@ class PostController extends Controller
     if ($request->hasFile('image')) {
         $image = $request->file('image');
         $fileName = Str::uuid() . '.webp';
-
-        // Converti l'immagine in formato webp
-        $convertedImage = InterventionImage::make($image)
-            ->encode('webp', 90);
-        
-        // Salva l'immagine
+        $convertedImage = InterventionImage::make($image)->encode('webp', 90);
         $path = $image->storeAs('/images', $fileName);
 
-        // Se è presente un'immagine in evidenza 
+        // Aggiorna l'immagine in evidenza
         $post->images()->updateOrCreate(
             ['is_featured' => true], 
             ['path' => $path, 'is_featured' => true]
         );
     }
 
+    // Redirect
     $redirectFrom = $request->input('redirect_from');
-
     if ($redirectFrom && str_contains($redirectFrom, '/drafts')) {
-        // Se l'URL di origine contiene /drafts, reindirizza a drafts
         return redirect()->route('posts.drafts');
     }
 
     return redirect()->route('posts.index');
 }
 
-    
     
 
     /**

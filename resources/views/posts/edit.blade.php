@@ -30,15 +30,16 @@
                     {{-- Sezioni --}}
                     <h4 class="mb-3 text-secondary">Sezioni</h4>
                     <div id="sections-container">
-                        @foreach (old('sections', $post->sections) as $index => $section)
+                        @foreach (old('sections', $post->sections->toArray()) as $index => $section)
                             <div class="card mb-3 section-block">
                                 <div class="card-body">
-                                    {{-- Input hidden per l'ID della sezione --}}
+                                    {{-- ID Sezione --}}
                                     @if (isset($section['id']))
                                         <input type="hidden" name="sections[{{ $index }}][id]"
                                             value="{{ $section['id'] }}">
                                     @endif
 
+                                    {{-- Titolo --}}
                                     <div class="form-floating mb-2">
                                         <input type="text"
                                             class="form-control @error('sections.' . $index . '.title') is-invalid @enderror"
@@ -50,6 +51,8 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+
+                                    {{-- Contenuto --}}
                                     <div class="form-floating mb-2">
                                         <textarea class="form-control @error('sections.' . $index . '.content') is-invalid @enderror"
                                             name="sections[{{ $index }}][content]" placeholder="Contenuto della sezione" rows="4" required>{{ old('sections.' . $index . '.content', $section['content'] ?? '') }}</textarea>
@@ -58,6 +61,8 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+
+                                    {{-- Immagine --}}
                                     <div class="mb-2">
                                         <label for="section-image-{{ $index }}" class="form-label">Immagine della
                                             sezione</label>
@@ -69,21 +74,26 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    @if (isset($section['images']) && $section['images']->isNotEmpty())
+
+                                    {{-- Immagine attuale --}}
+                                    @if (isset($section['images']) && !empty($section['images']))
                                         <div class="mt-2">
                                             @foreach ($section['images'] as $image)
-                                                <img src="{{ url('storage/' . $image->path) }}"
+                                                <img src="{{ url('storage/' . $image['path']) }}"
                                                     alt="Immagine della sezione" class="img-fluid mb-2"
                                                     style="max-height: 200px; object-fit: cover;">
                                             @endforeach
                                         </div>
                                     @endif
+
+                                    {{-- Rimuovi Sezione --}}
                                     <button type="button" class="btn btn-danger btn-sm mt-2 remove-section">Rimuovi
                                         Sezione</button>
                                 </div>
                             </div>
                         @endforeach
                     </div>
+
                     <button type="button" id="add-section" class="btn btn-outline-primary mb-4">Aggiungi Sezione</button>
                 </div>
 
@@ -91,10 +101,10 @@
                     {{-- Tags --}}
                     <h5 class="mb-3">Tags</h5>
                     <div class="row">
-                        <div class="col row row-cols-2">
+                        <div class="col">
                             @foreach ($tags as $tag)
                                 <div class="form-check">
-                                    <input @checked($post->tags->contains($tag->id))
+                                    <input @checked(in_array($tag->id, old('tag_id', $post->tags->pluck('id')->toArray())))
                                         class="form-check-input @error('tag_id') is-invalid @enderror" name="tag_id[]"
                                         type="checkbox" value="{{ $tag->id }}" id="tag-{{ $tag->id }}">
                                     <label class="form-check-label"
@@ -107,11 +117,11 @@
                         </div>
                     </div>
 
-                    {{-- Immagine --}}
+                    {{-- Immagine principale --}}
                     <div class="my-4">
                         <label for="image" class="form-label">Copertina</label>
                         @foreach ($post->images as $image)
-                            @if ($image->is_featured == 1)
+                            @if ($image->is_featured)
                                 <div class="mb-3">
                                     <img src="{{ url('storage/' . $image->path) }}" alt="Copertina Corrente"
                                         class="img-fluid mb-2" style="max-height: 200px; object-fit: cover;">
@@ -123,7 +133,6 @@
                         @error('image')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-
                     </div>
 
                     {{-- Featured --}}
@@ -141,8 +150,10 @@
                         <div class="form-floating mb-4">
                             <select class="form-select @error('status') is-invalid @enderror" id="status"
                                 name="status">
-                                <option value="draft" @selected(old('status', $post->status) == 'draft')>Bozza</option>
-                                <option value="published" @selected(old('status', $post->status) == 'published')>Pubblicato</option>
+                                <option value="draft" {{ old('status', $post->status) == 'draft' ? 'selected' : '' }}>
+                                    Bozza</option>
+                                <option value="published"
+                                    {{ old('status', $post->status) == 'published' ? 'selected' : '' }}>Pubblicato</option>
                             </select>
                             <label for="status">Stato</label>
                             @error('status')
@@ -155,7 +166,7 @@
         </form>
 
         {{-- Pulsante Salva sempre visibile --}}
-        <div class="text-center fixed-bottom py-2">
+        <div class="text-center fixed-bottom py-2 bg-white">
             <button type="submit" form="post-form" class="btn btn-primary">Salva</button>
         </div>
     </div>
@@ -163,40 +174,49 @@
 
 @section('scripts')
     <script>
-        let sectionIndex = @json(count(old('sections', $post->sections)));
+        let sectionIndex = {{ count(old('sections', $post->sections)) }};
 
         document.getElementById('add-section').addEventListener('click', function() {
             const newSection = document.createElement('div');
             newSection.classList.add('card', 'mb-3', 'section-block');
             newSection.innerHTML = `
                 <div class="card-body">
+                    {{-- Titolo --}}
                     <div class="form-floating mb-2">
                         <input type="text" class="form-control" name="sections[${sectionIndex}][title]" placeholder="Titolo della sezione" required>
                         <label for="section-title-${sectionIndex}">Titolo della sezione</label>
                     </div>
+                    
+                    {{-- Contenuto --}}
                     <div class="form-floating mb-2">
                         <textarea class="form-control" name="sections[${sectionIndex}][content]" placeholder="Contenuto della sezione" rows="4" required></textarea>
                         <label for="section-content-${sectionIndex}">Contenuto della sezione</label>
                     </div>
+
+                    {{-- Immagine --}}
                     <div class="mb-2">
                         <label for="section-image-${sectionIndex}" class="form-label">Immagine della sezione</label>
                         <input class="form-control" type="file" id="section-image-${sectionIndex}" name="sections[${sectionIndex}][image]">
                     </div>
+                    
                     <button type="button" class="btn btn-danger btn-sm mt-2 remove-section">Rimuovi Sezione</button>
                 </div>
             `;
+
             document.getElementById('sections-container').appendChild(newSection);
             sectionIndex++;
+
+            // Aggiungere l'evento di rimozione alla nuova sezione
+            newSection.querySelector('.remove-section').addEventListener('click', function() {
+                newSection.remove();
+            });
         });
 
-        // Rimuovi sezione
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-section')) {
-                const sectionBlock = e.target.closest('.section-block');
-                if (sectionBlock) {
-                    sectionBlock.remove();
-                }
-            }
+        // Gestire la rimozione delle sezioni esistenti
+        document.querySelectorAll('.remove-section').forEach(function(button) {
+            button.addEventListener('click', function() {
+                button.closest('.section-block').remove();
+            });
         });
     </script>
 @endsection
