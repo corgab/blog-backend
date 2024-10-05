@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             
             TagSeeder::class,
             PostSeeder::class,
+            PostSectionSeeder::class,
             ImageSeeder::class,
          ]);
     }

@@ -14,26 +14,38 @@ class TagSeeder extends Seeder
      */
     public function run(): void
     {
-        $tags = [
-            'Alimentazione Consapevole',
-            'Mindfulness e Meditazione',
-            'Fitness e Movimento',
-            'Salute Mentale',
-            'Rimedi Naturali e Fitoterapia',
-            'Spiritualità e Crescita Personale',
-            'Sostenibilità e Stili di Vita',
-            'Comunità e Supporto',
-            'Eventi e Attività Olistiche',
-            'Lifestyle e Produttività',
-        ];
+        $data = $this->getCSVData(__DIR__.'/csv/tags.csv');
+        foreach ($data as $index => $row) {
+            if($index != 0) {
 
-        foreach($tags as $tag) {
-            $new_tag = New Tag();
+                    $new_tag = new Tag();
 
-            $new_tag->name = $tag;
-            $new_tag->slug = Str::slug($new_tag->name, '-');            
-            $new_tag->save();
-        };
+                    $new_tag->name = $row[0];
+                    $new_tag->slug = Str::slug($new_tag->name, '-');
 
+                    $new_tag->save();
+            }
+        }
+
+    }
+
+
+     // Funzione recupero dati da CSV
+     public function getCSVData(string $path) {
+        $data = [];
+
+        $file_stream = fopen($path, 'r');
+
+        if ($file_stream === false) {
+            exit('fail' . $path);
+        }
+
+        while (($row = fgetcsv($file_stream)) !== false) {
+            $data[] = $row;
+        }
+
+        fclose($file_stream);
+
+        return $data;
     }
 }

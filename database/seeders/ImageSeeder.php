@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Image;
+use App\Models\Post;
+use App\Models\PostSection;
 
 class ImageSeeder extends Seeder
 {
@@ -13,17 +15,27 @@ class ImageSeeder extends Seeder
      */
     public function run(): void
     {
-        $imagePath = 'images/test-post.webp';
+        // Immagine copertina
+        $posts = Post::all();
+        foreach ($posts as $post) {
+            Image::create([
+                'post_id' => $post->id,
+                'path' => 'images/test-post.webp', 
+                'is_featured' => true,
+                'alt' => 'Copertura per ' . $post->title
+            ]);
+        }
 
-        for($i = 1; $i <= 75; $i++) {
-            $newImage = New Image();
-
-            $newImage->path = $imagePath;
-            $newImage->post_id = $i;
-            $newImage->alt = 'test-img';
-            $newImage->is_featured = 1;
-
-            $newImage->save();
+        // Immagini per le sezioni dei post
+        $sections = PostSection::all();
+        foreach ($sections as $section) {
+            Image::create([
+                'post_id' => $section->post_id,
+                'section_id' => $section->id,
+                'path' => 'images/test-post.webp',
+                'is_featured' => false,
+                'alt' => 'Immagine per la sezione ' . $section->title
+            ]);
         }
     }
 }

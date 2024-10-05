@@ -34,35 +34,34 @@ class PostSeeder extends Seeder
         return $data;
     }
 
-    public function run(Faker $faker): void
+    public function run(): void
     {
         
         $data = $this->getCSVData(__DIR__.'/csv/posts.csv');
 
-        foreach($data as $index=>$row) {
-            if($index !== 0) {
 
-                $user_id = $faker->numberBetween(1, 4);;
-
+        foreach ($data as $index => $row) {
+            if ($index !== 0) {
                 $new_post = new Post();
-
-                $new_post->user_id = $user_id;
                 $new_post->title = $row[0];
                 $new_post->slug = Str::slug($new_post->title, '-');
-                $new_post->created_at = $row[2];
-                $new_post->featured = $row[5];
-
+                $new_post->featured = filter_var($row[1], FILTER_VALIDATE_BOOLEAN);
+                $new_post->status = $row[2];
+                $new_post->user_id = $row[3];
+    
                 $new_post->save();
-
-                // Recupera gli ID di tutti i tags in un array
+    
+                // Recupera gli ID di tutti i tag in un array
                 $tags_id = Tag::all()->pluck('id')->all();
-
-                $random_tag = $faker->randomElements($tags_id, 1);
-
-                $new_post->tags()->attach($random_tag);
-
+    
+                if (!empty($tags_id)) {
+                    $random_tag_id = $tags_id[array_rand($tags_id)];
+                    $new_post->tags()->attach($random_tag_id);
+                }
             }
         }
+        
 
     }
+
 }
