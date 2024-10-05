@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,23 +17,25 @@
     <!-- Usando Vite -->
     @vite(['resources/js/app.js'])
 
-    <!-- Custom CSS -->    
+    <!-- Custom CSS -->
     @stack('styles')
 </head>
+
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
         <div class="sidebar">
             <h4 class="p-3">Dashboard</h4>
             <a href="{{ route('dashboard') }}">Home</a>
-            <a href="{{ route('posts.index')}}">All Posts</a>
+            <a href="{{ route('posts.index') }}">All Posts</a>
             <a href="{{ route('posts.create') }}">Create New Post</a>
             <a href="{{ route('posts.trash') }}">Cestino</a>
             @if (Auth::user()->hasRole('admin') || $user->hasRole('editor'))
-            <a href="{{ route('posts.drafts') }}">Draft Posts</a>
+                <a href="{{ route('posts.drafts') }}">Draft Posts</a>
             @endif
             @if (Auth::user()->hasRole('admin'))
-            <a href="{{ route('register')}}">Registra un Utente</a>
+                <a href="{{ route('register') }}">Registra un Utente</a>
+                <a href="{{ route('tags.index') }}">Tags</a>
             @endif
 
             <!-- User Info -->
@@ -42,7 +45,7 @@
                 @else
                     <a href="{{ route('profile.edit') }}">Gestisci Profilo</a>
                     <a href="{{ route('logout') }}"
-                       onclick="event.preventDefault();
+                        onclick="event.preventDefault();
                                  document.getElementById('logout-form').submit();">
                         Logout
                     </a>

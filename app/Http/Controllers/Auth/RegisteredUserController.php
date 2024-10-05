@@ -34,6 +34,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['nullable', 'string', 'in:admin,editor,author'],
         ]);
 
         $user = User::create([
@@ -47,7 +48,8 @@ class RegisteredUserController extends Controller
         // Auth::login($user);
 
         // Assegna un ruolo predefinito all'utente
-        $user->assignRole('author');
+        $role = $request->role ?? 'author';
+        $user->assignRole($role);
 
         return redirect()->route('dashboard')->with('status', 'Utente creato con successo');
 
