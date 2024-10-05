@@ -53,29 +53,30 @@ class AuthController extends Controller
         }
     }
 
-    public function login(LoginRequest $request) // Inserire Validazioni
+    public function login(LoginRequest $request)
     {
-
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
+        try {
+            $request->authenticate();
+            
             $user = Auth::user();
-            // Genera il token
             $token = $user->createToken('Frontend')->plainTextToken;
 
             return response()->json([
                 'token' => $token,
                 'user' => $user,
             ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'errMessage' => $e->validator->errors()->first(),
+                'errors' => $e->validator->errors(),
+            ], 422);
         }
-
-        return response()->json(['error' => 'Unauthorized'], 401);
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Logged out successfully']);
+        return response()->json(['message' => __('logout.success')]);
     }
 }
