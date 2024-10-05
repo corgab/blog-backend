@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\TagController;
+use App\Http\Controllers\User\AuthController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +28,9 @@ Route::get('/posts/{post:slug}', [PostController::class, 'show']);
 
 Route::get('/tags', [TagController::class, 'index']);
 Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
+
+// Gestione Utente
+Route::post('login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
 

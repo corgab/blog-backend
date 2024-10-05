@@ -48,7 +48,7 @@ class RegisteredUserController extends Controller
         // Auth::login($user);
 
         // Assegna un ruolo predefinito all'utente
-        $role = $request->role ?? 'author';
+        $role = $request->role ?? 'user';
         $user->assignRole($role);
 
         return redirect()->route('dashboard')->with('status', 'Utente creato con successo');
