@@ -35,13 +35,14 @@ class AuthController extends Controller
                 
             ]);
 
-            $role = 'admin';
+            $role = 'user';
             $user->assignRole($role);
             
             // Creazione di un token per l'utente appena registrato
             $token = $user->createToken('Frontend')->plainTextToken;
 
             return response()->json([
+                'success' => __('Registrazione effettuata con successo'),
                 'user' => $user,
                 'token' => $token,
             ], 201); 
