@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/posts', [PostController::class, 'index']);
+Route::get('recentposts', [PostController::class, 'recentPosts']);
 Route::get('/posts/{post:slug}', [PostController::class, 'show']);
 
 Route::get('/tags', [TagController::class, 'index']);

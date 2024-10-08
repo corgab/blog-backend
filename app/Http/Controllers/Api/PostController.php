@@ -19,7 +19,7 @@ class PostController extends Controller
         $perPage = $request->input('per_page', 5);
     
         // Inizializza la query per i post
-        $postsQuery = Post::with('user','images','tags','sections')->where('status','published')->orderBy('id','desc');
+        $postsQuery = Post::with('user','images','tags','sections')->where('status','published')->inRandomOrder();
     
         // Logiche aggiuntive per ricerca
         $tag = $request->input('tag');
@@ -88,6 +88,33 @@ class PostController extends Controller
         ];
     
         return response()->json($response);
+    }
+
+    public function recentPosts(Request $request) 
+    {
+        $perPage = $request->input('per_page', 4);
+
+        $postsQuery = Post::with('user','images','tags','sections')->where('status','published')->orderBy('id','desc');
+        $posts = $postsQuery->paginate($perPage);
+
+        // Trasforma i dati della collezione
+        $posts->getCollection()->transform(function($post) {
+            $post->user_name = $post->user->name;
+
+            $post->created_date = ucfirst($post->created_at->translatedFormat('M d, Y'));
+
+            $post->images = $post->images->map(function($image) {
+
+                $image->link = url('storage/' . $image->path);
+                return $image;
+            });
+
+            unset($post->created_at);
+            return $post;
+        });
+    
+        return response()->json($posts);
+
     }
     
 

@@ -64,9 +64,9 @@ class Post extends Model
         $minutes = ceil($wordCount / $wordsPerMinute);
 
         if ($minutes <= 1) {
-            return 'Less than 1 minute';
+            return 'Meno di un minuto';
         } else {
-            return "{$minutes} minutes";
+            return "{$minutes} minuti";
         }
     }
 
