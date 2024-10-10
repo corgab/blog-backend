@@ -21,11 +21,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::middleware(['auth','verified','role:admin|editor|author'])->group(function () {
 
-Route::middleware('auth', 'verified')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Rotte per Post
     Route::resource('/posts', PostController::class);

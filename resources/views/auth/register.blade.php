@@ -81,7 +81,8 @@
                                         name="role" required>
                                         <option value="admin">Admin</option>
                                         <option value="editor">Editor</option>
-                                        <option value="author">Author</option>
+                                        <option value="author" selected>Author</option>
+                                        <option value="user">User !test</option>
                                     </select>
 
                                     @error('role')
