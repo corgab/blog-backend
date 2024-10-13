@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-})->prefix('admin');
+});
 
 Route::middleware(['auth','verified','role:admin|editor|author'])->group(function () { // ->prefix('admin')
 
