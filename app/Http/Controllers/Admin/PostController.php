@@ -10,13 +10,10 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Image;
 use App\Models\PostSection;
-
-
 use Intervention\Image\Facades\Image as InterventionImage; 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-
 
 class PostController extends Controller
 {
@@ -24,22 +21,15 @@ class PostController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-
     {
         $user = Auth::user();
-        if($user->hasRole('admin') || $user->hasRole('editor')) {
-            $posts = Post::orderBy('created_at', 'desc')
-            ->with('user','tags')
-            ->get();
-
+        if ($user->hasRole('admin') || $user->hasRole('editor')) {
+            $posts = Post::with('user', 'tags')->orderBy('created_at', 'desc')->get();
         } else {
-            $posts = Post::orderBy('created_at', 'desc')->where('user_id', $user->id)->with('user','tags')->get();
-
+            $posts = Post::with('user', 'tags')->where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
         }
 
-        // dd($posts);
-
-        return view('posts.index', compact('user','posts'));
+        return view('posts.index', compact('user', 'posts'));
     }
 
     /**
@@ -47,15 +37,11 @@ class PostController extends Controller
      */
     public function create()
     {
-        // Recupero l'utente 
         $user = Auth::user();
-        // Trova i post associati all'utente
         $posts = Post::where('user_id', $user->id)->first();
-        // Tutti i tags
         $tags = Tag::orderBy('name', 'asc')->get();
 
-        return view('posts.create', compact('user','posts','tags'));
-
+        return view('posts.create', compact('user', 'posts', 'tags'));
     }
 
     /**
@@ -67,12 +53,12 @@ class PostController extends Controller
         $form_data = $request->validated();
         $form_data['user_id'] = Auth::id(); // Assegna l'ID dell'utente autenticato
         $form_data['status'] = $request->input('status', 'draft'); // Imposta lo stato, predefinito a 'draft'
-    
+
         // Creazione slug univoco
         $base_slug = Str::slug($form_data['title']);
         $slug = $base_slug;
         $n = 0;
-    
+
         do {
             $find = Post::where('slug', $slug)->withTrashed()->first();
             if ($find !== null) {
@@ -80,23 +66,21 @@ class PostController extends Controller
                 $slug = $base_slug . '-' . $n; // Incrementa lo slug se già esistente
             }
         } while ($find !== null);
-    
+
         $form_data['slug'] = $slug;
-    
+
         // Creazione del nuovo post
         $new_post = Post::create($form_data);
-    
+
         // Gestione delle sezioni
         if ($request->has('sections')) {
             foreach ($request->input('sections') as $index => $sectionData) {
-                // Crea la sezione e recupera l'ID
                 $section = PostSection::create([
                     'post_id' => $new_post->id,
                     'title' => $sectionData['title'] ?? null,
                     'content' => $sectionData['content'],
                     'order' => $index + 1,
                 ]);
-                
 
                 if ($request->hasFile('sections.' . $index . '.image')) {
                     $image = $request->file('sections.' . $index . '.image'); 
@@ -104,25 +88,26 @@ class PostController extends Controller
                         // Procedi con la conversione e il salvataggio
                         $fileName = Str::uuid() . '.webp';
                         $convertedImage = InterventionImage::make($image)->encode('webp', 90);
-                        $path = $image->storeAs('/images', $fileName);
+                        $path = $convertedImage->storeAs('/images', $fileName);
+                        
                         // Crea l'immagine della sezione
                         Image::create([
                             'post_id' => $new_post->id,
                             'section_id' => $section->id,
                             'path' => $path,
-                            'is_featured' => false, // Section
+                            'is_featured' => false, // Sezione
                         ]);
                     }
                 }
+            }
         }
 
         // Gestione dell'immagine di copertura
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $fileName = Str::uuid() . '.webp';
-            $convertedImage = InterventionImage::make($image)
-                ->encode('webp', 90);
-            $path = $image->storeAs('/images', $fileName);
+            $convertedImage = InterventionImage::make($image)->encode('webp', 90);
+            $path = $convertedImage->storeAs('/images', $fileName);
             
             // Crea l'immagine di copertura
             Image::create([
@@ -131,20 +116,16 @@ class PostController extends Controller
                 'is_featured' => true, // Copertina
             ]);
         }
-    
+
         // Assegna i tag al post
         if (isset($form_data['tag_id'])) {
             $new_post->tags()->sync($form_data['tag_id']);
         }
 
-        // dd($form_data);
-    
         // Reindirizza all'indice dei post con un messaggio di successo
         return to_route('posts.index')->with('success', 'Post creato con successo!');
-        }
     }
 
-    
     /**
      * Display the specified resource.
      */
@@ -159,139 +140,131 @@ class PostController extends Controller
     
         return view('posts.show', compact('post', 'user', 'sections'));
     }
-    
-    
+
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Post $post)
     {
-
         $user = Auth::user();
-        // Carica le relazioni tags
-        $post->load('tags','sections.images','images');
-        // dd($post);
+        $post->load('tags', 'sections.images', 'images');
         
         $tags = Tag::orderBy('name', 'asc')->get();
 
-        return view('posts.edit', compact('user','post','tags'));
+        return view('posts.edit', compact('user', 'post', 'tags'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdatePostRequest $request, Post $post)
-{
-    // Ottieni i dati validati dalla richiesta
-    $form_data = $request->validated();
+    {
+        // Ottieni i dati validati dalla richiesta
+        $form_data = $request->validated();
 
-    // Controllo del ruolo utente
-    if (Auth::user()->hasRole('author')) {
-        $form_data['status'] = 'draft'; // Forza lo stato a "draft"
-    } elseif (!in_array($form_data['status'], ['draft', 'published'])) {
-        return redirect()->back()->withErrors(['status' => 'Stato non valido']);
-    }
-
-    // Aggiornamento del titolo e generazione dello slug
-    if ($post->title !== $form_data['title']) {
-        $base_slug = Str::slug($form_data['title']);
-        $slug = $base_slug;
-        $n = 0;
-
-        while (Post::where('slug', $slug)->where('id', '!=', $post->id)->withTrashed()->exists()) {
-            $n++;
-            $slug = $base_slug . '-' . $n;
+        // Controllo del ruolo utente
+        if (Auth::user()->hasRole('author')) {
+            $form_data['status'] = 'draft'; // Forza lo stato a "draft"
+        } elseif (!in_array($form_data['status'], ['draft', 'published'])) {
+            return redirect()->back()->withErrors(['status' => 'Stato non valido']);
         }
-        $form_data['slug'] = $slug;
-    }
 
-    // Aggiorna il post
-    $post->update($form_data);
-    $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
+        // Aggiornamento del titolo e generazione dello slug
+        if ($post->title !== $form_data['title']) {
+            $base_slug = Str::slug($form_data['title']);
+            $slug = $base_slug;
+            $n = 0;
 
-    // Gestione delle sezioni
-    if ($request->has('sections')) {
-        $existingSectionIds = [];
-        $nextOrder = $post->sections()->max('order') + 1; // Trova il prossimo ordine disponibile
+            while (Post::where('slug', $slug)->where('id', '!=', $post->id)->withTrashed()->exists()) {
+                $n++;
+                $slug = $base_slug . '-' . $n;
+            }
+            $form_data['slug'] = $slug;
+        }
 
-        foreach ($request->input('sections') as $index => $section) {
-            // Verifica se la sezione ha un ID per determinare se è esistente o nuova
-            if (isset($section['id'])) {
-                // Trova la sezione esistente
-                $postSection = $post->sections()->find($section['id']);
-                if ($postSection) {
-                    // Aggiorna la sezione esistente
+        // Aggiorna il post
+        $post->update($form_data);
+        $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
+
+        // Gestione delle sezioni
+        if ($request->has('sections')) {
+            $existingSectionIds = [];
+            $nextOrder = $post->sections()->max('order') + 1; // Trova il prossimo ordine disponibile
+
+            foreach ($request->input('sections') as $index => $section) {
+                // Verifica se la sezione ha un ID per determinare se è esistente o nuova
+                if (isset($section['id'])) {
+                    // Trova la sezione esistente
+                    $postSection = $post->sections()->find($section['id']);
+                    if ($postSection) {
+                        // Aggiorna la sezione esistente
+                        $postSection->fill([
+                            'title' => $section['title'] ?? null,
+                            'content' => $section['content'],
+                            'order' => $postSection->order, // Mantieni l'ordine esistente
+                        ]);
+                    }
+                } else {
+                    // Crea una nuova sezione
+                    $postSection = new PostSection();
                     $postSection->fill([
+                        'post_id' => $post->id,
                         'title' => $section['title'] ?? null,
                         'content' => $section['content'],
-                        'order' => $postSection->order, // Mantieni l'ordine esistente
+                        'order' => $nextOrder++, // Assegna il nuovo ordine
                     ]);
                 }
-            } else {
-                // Crea una nuova sezione
-                $postSection = new PostSection();
-                $postSection->fill([
-                    'post_id' => $post->id,
-                    'title' => $section['title'] ?? null,
-                    'content' => $section['content'],
-                    'order' => $nextOrder++, // Assegna il nuovo ordine
-                ]);
-            }
 
-            if ($request->hasFile('sections.' . $index . '.image')) {
-                $image = $request->file('sections.' . $index . '.image'); 
-                if ($image->isValid()) {
-                    // Procedi con la conversione e il salvataggio
-                    $fileName = Str::uuid() . '.webp';
-                    $convertedImage = InterventionImage::make($image)->encode('webp', 90);
-                    
-                    $path = $convertedImage->storeAs('images', $fileName, 'public');
-                    
-                    // Crea l'immagine della sezione
-                    Image::create([
-                        'post_id' => $new_post->id,
-                        'section_id' => $section->id,
-                        'path' => $path,
-                        'is_featured' => false, // Section
-                    ]);
+                // Gestione dell'immagine della sezione
+                if ($request->hasFile('sections.' . $index . '.image')) {
+                    $image = $request->file('sections.' . $index . '.image'); 
+                    if ($image->isValid()) {
+                        $fileName = Str::uuid() . '.webp';
+                        $convertedImage = InterventionImage::make($image)->encode('webp', 90);
+                        $path = $convertedImage->storeAs('images', $fileName, 'public');
+
+                        // Crea l'immagine della sezione
+                        Image::create([
+                            'post_id' => $post->id,
+                            'section_id' => $postSection->id,
+                            'path' => $path,
+                            'is_featured' => false, // Sezione
+                        ]);
+                    }
                 }
+
+                // Salva la sezione
+                $postSection->save();
+                $existingSectionIds[] = $postSection->id;
             }
 
-            // Salva la sezione
-            $postSection->save();
-            $existingSectionIds[] = $postSection->id;
+            // Rimuovi le sezioni non più presenti
+            $post->sections()->whereNotIn('id', $existingSectionIds)->delete();
         }
 
-        // Rimuovi le sezioni non più presenti
-        $post->sections()->whereNotIn('id', $existingSectionIds)->delete();
+        // Gestione dell'immagine di copertura
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $fileName = Str::uuid() . '.webp';
+            $convertedImage = InterventionImage::make($image)->encode('webp', 90);
+            $path = $convertedImage->storeAs('images', $fileName, 'public');
+
+            // Crea l'immagine di copertura
+            Image::create([
+                'post_id' => $post->id,
+                'path' => $path,
+                'is_featured' => true, // Copertina
+            ]);
+        }
+
+        // Redirect
+        $redirectFrom = $request->input('redirect_from');
+        if ($redirectFrom && str_contains($redirectFrom, '/drafts')) {
+            return redirect()->route('posts.drafts');
+        }
+
+        return redirect()->route('posts.index');
     }
-
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-        $fileName = Str::uuid() . '.webp';
-        $convertedImage = InterventionImage::make($image)
-            ->encode('webp', 90);
-        
-        $path = $convertedImage->storeAs('images', $fileName, 'public');
-    
-        // Crea l'immagine di copertina
-        Image::create([
-            'post_id' => $new_post->id,
-            'path' => $path,
-            'is_featured' => true, // Copertina
-        ]);
-    }
-
-    // Redirect
-    $redirectFrom = $request->input('redirect_from');
-    if ($redirectFrom && str_contains($redirectFrom, '/drafts')) {
-        return redirect()->route('posts.drafts');
-    }
-
-    return redirect()->route('posts.index');
-}
-
-    
 
     /**
      * Remove the specified resource from storage.
@@ -306,59 +279,42 @@ class PostController extends Controller
     public function drafts()
     {
         $user = Auth::user();
-    
         $drafts = Post::where('status', 'draft')->get();
         
-        return view('posts.drafts',compact('drafts', 'user'));
+        return view('posts.drafts', compact('drafts', 'user'));
     }
 
     public function publish(Post $post)
     {
         $post->status = 'published';
-
         $post->save();
 
         return redirect()->route('posts.drafts')->with('success', 'Post published successfully!');
-
     }
 
     public function trash()
     {
         $user = Auth::user();
-
-        if($user->hasRole('admin')) {
-
-            $user = Auth::user();
-            $posts = Post::onlyTrashed()
-            ->orderBy('created_at','desc')
-            // ->where('user_id', $user->id)
+        $posts = Post::onlyTrashed()
+            ->when(!$user->hasRole('admin'), function($query) use ($user) {
+                return $query->where('user_id', $user->id);
+            })
+            ->orderBy('created_at', 'desc')
             ->get();
 
-            return view('posts.trash', compact('posts','user'));
-        } else {
-
-            $user = Auth::user();
-            $posts = Post::onlyTrashed()
-            ->orderBy('created_at','desc')
-            ->where('user_id', $user->id)
-            ->get();
-
-            return view('posts.trash', compact('posts','user'));
-        } 
-
-
+        return view('posts.trash', compact('posts', 'user'));
     }
 
     public function restore($slug)
     {
         // Trova il post soft deleted usando lo slug
         $post = Post::withTrashed()->where('slug', $slug)->first();
-    
+
         if ($post) {
             $post->restore(); // Ripristina il post
             return redirect()->route('posts.trash')->with('success', 'Post ripristinato correttamente!');
         }
-    
+
         abort(404);
     }
 }
