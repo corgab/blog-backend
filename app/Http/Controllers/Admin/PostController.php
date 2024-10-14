@@ -238,43 +238,48 @@ class PostController extends Controller
                 ]);
             }
 
-            // Gestione dell'immagine se fornita
-            if ($request->hasFile("sections.$index.image")) {
-                $image = $request->file("sections.$index.image");
-                $fileName = Str::uuid() . '.webp';
-
-                // Converti l'immagine
-                $convertedImage = InterventionImage::make($image)->encode('webp', 90);
-                $path = $image->storeAs('/images', $fileName);
-
-                // Salva l'immagine per la sezione
-                $postSection->images()->updateOrCreate(
-                    ['post_id' => $post->id, 'is_featured' => false], 
-                    ['path' => $path]
-                );
+            if ($request->hasFile('sections.' . $index . '.image')) {
+                $image = $request->file('sections.' . $index . '.image'); 
+                if ($image->isValid()) {
+                    // Procedi con la conversione e il salvataggio
+                    $fileName = Str::uuid() . '.webp';
+                    $convertedImage = InterventionImage::make($image)->encode('webp', 90);
+                    
+                    $path = $convertedImage->storeAs('images', $fileName, 'public');
+                    
+                    // Crea l'immagine della sezione
+                    Image::create([
+                        'post_id' => $new_post->id,
+                        'section_id' => $section->id,
+                        'path' => $path,
+                        'is_featured' => false, // Section
+                    ]);
+                }
             }
 
             // Salva la sezione
             $postSection->save();
-            $existingSectionIds[] = $postSection->id; // Aggiungi l'ID della sezione salvata
+            $existingSectionIds[] = $postSection->id;
         }
 
         // Rimuovi le sezioni non più presenti
         $post->sections()->whereNotIn('id', $existingSectionIds)->delete();
     }
 
-    // Gestione dell'immagine principale se aggiornata
     if ($request->hasFile('image')) {
         $image = $request->file('image');
         $fileName = Str::uuid() . '.webp';
-        $convertedImage = InterventionImage::make($image)->encode('webp', 90);
-        $path = $image->storeAs('/images', $fileName);
-
-        // Aggiorna l'immagine in evidenza
-        $post->images()->updateOrCreate(
-            ['is_featured' => true], 
-            ['path' => $path, 'is_featured' => true]
-        );
+        $convertedImage = InterventionImage::make($image)
+            ->encode('webp', 90);
+        
+        $path = $convertedImage->storeAs('images', $fileName, 'public');
+    
+        // Crea l'immagine di copertina
+        Image::create([
+            'post_id' => $new_post->id,
+            'path' => $path,
+            'is_featured' => true, // Copertina
+        ]);
     }
 
     // Redirect
