@@ -1,0 +1,53 @@
+{
+    "Name": "Nome",
+    "Confirm Password":"Conferma Password",       
+    "E-Mail Address": "Indirizzo Email",
+    "Forgot Your Password?": "Hai dimenticato la tua password?",
+    "Remember Me": "Resta connesso",
+    "Select Role": "Seleziona il ruolo",
+    "Register": "Registra",
+    "Welcome": "Benvenuto",
+    "Published posts": "Post pubblicati",
+    "Drafts": "Bozze",
+    "Last posts": "Ultimi posts",
+    "No posts found": "Nessun post trovato",
+    "Trash": "Cestino",
+    "You don't have any posts yet": "Non hai ancora nessun post",
+    "Title": "Titolo",
+    "Author": "Autore",
+    "Deleted at": "Eliminato il",
+    "Actions": "Azioni",
+    "Restore": "Ripristina",
+    "Reading time": "Tempo di lettura",
+    "Yes": "Si",
+    "Create ad": "Creato il",
+
+    "Cover image": "Immagine copertina",
+    "Add image": "Aggiungi immagine",
+
+    "View": "Visualizza",
+    "Edit": "Modifica",
+    "Delete": "Elimina",
+    "Crea": "Crea",
+    "Publish": "Pubblica",
+
+    "Section": "Sezione",
+    "Sections": "Sezioni",
+    "Content": "Contenuto",
+    "Image": "Immagine",
+    "Remove": "Rimuovi",
+    "Add": "Aggiungi",
+    "Status": "Stato",
+
+    "No draft available": "Nessuna bozza disponibile",
+    
+
+
+
+
+    "When you need to add an image to a section, first save the post and then insert the image": "Quando devi aggiungere un immagine ad una sezione prima salva il post e dopo inserisci l'immagine"
+
+
+
+
+}

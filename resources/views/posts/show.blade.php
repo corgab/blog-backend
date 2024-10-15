@@ -8,6 +8,8 @@
             <h1>{{ $post->title }}</h1>
         </div>
 
+        <a href="{{ route('posts.edit', $post) }}" class="btn btn-warning mb-4"><i class="bi bi-pencil-square"></i>
+            {{ __('Edit') }}</a>
         <!-- Post Metadata -->
         <div class="row mb-4">
             <div class="col-md-12">
@@ -16,21 +18,21 @@
                     <div>{{ $post->id }}</div>
                 </div>
                 <div class="d-flex flex-column flex-md-row justify-content-between border-bottom pb-3 mb-3">
-                    <div class="fw-bold">Read Time:</div>
-                    <div>{{ $post->reading_time }} min</div>
+                    <div class="fw-bold">{{ __('Reading time') }}</div>
+                    <div>{{ $post->reading_time }}</div>
                 </div>
                 <div class="d-flex flex-column flex-md-row justify-content-between border-bottom pb-3 mb-3">
-                    <div class="fw-bold">Featured:</div>
+                    <div class="fw-bold">Premium</div>
                     <div>
                         @if ($post->featured)
-                            <span class="badge bg-success">Yes</span>
+                            <span class="badge bg-success">{{ __('Yes') }}</span>
                         @else
                             <span class="badge bg-danger">No</span>
                         @endif
                     </div>
                 </div>
                 <div class="d-flex flex-column flex-md-row justify-content-between border-bottom pb-3 mb-3">
-                    <div class="fw-bold">Created:</div>
+                    <div class="fw-bold">{{ __('Create ad') }}</div>
                     <div>{{ ucfirst($post->created_at->translatedFormat('M d, Y')) }}</div>
                 </div>
                 <!-- Post Tags -->
@@ -51,21 +53,20 @@
                             <img src="{{ url('storage/' . $image->path) }}" alt="{{ $image->alt }}"
                                 class="img-fluid rounded shadow-sm">
                             <div class="position-absolute top-0 start-0 bg-dark text-white px-2 py-1 rounded-end">
-                                Immagine Copertina
+                                {{ __('Cover image') }}
                             </div>
                         </div>
                     @break
                 @endif
             @empty
                 <a href="{{ route('posts.edit', $post) }}"
-                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Aggiungi
-                    Immagine</a>
+                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{ __('Add image') }}</a>
             @endforelse
         </div>
 
         <div class="col-md-12 col-lg-6">
             @foreach ($sections as $index => $section)
-                <h2 class="mb-3">Section {{ $index + 1 }}</h2>
+                <h2 class="mb-3">{{ __('Section') }} {{ $index + 1 }}</h2>
                 <div class="mb-4 p-4 border rounded shadow-sm">
                     <!-- Aggiungi la logica per visualizzare l'immagine -->
                     @foreach ($section->images as $image)

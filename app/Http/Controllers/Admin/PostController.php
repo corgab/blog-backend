@@ -171,10 +171,21 @@ class PostController extends Controller
         // Carica le relazioni tags
         $post->load('tags','sections.images','images');
         // dd($post);
+
+        // Se lo status del post è published e l'utente non è admin return 404
         
         $tags = Tag::orderBy('name', 'asc')->get();
+        
+        // dd($post->status);
+
+        //  se il post è pubblico e l'utente è author e editor
+        if($post->status == 'published' && $user->hasRole(['author', 'editor'])) {
+            return redirect()->route('posts.index')->with('errMessage', 'Non puoi modificare un post pubblico');
+        }
 
         return view('posts.edit', compact('user','post','tags'));
+        
+
     }
 
     /**
@@ -293,6 +304,13 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+
+        $user = Auth::user();
+
+        if($post->status == 'published' && $user->hasRole('author')) {
+            return back()->with('errMessage', 'Non puoi eliminare questo post perchè è pubblico');
+        }
+
         $post->delete();
 
         return to_route('posts.index');
@@ -313,7 +331,7 @@ class PostController extends Controller
 
         $post->save();
 
-        return redirect()->route('posts.drafts')->with('success', 'Post published successfully!');
+        return redirect()->route('posts.drafts')->with('success', 'Post pubblicato con successo');
 
     }
 

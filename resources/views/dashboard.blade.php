@@ -13,7 +13,8 @@
 
                 <!-- Dashboard Welcome -->
                 <div class="mb-2">
-                    <h1 class="display-4 text-center">Benvenuto, <span class="text-primary">{{ $user->name }}</span></h1>
+                    <h1 class="display-4 text-center">{{ __('Welcome') }}, <span
+                            class="text-primary">{{ $user->name }}</span></h1>
                 </div>
 
                 <!-- Dashboard Statistics -->
@@ -21,14 +22,14 @@
                     <a href="{{ route('posts.index') }}" class="col-12 col-md text-decoration-none">
                         <div class="p-3 border bg-light rounded text-center">
                             <h5>{{ $totalPosts }}</h5>
-                            <p>Post Pubblicati</p>
+                            <p>{{ __('Published posts') }}</p>
                         </div>
                     </a>
-                    @if (Auth::user()->hasRole('admin') || $user->hasRole('editor'))
+                    @if ($user->hasRole('admin') || $user->hasRole('editor'))
                         <a href="{{ route('posts.drafts') }}" class="col-12 col-md text-decoration-none">
                             <div class="p-3 border bg-light rounded text-center">
                                 <h5>{{ $totalDrafts }}</h5>
-                                <p>Bozze</p>
+                                <p>{{ __('Drafts') }}</p>
                             </div>
                         </a>
                     @endif
@@ -36,7 +37,7 @@
 
                 <!-- Latest Posts -->
                 @if ($posts->isNotEmpty())
-                    <h4 class="mb-3">Ultimi Post</h4>
+                    <h4 class="mb-3">{{ __('Last posts') }}</h4>
                     <div class="list-group">
                         @foreach ($posts as $post)
                             <a href="{{ route('posts.show', $post) }}" class="list-group-item list-group-item-action">
@@ -48,7 +49,8 @@
                                                 <small class=>{{ $tag->name }}</small>
                                             @endforeach
                                         </p>
-                                        <small class="bg-secondary badge">{{ ucfirst($post->status) }}</small>
+                                        <small
+                                            class="badge {{ $post->status === 'published' ? 'text-bg-success' : 'text-bg-secondary' }}">{{ ucfirst($post->status) }}</small>
                                     </div>
                                     <div class="text-end">
                                         <small class="text-muted">by {{ $post->user->name }}</small>
@@ -58,8 +60,8 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-center">Nessun post trovato. <a href="{{ route('posts.create') }}"
-                            class="btn btn-primary">Crea il tuo primo post</a></p>
+                    <p class="text-center">{{ __('No posts found') }} <a href="{{ route('posts.create') }}"
+                            class="btn btn-primary">{{ __('Create your first post<') }}</a></p>
                 @endif
             </div>
         </div>
