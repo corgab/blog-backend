@@ -40,19 +40,18 @@
 
             <!-- User Info -->
             <div class="user-info">
-                @guest
-                    <a href="{{ route('login') }}">Login</a>
-                @else
-                    <a href="{{ route('profile.edit') }}">Gestisci Profilo</a>
-                    <a href="{{ route('logout') }}"
-                        onclick="event.preventDefault();
-                                 document.getElementById('logout-form').submit();">
-                        Logout
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-                @endguest
+                <a href="{{ route('lang.switch', app()->getLocale() == 'en' ? 'it' : 'en') }}" class="fs-6">
+                    {{ __('Change language') }}
+                </a>
+                <a href="{{ route('profile.edit') }}">Gestisci Profilo</a>
+                <a href="{{ route('logout') }}"
+                    onclick="event.preventDefault();
+                                document.getElementById('logout-form').submit();">
+                    Logout
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
             </div>
         </div>
 

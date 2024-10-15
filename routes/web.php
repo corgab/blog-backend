@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\TagController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +22,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('lang/{locale}', function ($locale) {
+    Session::put('locale', $locale);
+    return redirect()->back();
+})->name('lang.switch');
 
 Route::middleware(['auth','verified','role:admin|editor|author'])->group(function () { // ->prefix('admin')
 

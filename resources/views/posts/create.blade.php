@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container py-4">
-        <h1 class="text-center mb-4">Crea Nuovo Post</h1>
+        <h1 class="text-center mb-4">{{ __('Create a new post') }}</h1>
 
         @if ($errors->has('sections'))
             <div class="alert alert-danger">
@@ -18,8 +18,8 @@
                     {{-- Titolo --}}
                     <div class="form-floating mb-4">
                         <input type="text" class="form-control @error('title') is-invalid @enderror" id="title"
-                            name="title" value="{{ old('title') }}" placeholder="Scrivi il titolo qui">
-                        <label for="title">Titolo</label>
+                            name="title" value="{{ old('title') }}" placeholder={{ __('Title') }}>
+                        <label for="title">{{ __('Title') }}</label>
                         @error('title')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -36,8 +36,8 @@
                                     <input type="text"
                                         class="form-control @error('sections.0.title') is-invalid @enderror"
                                         name="sections[0][title]" value="{{ old('sections.0.title') }}"
-                                        placeholder="Titolo della sezione">
-                                    <label for="section-title-0">Titolo della sezione</label>
+                                        placeholder={{ __('Title') }}>
+                                    <label for="section-title-0">{{ __('Title') }}</label>
                                     @error('sections.0.title')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -47,7 +47,7 @@
                                 <div class="form-floating mb-2">
                                     <textarea class="form-control @error('sections.0.content') is-invalid @enderror" name="sections[0][content]"
                                         placeholder="Contenuto della sezione" rows="4">{{ old('sections.0.content') }}</textarea>
-                                    <label for="section-content-0">Contenuto della sezione</label>
+                                    <label for="section-content-0">{{ __('Content') }}</label>
                                     @error('sections.0.content')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -55,7 +55,7 @@
 
                                 {{-- Immagine della prima sezione --}}
                                 <div class="mb-2">
-                                    <label for="section-image-0" class="form-label">Immagine della sezione</label>
+                                    <label for="section-image-0" class="form-label">{{ __('Image') }}</label>
                                     <input class="form-control @error('sections.0.image') is-invalid @enderror"
                                         type="file" id="section-image-0" name="sections[0][image]">
                                     @error('sections.0.image')
@@ -74,17 +74,16 @@
                                             <input type="text"
                                                 class="form-control @error('sections.' . $index . '.title') is-invalid @enderror"
                                                 name="sections[{{ $index }}][title]"
-                                                value="{{ $section['title'] ?? '' }}" placeholder="Titolo della sezione">
-                                            <label for="section-title-{{ $index }}">Titolo della sezione</label>
+                                                value="{{ $section['title'] ?? '' }}" placeholder={{ __('Title') }}>
+                                            <label for="section-title-{{ $index }}">{{ __('Title') }}</label>
                                             @error('sections.' . $index . '.title')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
                                         <div class="form-floating mb-2">
                                             <textarea class="form-control @error('sections.' . $index . '.content') is-invalid @enderror"
-                                                name="sections[{{ $index }}][content]" placeholder="Contenuto della sezione" rows="4">{{ $section['content'] ?? '' }}</textarea>
-                                            <label for="section-content-{{ $index }}">Contenuto della
-                                                sezione</label>
+                                                name="sections[{{ $index }}][content]" placeholder={{ __('Content') }} rows="4">{{ $section['content'] ?? '' }}</textarea>
+                                            <label for="section-content-{{ $index }}">{{ __('Content') }}</label>
                                             @error('sections.' . $index . '.content')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -92,8 +91,8 @@
 
                                         {{-- Immagine della sezione --}}
                                         <div class="mb-2">
-                                            <label for="section-image-{{ $index }}" class="form-label">Immagine
-                                                della sezione</label>
+                                            <label for="section-image-{{ $index }}"
+                                                class="form-label">{{ __('Image') }}</label>
                                             <input
                                                 class="form-control @error('sections.' . $index . '.image') is-invalid @enderror"
                                                 type="file" id="section-image-{{ $index }}"
@@ -103,8 +102,8 @@
                                             @enderror
                                         </div>
 
-                                        <button type="button" class="btn btn-danger btn-sm mt-2 remove-section">Rimuovi
-                                            Sezione</button>
+                                        <button type="button"
+                                            class="btn btn-danger btn-sm mt-2 remove-section">{{ __('Remove') }}</button>
                                     </div>
                                 </div>
                             @endif
@@ -112,7 +111,8 @@
                     </div>
 
                     {{-- Pulsante per aggiungere nuove sezioni --}}
-                    <button type="button" id="add-section" class="btn btn-outline-primary mb-4">Aggiungi Sezione</button>
+                    <button type="button" id="add-section"
+                        class="btn btn-outline-primary mb-4">{{ __('Add') }}</button>
                 </div>
 
                 <div class="col-lg-4 col-md-12">
@@ -137,7 +137,7 @@
 
                     {{-- Immagine --}}
                     <div class="my-4">
-                        <label for="image" class="form-label">Copertina</label>
+                        <label for="image" class="form-label">{{ __('Cover image') }}</label>
                         <input class="form-control @error('image') is-invalid @enderror" type="file" id="image"
                             name="image">
                         @error('image')
@@ -150,7 +150,7 @@
                         <input type="hidden" value="0" id="featured-hidden" name="featured">
                         <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured"
                             value="1" {{ old('featured') ? 'checked' : '' }}>
-                        <label class="form-check-label ms-2" for="featured">In Evidenza</label>
+                        <label class="form-check-label ms-2" for="featured">Premium</label>
                     </div>
 
                     {{-- Stato --}}
@@ -160,10 +160,10 @@
                         <div class="form-floating mb-4">
                             <select class="form-select @error('status') is-invalid @enderror" id="status"
                                 name="status">
-                                <option value="draft" @selected(old('status') == 'draft')>Bozza</option>
-                                <option value="published" @selected(old('status') == 'published')>Pubblicato</option>
+                                <option value="draft" @selected(old('status') == 'draft')>{{ __('Draft') }}</option>
+                                <option value="published" @selected(old('status') == 'published')>__{{ __('Published') }}</option>
                             </select>
-                            <label for="status">Stato</label>
+                            <label for="status">{{ __('Status') }}</label>
                             @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -175,7 +175,7 @@
 
         {{-- Pulsante Salva sempre visibile --}}
         <div class="text-center fixed-bottom py-2">
-            <button type="submit" form="post-form" class="btn btn-primary">Salva</button>
+            <button type="submit" form="post-form" class="btn btn-primary">{{ __('Save') }}</button>
         </div>
     </div>
 @endsection
@@ -191,18 +191,18 @@
             newSection.innerHTML = `
             <div class="card-body">
                 <div class="form-floating mb-2">
-                    <input type="text" class="form-control" name="sections[${sectionIndex}][title]" placeholder="Titolo della sezione">
-                    <label for="section-title-${sectionIndex}">Titolo della sezione</label>
+                    <input type="text" class="form-control" name="sections[${sectionIndex}][title]" placeholder={{ __('Title') }}>
+                    <label for="section-title-${sectionIndex}">{{ __('Title') }}</label>
                 </div>
                 <div class="form-floating mb-2">
-                    <textarea class="form-control" name="sections[${sectionIndex}][content]" placeholder="Contenuto della sezione" rows="4"></textarea>
-                    <label for="section-content-${sectionIndex}">Contenuto della sezione</label>
+                    <textarea class="form-control" name="sections[${sectionIndex}][content]" placeholder={{ __('Content') }} rows="4"></textarea>
+                    <label for="section-content-${sectionIndex}">{{ __('Content') }}</label>
                 </div>
                 <div class="mb-2">
-                    <label for="section-image-${sectionIndex}" class="form-label">Immagine della sezione</label>
+                    <label for="section-image-${sectionIndex}" class="form-label">{{ __('Image') }}</label>
                     <input class="form-control" type="file" id="section-image-${sectionIndex}" name="sections[${sectionIndex}][image]">
                 </div>
-                <button type="button" class="btn btn-danger btn-sm mt-2 remove-section">Rimuovi Sezione</button>
+                <button type="button" class="btn btn-danger btn-sm mt-2 remove-section">{{ __('Remove') }}</button>
             </div>
         `;
             document.getElementById('sections-container').appendChild(newSection);

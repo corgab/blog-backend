@@ -21,6 +21,7 @@
     "Reading time": "Tempo di lettura",
     "Yes": "Si",
     "Create ad": "Creato il",
+    "Create a new post": "Crea un nuovo post",
 
     "Cover image": "Immagine copertina",
     "Add image": "Aggiungi immagine",
@@ -39,11 +40,10 @@
     "Add": "Aggiungi",
     "Status": "Stato",
 
-    "No draft available": "Nessuna bozza disponibile",
     
-
-
-
+    "Change language": "Cambia Lingua",
+    
+    "No draft available": "Nessuna bozza disponibile",
 
     "When you need to add an image to a section, first save the post and then insert the image": "Quando devi aggiungere un immagine ad una sezione prima salva il post e dopo inserisci l'immagine"
 
