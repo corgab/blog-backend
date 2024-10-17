@@ -10,8 +10,11 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
+
+// Mail
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
+use App\Mail\UserInfo;
+
 
 
 
@@ -44,6 +47,8 @@ class AuthController extends Controller
             // Creazione di un token per l'utente appena registrato
             $token = $user->createToken('Frontend')->plainTextToken;
 
+            Mail::to($user->email)->send(new UserInfo($user));
+            
             return response()->json([
                 'success' => __('Registrazione effettuata con successo'),
                 'user' => $user,
