@@ -32,9 +32,17 @@ Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
 
 // Gestione Utente
 Route::middleware('api')->group(function () {
+    // Rotte pubbliche
     Route::post('/register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
-    Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+    Route::post('/login', [AuthController::class, 'login']);
+
+    // Rotte protette
+    Route::middleware('auth:sanctum')->group(function() {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/user', function (Request $request) {
+            return $request->user();
+        });
+    });
 });
 
 

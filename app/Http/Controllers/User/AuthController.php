@@ -10,6 +10,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+
 
 
 
@@ -54,11 +57,14 @@ class AuthController extends Controller
         }
     }
 
-    public function login(LoginRequest $request)
+    public function login(Request $request)
     {
-        try {
-            $request->authenticate();
-            
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($request->only('email', 'password'))) {
             $user = Auth::user();
             $token = $user->createToken('Frontend')->plainTextToken;
 
@@ -67,18 +73,18 @@ class AuthController extends Controller
                 'token' => $token,
                 'user' => $user,
             ]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'errMessage' => $e->validator->errors()->first(),
-                'errors' => $e->validator->errors(),
-            ], 422);
         }
+
+        return response()->json(['errMessage' => 'Credenziali non valide.'], 401);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()->delete(); // Elimina il token attuale
+        // $request->user()->tokens()->delete()
 
-        return response()->json(['message' => __('logout.success')]);
+        return response()->json(['success' => 'Logout effettuato con successo!']);
     }
+
+
 }
