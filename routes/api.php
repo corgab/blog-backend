@@ -35,6 +35,8 @@ Route::middleware('api')->group(function () {
     // Rotte pubbliche
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
+
 
     // Rotte protette
     Route::middleware('auth:sanctum')->group(function() {
