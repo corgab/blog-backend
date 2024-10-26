@@ -45,8 +45,6 @@ class RegisteredUserController extends Controller
             'email_verified_at' => Carbon::now(),
         ]);
 
-        dd($user);
-
         event(new Registered($user));
 
         // Assegna un ruolo predefinito all'utente
