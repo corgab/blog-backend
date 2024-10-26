@@ -161,7 +161,7 @@
                             <select class="form-select @error('status') is-invalid @enderror" id="status"
                                 name="status">
                                 <option value="draft" @selected(old('status') == 'draft')>{{ __('Draft') }}</option>
-                                <option value="published" @selected(old('status') == 'published')>__{{ __('Published') }}</option>
+                                <option value="published" @selected(old('status') == 'published')>{{ __('Published') }}</option>
                             </select>
                             <label for="status">{{ __('Status') }}</label>
                             @error('status')

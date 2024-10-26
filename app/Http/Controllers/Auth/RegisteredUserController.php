@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Carbon\Carbon;
 
 class RegisteredUserController extends Controller
 {
@@ -41,15 +42,17 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'email_verified_at' => Carbon::now(),
         ]);
 
-        event(new Registered($user));
+        dd($user);
 
-        // Auth::login($user);
+        event(new Registered($user));
 
         // Assegna un ruolo predefinito all'utente
         $role = $request->role ?? 'user';
         $user->assignRole($role);
+
 
         return redirect()->route('dashboard')->with('status', 'Utente creato con successo');
 
