@@ -44,7 +44,7 @@ class TagController extends Controller
         $base_slug = Str::slug($form_data['name']);
         $slug = $base_slug;
         $n = 0;
-    
+
         do {
             $find = Tag::where('slug', $slug)->first();
             if ($find !== null) {
@@ -54,6 +54,7 @@ class TagController extends Controller
         } while ($find !== null);
     
         $form_data['slug'] = $slug;
+        $form_data['name'] = ucfirst($form_data['name']);
     
         Tag::create($form_data);
     
