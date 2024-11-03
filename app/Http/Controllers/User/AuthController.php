@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 // Mail
 use Illuminate\Support\Facades\Mail;
-use App\Mail\confirmMail;
+use App\Mail\welcome;
 
 class AuthController extends Controller
 {
@@ -45,7 +45,7 @@ class AuthController extends Controller
             $verificationToken = Hash::make($user->email . $user->created_at);
     
             // Invio dell'email di benvenuto con il link di verifica
-            Mail::to($user->email)->send(new confirmMail($user, $verificationToken));
+            Mail::to($user->email)->send(new welcome($user, $verificationToken));
             
             return response()->json([
                 'success' => __('Registrazione effettuata con successo. Controlla la tua email per confermare il tuo account.'),
@@ -122,8 +122,5 @@ class AuthController extends Controller
         return response()->json(['success' => true, 'message' => 'Email verificata con successo!']);
 
     }
-
-
-
 
 }

@@ -27,7 +27,7 @@
 
         <!-- Descrizione -->
         <p class="lead text-muted mb-4">
-            Benvenuto nella tua area di gestione del blog. Qui puoi creare, modificare e gestire i tuoi post in modo facile e veloce.
+            {{ __('Welcome to your blog management area. Here you can create, edit and manage your posts quickly and easily') }}
         </p>
 
         <!-- Pulsanti di navigazione -->

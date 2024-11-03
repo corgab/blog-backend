@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Facades\Config;
 
 
-class confirmMail extends Mailable
+class welcome extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -36,8 +36,9 @@ class confirmMail extends Mailable
 
     
         return new Content(
-            view: 'mail.confirmMail',
+            view: 'mail.welcome',
             with: [
+                'email' => $this->user->email,
                 'userName' => $this->user->name,
                 'verificationUrl' => $verificationUrl,
             ]
