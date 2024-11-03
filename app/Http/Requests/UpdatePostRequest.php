@@ -24,7 +24,8 @@ class UpdatePostRequest extends FormRequest
         return [
             'title' =>'required|string|max:255',
             'slug' =>'nullable|string',
-            'image' => ' nullable|image|mimes:jpeg,png,webp|max:2048', // Required
+            'description'=> 'nullable|string',
+            'image' => ' nullable|image|mimes:jpeg,png,webp|max:2048',
             'featured' => 'required|boolean',
             'status' => 'required|in:draft,published',
             'tag_id' => 'required|array',

@@ -24,10 +24,10 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="form-floating mb-4">
-                        <textarea class="form-control @error('description') is-invalid @enderror" name="description" placeholder="Descrizione"
-                            rows="2">{{ old('description') }}</textarea>
-                        <label for="description">{{ __('description') }}</label>
+                    <div class="form-floating mb-2">
+                        <textarea class="form-control @error('description') is-invalid @enderror" name="description"
+                            placeholder="{{ __('Description') }}" rows="2" required>{{ old('description') }}</textarea>
+                        <label for="description">{{ __('Description') }}</label>
                         @error('description')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
