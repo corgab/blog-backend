@@ -73,32 +73,37 @@ class AuthController extends Controller
     
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user) {
-            return response()->json(['errMessage' => 'Utente non trovato'], 404);
-        }
-
-        if($user->email_verified_at == null) {
-            return response()->json(['errMessage'=> 'Devi verificare la tua Mail']);
-        }
-        elseif (Auth::attempt($request->only('email', 'password'))) {
-            $user = Auth::user();
-            $token = $user->createToken('Frontend')->plainTextToken;
-
-            return response()->json([
-                'success' => 'Login effettuato con successo!',
-                'token' => $token,
-                'user' => $user,
+        try{
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
             ]);
+    
+            $user = User::where('email', $request->email)->first();
+    
+            if (!$user) {
+                return response()->json(['errMessage' => 'Utente non trovato'], 404);
+            }
+    
+            if($user->email_verified_at == null) {
+                return response()->json(['errMessage'=> 'Devi verificare la tua Mail']);
+            }
+            elseif (Auth::attempt($request->only('email', 'password'))) {
+                $user = Auth::user();
+                $token = $user->createToken('Frontend')->plainTextToken;
+    
+                return response()->json([
+                    'success' => 'Login effettuato con successo!',
+                    'token' => $token,
+                    'user' => $user,
+                ]);
+            }
+        } catch(ValidationException $e) {
+            return response()->json(['errMessage' => $e->validator->errors()->first()], 422);
         }
         
-        return response()->json(['errMessage' => 'Credenziali non valide'], 401);
+        
+        
     }
 
     public function logout(Request $request)
