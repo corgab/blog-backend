@@ -35,6 +35,11 @@
                     <div class="fw-bold">{{ __('Create ad') }}</div>
                     <div>{{ ucfirst($post->created_at->translatedFormat('M d, Y')) }}</div>
                 </div>
+                <div class="d-flex flex-column flex-md-row justify-content-between border-bottom pb-3 mb-3">
+                    <div class="fw-bold">{{ __('Status') }}</div>
+                    <div>{{ $post->status }}</div>
+                </div>
+
                 <!-- Post Tags -->
                 <div class="d-flex flex-wrap gap-2 mt-3">
                     @foreach ($post->tags as $tag)
