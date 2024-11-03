@@ -65,6 +65,8 @@ class PostController extends Controller
     {
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
+
+        $form_data['title'] = strtoupper($form_data['title']);
         $form_data['user_id'] = Auth::id(); // Assegna l'ID dell'utente autenticato
         $form_data['status'] = $request->input('status', 'draft'); // Imposta lo stato, predefinito a 'draft'
     
@@ -89,6 +91,10 @@ class PostController extends Controller
         // Gestione delle sezioni
         if ($request->has('sections')) {
             foreach ($request->input('sections') as $index => $sectionData) {
+
+                $sectionData['title'] = strtoupper($sectionData['title']);
+                $sectionData['content'] = ucwords($sectionData['content']);
+
                 // Crea la sezione e recupera l'ID
                 $section = PostSection::create([
                     'post_id' => $new_post->id,
@@ -170,10 +176,7 @@ class PostController extends Controller
         $user = Auth::user();
         // Carica le relazioni tags
         $post->load('tags','sections.images','images');
-        // dd($post);
 
-        // Se lo status del post è published e l'utente non è admin return 404
-        
         $tags = Tag::orderBy('name', 'asc')->get();
         
         // dd($post->status);
@@ -195,7 +198,7 @@ class PostController extends Controller
 {
     // Ottieni i dati validati dalla richiesta
     $form_data = $request->validated();
-
+    
     // Controllo del ruolo utente
     if (Auth::user()->hasRole('author')) {
         $form_data['status'] = 'draft'; // Forza lo stato a "draft"
@@ -216,6 +219,9 @@ class PostController extends Controller
         $form_data['slug'] = $slug;
     }
 
+    $form_data['title'] = strtoupper($form_data['title']);
+
+
     // Aggiorna il post
     $post->update($form_data);
     $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
@@ -228,6 +234,9 @@ class PostController extends Controller
         foreach ($request->input('sections') as $index => $section) {
             // Verifica se la sezione ha un ID per determinare se è esistente o nuova
             if (isset($section['id'])) {
+
+                $section['title'] = strtoupper($section['title']);
+                $section['content'] = ucfirst($section['content']);
                 // Trova la sezione esistente
                 $postSection = $post->sections()->find($section['id']);
                 if ($postSection) {

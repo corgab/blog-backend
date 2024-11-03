@@ -61,7 +61,7 @@
                     </div>
                 @else
                     <p class="text-center">{{ __('No posts found') }} <a href="{{ route('posts.create') }}"
-                            class="btn btn-primary">{{ __('Create your first post<') }}</a></p>
+                            class="btn btn-primary">{{ __('Create your first post') }}</a></p>
                 @endif
             </div>
         </div>
