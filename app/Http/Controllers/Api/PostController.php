@@ -69,6 +69,7 @@ class PostController extends Controller
         $response = [
             'id' => $post->id,
             'title' => $post->title,
+            'description' => $post->description,
             'reading_time' => $post->reading_time,
             'featured' => $post->featured ? 'True' : 'False',
             'tags' => $post->tags,
