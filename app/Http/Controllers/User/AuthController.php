@@ -23,13 +23,14 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         try {
+            // Validazione della richiesta
             $request->validate([
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
                 'role' => ['nullable', 'string', 'in:admin,editor,author'],
             ]);
-    
+        
             // Creazione di un nuovo utente
             $user = User::create([
                 'name' => $request->name,
@@ -37,20 +38,31 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
                 'email_verified_at' => null,
             ]);
-    
-            $role = 'user';
+        
+            // Assegnazione ruolo predefinito o specifico se fornito
+            $role = $request->role ?? 'user';
             $user->assignRole($role);
-    
+        
             // Generazione di un token di verifica dell'email
             $verificationToken = Hash::make($user->email . $user->created_at);
-    
+        
             // Invio dell'email di benvenuto con il link di verifica
-            Mail::to($user->email)->send(new welcome($user, $verificationToken));
-            
-            return response()->json([
-                'success' => __('Registrazione effettuata con successo. Controlla la tua email per confermare il tuo account.'),
-                'user' => $user,
-            ], 201);
+            try {
+                Mail::to($user->email)->send(new Welcome($user, $verificationToken));
+        
+                return response()->json([
+                    'success' => __('Registrazione effettuata con successo. Controlla la tua email per confermare il tuo account.'),
+                    'user' => $user,
+                ], 201);
+            } catch (\Exception $e) {
+                // Rimozione utente in caso di fail
+                $user->delete();
+        
+                return response()->json([
+                    'error' => __('Si è verificato un problema durante l\'invio dell\'email. Riprovare più tardi.'),
+                ], 500);
+            }
+        
         } catch (ValidationException $e) {
             return response()->json([
                 'errMessage' => $e->validator->errors()->first(),
