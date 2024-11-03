@@ -42,6 +42,7 @@ class UserSeeder extends Seeder
                 $new_user->name = $row[0];
                 $new_user->email = $row[1];
                 $new_user->password = Hash::make($row[2]);
+                $new_user->email_verified_at = now();
 
                 $new_user->save();
             }

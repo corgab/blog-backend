@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('content');
             $table->integer('order')->default(0); // Per mantenere l'ordine delle sezioni
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
