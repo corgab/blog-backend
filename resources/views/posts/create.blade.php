@@ -24,6 +24,14 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                    <div class="form-floating mb-4">
+                        <textarea class="form-control @error('description') is-invalid @enderror" name="description" placeholder="Descrizione"
+                            rows="2">{{ old('description') }}</textarea>
+                        <label for="description">{{ __('description') }}</label>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
                     {{-- Sezioni --}}
                     <h4 class="mb-3 text-secondary">Sezioni</h4>

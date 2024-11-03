@@ -67,6 +67,7 @@ class PostController extends Controller
         $form_data = $request->validated();
 
         $form_data['title'] = strtoupper($form_data['title']);
+        $form_data['description'] = strtoupper($form_data['description']);
         $form_data['user_id'] = Auth::id(); // Assegna l'ID dell'utente autenticato
         $form_data['status'] = $request->input('status', 'draft'); // Imposta lo stato, predefinito a 'draft'
     
