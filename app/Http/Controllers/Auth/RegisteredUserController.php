@@ -54,7 +54,9 @@ class RegisteredUserController extends Controller
         $user->assignRole($role);
 
 
-        return redirect()->route('dashboard')->with('status', 'Utente creato con successo');
+        // return redirect()->route('dashboard')->with('status', 'Utente creato con successo');
+        return redirect(RouteServiceProvider::HOME)->with('status', 'Utente creato con successo');
+
 
     }
 }
