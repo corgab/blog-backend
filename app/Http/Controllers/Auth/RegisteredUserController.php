@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Welcome;
 
 class RegisteredUserController extends Controller
 {
@@ -42,10 +44,10 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'email_verified_at' => Carbon::now(),
         ]);
-
         event(new Registered($user));
+
+        Mail::to($user->email)->send(new Welcome($user));
 
         // Assegna un ruolo predefinito all'utente
         $role = $request->role ?? 'user';

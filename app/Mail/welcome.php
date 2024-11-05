@@ -8,6 +8,8 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\URL;
+use Carbon\Carbon;
 
 
 class welcome extends Mailable
@@ -15,12 +17,10 @@ class welcome extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
-    public $verificationToken;
 
-    public function __construct($user, $verificationToken)
+    public function __construct($user)
     {
         $this->user = $user;
-        $this->verificationToken = $verificationToken;
     }
 
     public function envelope(): Envelope
@@ -32,8 +32,8 @@ class welcome extends Mailable
 
     public function content(): Content
     {
-        $verificationUrl = env('FRONTEND_URL') . '/verify-email?token=' . $this->verificationToken . '&email=' . urlencode($this->user->email);
-
+        // $verificationUrl = env('FRONTEND_URL') . '/verify-email?token=' . $this->verificationToken . '&email=' . urlencode($this->user->email);
+        $verificationUrl = $this->verificationUrl($this->user);
     
         return new Content(
             view: 'mail.welcome',
@@ -44,6 +44,16 @@ class welcome extends Mailable
             ]
         );
     }
+
+    protected function verificationUrl($notifiable)
+    {
+        return URL::temporarySignedRoute(
+            'verification.verify',
+            Carbon::now()->addMinutes(60),
+            ['id' => $notifiable->getKey(), 'hash' => sha1($notifiable->getEmailForVerification())]
+        );
+    }
+    
 
     public function attachments(): array
     {

@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+// use App\Notifications\VerifyEmail;
+
 
 
 
@@ -49,4 +51,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function posts() {
         return $this->hasMany(Post::class);
     }
+    
+
+    // public function sendEmailVerificationNotification()
+    // {
+    //     $this->notify(new VerifyEmail());
+    // }
 }

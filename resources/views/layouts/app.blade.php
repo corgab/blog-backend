@@ -40,9 +40,9 @@
 
             <!-- User Info -->
             <div class="user-info">
-                <a href="{{ route('lang.switch', app()->getLocale() == 'en' ? 'it' : 'en') }}" class="fs-6">
+                {{-- <a href="{{ route('lang.switch', app()->getLocale() == 'en' ? 'it' : 'en') }}" class="fs-6">
                     {{ __('Change language') }}
-                </a>
+                </a> --}}
                 <a href="{{ route('profile.edit') }}">Gestisci Profilo</a>
                 <a href="{{ route('logout') }}"
                     onclick="event.preventDefault();

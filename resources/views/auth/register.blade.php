@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.guest')
 
 @section('content')
     <div class="container mt-4">
@@ -72,25 +72,27 @@
                                 </div>
                             </div>
 
-                            <div class="mb-4 row">
-                                <label for="role"
-                                    class="col-md-4 col-form-label text-md-right">{{ __('Select Role') }}</label>
+                            @if (Auth::check() && Auth::user()->hasRole('admin'))
+                                <div class="mb-4 row">
+                                    <label for="role"
+                                        class="col-md-4 col-form-label text-md-right">{{ __('Select Role') }}</label>
 
-                                <div class="col-md-6">
-                                    <select id="role" class="form-control @error('role') is-invalid @enderror"
-                                        name="role" required>
-                                        <option value="admin">Admin</option>
-                                        <option value="editor">Editor</option>
-                                        <option value="author" selected>Author</option>
-                                    </select>
+                                    <div class="col-md-6">
+                                        <select id="role" class="form-control @error('role') is-invalid @enderror"
+                                            name="role" required>
+                                            <option value="admin">Admin</option>
+                                            <option value="editor">Editor</option>
+                                            <option value="author" selected>Author</option>
+                                        </select>
 
-                                    @error('role')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
+                                        @error('role')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
 
                             <div class="mb-4 row mb-0">
                                 <div class="col-md-6 offset-md-4">

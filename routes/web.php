@@ -28,7 +28,7 @@ Route::get('lang/{locale}', function ($locale) {
     return redirect()->back();
 })->name('lang.switch');
 
-Route::middleware(['auth','verified','role:admin|editor|author'])->group(function () { // ->prefix('admin')
+Route::middleware(['auth','verified'])->group(function () { // ->prefix('admin') ,'role:admin|editor|author'
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
