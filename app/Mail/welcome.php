@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
 
 
-class welcome extends Mailable
+class Welcome extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -45,12 +45,12 @@ class welcome extends Mailable
         );
     }
 
-    protected function verificationUrl($notifiable)
+    protected function verificationUrl($user)
     {
         return URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(60),
-            ['id' => $notifiable->getKey(), 'hash' => sha1($notifiable->getEmailForVerification())]
+            ['id' => $user->getKey(), 'hash' => sha1($user->getEmailForVerification())]
         );
     }
     

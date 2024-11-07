@@ -19,45 +19,40 @@ use Illuminate\Support\Facades\Session;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('lang/{locale}', function ($locale) {
-    Session::put('locale', $locale);
-    return redirect()->back();
-})->name('lang.switch');
+// Route::get('lang/{locale}', function ($locale) {
+//     Session::put('locale', $locale);
+//     return redirect()->back();
+// })->name('lang.switch');
 
 Route::middleware(['auth','verified'])->group(function () { // ->prefix('admin') ,'role:admin|editor|author'
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+        // Rotte per Profilo
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Rotte per Post
-    Route::resource('/posts', PostController::class);
-    Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
+    Route::middleware('role:admin|editor|author')->group(function () {
 
-    Route::get('/trash', [PostController::class, 'trash'])->name('posts.trash');
-    Route::put('/trash/restore/{post:slug}', [PostController::class, 'restore'])->name('posts.restore');
+        Route::resource('/posts', PostController::class);
+        Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
+    
+        Route::get('/trash', [PostController::class, 'trash'])->name('posts.trash');
+        Route::put('/trash/restore/{post:slug}', [PostController::class, 'restore'])->name('posts.restore');
+    
+        Route::middleware('role:admin|editor')->group(function () {
+            Route::get('/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
+            Route::get('/posts/publish/{post:slug}', [PostController::class, 'publish'])->name('posts.publish');
+    
+        });
 
-
-    Route::middleware('role:admin|editor')->group(function () {
-        Route::get('/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
-        Route::get('/posts/publish/{post:slug}', [PostController::class, 'publish'])->name('posts.publish');
-
-
-    });
-
-    // Rotte per Profilo
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Rotte per Tag con Permessi
-    Route::middleware('role:admin')->group(function () {
+        // Rotte per Tag con Permessi
+        Route::middleware('role:admin')->group(function () {
         Route::resource('/tags', TagController::class)->except(['show', 'edit']);
     });
-
-
+    });
 });
 
 require __DIR__.'/auth.php';
