@@ -36,9 +36,8 @@ class PostController extends Controller
         // Trasforma i dati della collezione
         $posts->getCollection()->transform(function($post) {
             $post->user_name = $post->user->name;
-
             $post->created_date = ucfirst($post->created_at->translatedFormat('M d, Y'));
-
+            $post->reading_time = $post->reading_time;
             $post->images = $post->images->map(function($image) {
 
                 $image->link = url('storage/' . $image->path);
