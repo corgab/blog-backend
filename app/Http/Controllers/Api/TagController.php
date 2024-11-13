@@ -25,7 +25,6 @@ class TagController extends Controller
         $tag->load(['posts' => function ($query) {
             $query->where('status', 'published');
         }]);
-        
         return response()->json($tag);
     }
 }

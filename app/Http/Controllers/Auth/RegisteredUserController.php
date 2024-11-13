@@ -45,6 +45,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // Invio mail
         event(new Registered($user));
 
         Mail::to($user->email)->send(new Welcome($user));
@@ -53,8 +55,12 @@ class RegisteredUserController extends Controller
         $role = $request->role ?? 'user';
         $user->assignRole($role);
 
+        // Se user ha ruolo user
+        // if($user->hasRole('user')) {
+            Auth::login($user);
+        // }
 
-        // return redirect()->route('dashboard')->with('status', 'Utente creato con successo');
+        // return redirect()->route('verification.notice')->with('status', 'Utente creato con successo.');
         return redirect(RouteServiceProvider::HOME)->with('status', 'Utente creato con successo');
 
 
