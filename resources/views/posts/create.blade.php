@@ -26,7 +26,7 @@
                     </div>
                     <div class="form-floating mb-2">
                         <textarea class="form-control @error('description') is-invalid @enderror" name="description"
-                            placeholder="{{ __('Description') }}" rows="2" required>{{ old('description') }}</textarea>
+                            placeholder="{{ __('Description') }}" rows="2">{{ old('description') }}</textarea>
                         <label for="description">{{ __('Description') }}</label>
                         @error('description')
                             <div class="invalid-feedback">{{ $message }}</div>
