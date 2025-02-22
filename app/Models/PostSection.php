@@ -11,7 +11,7 @@ class PostSection extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['post_id','title', 'content', 'order'];
+    protected $fillable = ['post_id','title', 'content', 'order', 'image_path', 'image_alt'];
 
     public function post()
     {

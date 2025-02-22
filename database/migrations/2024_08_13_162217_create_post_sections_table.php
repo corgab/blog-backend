@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('title')->nullable(); // Titolo della sezione (opzionale)
             $table->text('content');
             $table->integer('order')->default(0); // Per mantenere l'ordine delle sezioni
+            // Immagini
+            $table->string('image_path')->nullable(); 
+            $table->string('image_alt')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });
