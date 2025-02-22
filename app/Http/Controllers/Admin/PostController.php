@@ -69,7 +69,7 @@ class PostController extends Controller
         // dd($form_data);
 
         $form_data['title'] = strtoupper($form_data['title']);
-        $form_data['description'] = ucfirst($form_data['description']);
+        // $form_data['description'] = ucfirst($form_data['description']);
         $form_data['user_id'] = Auth::id(); // Assegna l'ID dell'utente autenticato
         $form_data['status'] = $request->input('status', 'draft'); // Imposta lo stato, predefinito a 'draft'
     
