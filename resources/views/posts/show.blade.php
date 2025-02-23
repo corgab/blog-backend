@@ -48,46 +48,15 @@
                 </div>
             </div>
         </div>
+        @if ($post->description)
+            <h3>{{ __('Content') }}</h3>
+            <div>
+                {!! $post->description !!}
+            </div>
+        @endif
 
-        <!-- Post Content and Images -->
-        {{-- <div class="row">
-            <div class="col-md-12 col-lg-6 mb-4">
-                @forelse($post->images as $image)
-                    @if ($image->is_featured)
-                        <div class="position-relative">
-                            <img src="{{ url('storage/' . $image->path) }}" alt="{{ $image->alt }}"
-                                class="img-fluid rounded shadow-sm">
-                            <div class="position-absolute top-0 start-0 bg-dark text-white px-2 py-1 rounded-end">
-                                {{ __('Cover image') }}
-                            </div>
-                        </div>
-                        @break
-                    @endif
-                @empty
-                    <a href="{{ route('posts.edit', $post) }}"
-                        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{ __('Add image') }}</a>
-                @endforelse
-            </div> --}}
 
-        <div class="col-md-12 col-lg-6">
-            @foreach ($sections as $index => $section)
-                <h2 class="mb-3">{{ __('Section') }} {{ $index + 1 }}</h2>
-                <div class="mb-4 p-4 border rounded shadow-sm">
-                    <!-- Aggiungi la logica per visualizzare l'immagine -->
-                    {{-- @foreach ($section->images as $image)
-                        <img src="{{ url('storage/' . $image->path) }}" alt="{{ $image->alt }}" class="img-fluid">
-                    @endforeach --}}
-                    @if ($section->title)
-                        <h2 class="mb-3">{{ $section->title }}</h2>
-                    @endif
-                    <div>{!! $section->content !!}</div>
-                    {{-- @dd($section) --}}
-                    <img src="{{ url('storage/' . $section->image_path) }}" alt="{{ $section->image_alt }}"
-                        class="img-fluid">
-                </div>
-            @endforeach
-
-        </div>
+    </div>
     </div>
 
     </div>

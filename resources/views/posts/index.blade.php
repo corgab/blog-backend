@@ -4,8 +4,13 @@
     <div class="container">
         <h1 class="text-center my-4">POSTS</h1>
         @if (session('errMessage'))
-            <div class="alert alert-danger text-center">
+            <div class="alert alert-danger text-center" role="alert">
                 {{ session('errMessage') }}
+            </div>
+        @endif
+        @if (session('success'))
+            <div class="alert alert-success text-center" role="alert">
+                {{ session('success') }}
             </div>
         @endif
 

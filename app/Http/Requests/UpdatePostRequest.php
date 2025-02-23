@@ -25,15 +25,11 @@ class UpdatePostRequest extends FormRequest
             'title' =>'required|string|max:255',
             'slug' =>'nullable|string',
             'description'=> 'nullable|string',
-            'image' => ' nullable|image|mimes:jpeg,png,webp|max:2048',
+            'image' => ' nullable|image|mimes:jpeg,png,webp,jpg|max:2048',
             'featured' => 'required|boolean',
             'status' => 'required|in:draft,published',
             'tag_id' => 'required|array',
             'tag_id.*' => 'exists:tags,id',
-            'sections' => 'required|array|min:1',
-            'sections.*.title' => 'required|string|max:255',
-            'sections.*.content' => 'required|string',
-            'sections.*.image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 
@@ -58,14 +54,6 @@ class UpdatePostRequest extends FormRequest
             'tag_id.array' => 'I tag devono essere in un formato valido.',
             'tag_id.*.exists' => 'Il tag selezionato non è valido.',
 
-            'sections' => 'Deve esserci almeno una sezione',
-
-            'sections.*.title.required' => 'Il titolo della sezione è obbligatorio.',
-            'sections.*.title.string' => 'Il titolo della sezione deve essere una stringa.',
-            'sections.*.title.max' => 'Il titolo della sezione non può superare i :max caratteri.',
-
-            'sections.*.content.required' => 'Il contenuto della sezione è obbligatorio.',
-            'sections.*.content.string' => 'Il contenuto della sezione deve essere una stringa.',
         ];
     }
 

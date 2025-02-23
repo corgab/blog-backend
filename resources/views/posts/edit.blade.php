@@ -1,4 +1,8 @@
 @extends('layouts.app')
+@section('head')
+    <script src="https://cdn.tiny.cloud/1/lsgip8eauvxkiytzlbl9na7oqlwbgk2fzcopym7zed2ot006/tinymce/5/tinymce.min.js">
+    </script>
+@endsection
 
 @section('content')
     <div class="container py-4">
@@ -7,6 +11,11 @@
         @if ($errors->has('sections'))
             <div class="alert alert-danger">
                 {{ $errors->first('sections') }}
+            </div>
+        @endif
+        @if ($errors)
+            <div>
+                {{ $errors }}
             </div>
         @endif
 
@@ -34,81 +43,11 @@
                     <div class="form-floating mb-2">
                         <textarea class="form-control @error('description') is-invalid @enderror" name="description"
                             placeholder="{{ __('Description') }}" rows="2" required>{{ old('description', $post->description) }}</textarea>
-                        <label for="description">{{ __('Description') }}</label>
+                        {{-- <label for="description">{{ __('Description') }}</label> --}}
                         @error('description')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    {{-- Sezioni --}}
-                    <h4 class="mb-3 text-secondary">{{ __('Sections') }}</h4>
-                    <div id="sections-container">
-                        @foreach (old('sections', $post->sections->toArray()) as $index => $section)
-                            <div class="card mb-3 section-block">
-                                <div class="card-body">
-                                    {{-- ID Sezione --}}
-                                    @if (isset($section['id']))
-                                        <input type="hidden" name="sections[{{ $index }}][id]"
-                                            value="{{ $section['id'] }}">
-                                    @endif
-
-                                    {{-- Titolo --}}
-                                    <div class="form-floating mb-2">
-                                        <input type="text"
-                                            class="form-control @error('sections.' . $index . '.title') is-invalid @enderror"
-                                            name="sections[{{ $index }}][title]"
-                                            value="{{ old('sections.' . $index . '.title', $section['title'] ?? '') }}"
-                                            placeholder="{{ __('Title') }}" required>
-                                        <label for="section-title-{{ $index }}">{{ __('Title') }}</label>
-                                        @error('sections.' . $index . '.title')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    {{-- Contenuto --}}
-                                    <div class="form-floating mb-2">
-                                        <textarea class="form-control @error('sections.' . $index . '.content') is-invalid @enderror"
-                                            name="sections[{{ $index }}][content]" placeholder="{{ __('Content') }}" rows="4" required>{{ old('sections.' . $index . '.content', $section['content'] ?? '') }}</textarea>
-                                        <label for="section-content-{{ $index }}">{{ __('Content') }}</label>
-                                        @error('sections.' . $index . '.content')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    {{-- Immagine --}}
-                                    <div class="mb-2">
-                                        <label for="section-image-{{ $index }}"
-                                            class="form-label">{{ __('Image') }}</label>
-                                        <input
-                                            class="form-control @error('sections.' . $index . '.image') is-invalid @enderror"
-                                            type="file" id="section-image-{{ $index }}"
-                                            name="sections[{{ $index }}][image]">
-                                        @error('sections.' . $index . '.image')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    {{-- Immagine attuale --}}
-                                    @if (isset($section['images']) && !empty($section['images']))
-                                        <div class="mt-2">
-                                            @foreach ($section['images'] as $image)
-                                                <img src="{{ url('storage/' . $image['path']) }}"
-                                                    alt="Immagine della sezione" class="img-fluid mb-2"
-                                                    style="max-height: 200px; object-fit: cover;">
-                                            @endforeach
-                                        </div>
-                                    @endif
-
-                                    {{-- Rimuovi Sezione --}}
-                                    <button type="button"
-                                        class="btn btn-danger btn-sm mt-2 remove-section">{{ __('Remove') }}</button>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <button type="button" id="add-section"
-                        class="btn btn-outline-primary mb-4">{{ __('Add') }}</button>
                 </div>
 
                 <div class="col-lg-4 col-md-12">
@@ -128,24 +67,6 @@
                         @enderror
                     </div>
 
-                    {{-- Immagine principale --}}
-                    <div class="my-4">
-                        <label for="image" class="form-label">{{ __('Cover image') }}</label>
-                        @foreach ($post->images as $image)
-                            @if ($image->is_featured)
-                                <div class="mb-3">
-                                    <img src="{{ url('storage/' . $image->path) }}" alt="Copertina Corrente"
-                                        class="img-fluid mb-2" style="max-height: 200px; object-fit: cover;">
-                                </div>
-                            @endif
-                        @endforeach
-                        <input class="form-control @error('image') is-invalid @enderror" type="file" id="image"
-                            name="image">
-                        @error('image')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
                     {{-- Featured --}}
                     <div class="form-check form-switch my-3">
                         <input type="hidden" value="0" id="featured-hidden" name="featured">
@@ -159,8 +80,7 @@
                         <input type="hidden" name="status" value="draft">
                     @else
                         <div class="form-floating mb-4">
-                            <select class="form-select @error('status') is-invalid @enderror" id="status"
-                                name="status">
+                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
                                 <option value="draft" {{ old('status', $post->status) == 'draft' ? 'selected' : '' }}>
                                     {{ __('Draft') }}</option>
                                 <option value="published"
@@ -175,62 +95,89 @@
                     @endif
                 </div>
             </div>
-    </div>
-    </form>
+        </form>
 
-    {{-- Pulsante Salva sempre visibile --}}
-    <div class="text-center fixed-bottom py-2">
-        <button type="submit" form="post-form" class="btn btn-primary">Salva</button>
-    </div>
+        {{-- Pulsante Salva sempre visibile --}}
+        <div class="text-center fixed-bottom py-2">
+            <button type="submit" form="post-form" class="btn btn-primary">Salva</button>
+        </div>
     </div>
 @endsection
 
-
-
 @section('scripts')
     <script>
-        let sectionIndex = {{ count(old('sections', $post->sections)) }};
+        document.addEventListener("DOMContentLoaded", function() {
+            tinymce.init({
+                selector: 'textarea[name=description]',
+                plugins: 'advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
+                toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help | image',
+                height: 300,
+                file_picker_callback: function(callback, value, meta) {
+                    if (meta.filetype == 'image') {
+                        var input = document.createElement('input');
+                        input.setAttribute('type', 'file');
+                        input.setAttribute('accept', 'image/*');
+                        input.click();
 
-        document.getElementById('add-section').addEventListener('click', function() {
-            const newSection = document.createElement('div');
-            newSection.classList.add('card', 'mb-3', 'section-block');
-            newSection.innerHTML = `
-                <div class="card-body">
-                    {{-- Titolo --}}
-                    <div class="form-floating mb-2">
-                        <input type="text" class="form-control" name="sections[${sectionIndex}][title]" placeholder="{{ __('Title') }}" required>
-                        <label for="section-title-${sectionIndex}">{{ __('Title') }}</label>
-                    </div>
-                    
-                    {{-- Contenuto --}}
-                    <div class="form-floating mb-2">
-                        <textarea class="form-control" name="sections[${sectionIndex}][content]" placeholder="{{ __('Content') }}" rows="4" required></textarea>
-                        <label for="section-content-${sectionIndex}">{{ __('Content') }}</label>
-                    </div>
+                        input.onchange = function() {
+                            var file = input.files[0];
+                            var reader = new FileReader();
+                            reader.onload = function(e) {
+                                // Carica l'immagine al server
+                                var formData = new FormData();
+                                formData.append('image', file);
 
-                    {{-- Immagine --}}
-                    <div class="mb-2">
-                        <label for="section-image-${sectionIndex}" class="form-label">{{ __('Image') }}</label>
-                        <input class="form-control" type="file" id="section-image-${sectionIndex}" name="sections[${sectionIndex}][image]">
-                    </div>
-                    
-                    <button type="button" class="btn btn-danger btn-sm mt-2 remove-section">{{ __('Remove') }}</button>
-                </div>
-            `;
-
-            document.getElementById('sections-container').appendChild(newSection);
-            sectionIndex++;
-
-            // Aggiungere l'evento di rimozione alla nuova sezione
-            newSection.querySelector('.remove-section').addEventListener('click', function() {
-                newSection.remove();
+                                // Fai la richiesta di upload dell'immagine
+                                fetch("{{ route('posts.uploadImage') }}", {
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                                        },
+                                        body: formData
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Inserisci l'immagine nel contenuto dell'editor
+                                            callback(data.imageUrl, {
+                                                alt: file.name
+                                            });
+                                        } else {
+                                            alert("Errore nel caricamento dell'immagine.");
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error(error);
+                                        alert("Errore nel caricamento dell'immagine.");
+                                    });
+                            };
+                            reader.readAsDataURL(file);
+                        };
+                    }
+                },
+                setup: function(editor) {
+                    editor.on('change', function() {
+                        tinymce
+                    .triggerSave(); // Sincronizza il contenuto TinyMCE con il <textarea>
+                    });
+                }
             });
-        });
 
-        // Gestire la rimozione delle sezioni esistenti
-        document.querySelectorAll('.remove-section').forEach(function(button) {
-            button.addEventListener('click', function() {
-                button.closest('.section-block').remove();
+            // Rimuove l'attributo required dal <textarea> originale per evitare errori di focus
+            let textarea = document.querySelector('textarea[name=description]');
+            textarea.removeAttribute('required');
+
+            // Assicura che i dati vengano aggiornati prima dell'invio del form
+            document.getElementById("post-form").addEventListener("submit", function(event) {
+                tinymce.triggerSave();
+                let content = textarea.value.trim();
+
+                // Se il campo è vuoto, mostriamo un errore manuale
+                if (!content) {
+                    alert("La descrizione è obbligatoria.");
+                    textarea.focus();
+                    event.preventDefault(); // Blocca l'invio del form
+                }
             });
         });
     </script>

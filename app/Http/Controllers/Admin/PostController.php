@@ -10,12 +10,11 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Image;
 use App\Models\PostSection;
-
-
 use Intervention\Image\Facades\Image as InterventionImage; 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 
 class PostController extends Controller
@@ -66,18 +65,20 @@ class PostController extends Controller
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
 
-        // dd($form_data);
+        // Gestisci l'immagine
+        if ($request->hasFile('image')) {
+            $form_data['image'] = $this->uploadImage($request);
+        }
 
         $form_data['title'] = strtoupper($form_data['title']);
-        // $form_data['description'] = ucfirst($form_data['description']);
         $form_data['user_id'] = Auth::id(); // Assegna l'ID dell'utente autenticato
         $form_data['status'] = $request->input('status', 'draft'); // Imposta lo stato, predefinito a 'draft'
-    
+
         // Creazione slug univoco
         $base_slug = Str::slug($form_data['title']);
         $slug = $base_slug;
         $n = 0;
-    
+
         do {
             $find = Post::where('slug', $slug)->withTrashed()->first();
             if ($find !== null) {
@@ -85,56 +86,17 @@ class PostController extends Controller
                 $slug = $base_slug . '-' . $n; // Incrementa lo slug se già esistente
             }
         } while ($find !== null);
-    
+
         $form_data['slug'] = $slug;
 
         // Creazione del nuovo post
         $new_post = Post::create($form_data);
-    
-        // Gestione delle sezioni
-        if ($request->has('sections')) {
-
-            foreach ($request->input('sections') as $index => $sectionData) {
-
-                $sectionData['title'] = strtoupper($sectionData['title']);
-                $sectionData['content'] = ucwords($sectionData['content']);
-
-                $imageName = null;
-                $imagePath = null;
-                $imageAlt = null;
-                
-                if ($request->hasFile("sections.{$index}.image") && $request->file("sections.{$index}.image")->isValid()) {
-                    // dd('caricamento immagine');
-                    $imageFile = $request->file("sections.{$index}.image");
-                    $imageName = Str::uuid() . '.webp';
-                    // ATTIVARE ESTENSIONE
-                    //$image = InterventionImage::make($imageFile); 
-                    //$convertedImage = $image->encode('webp', 90);
-                    //$imagePath = $convertedImage->storeAs('images', $imageName, 'public');
-                    $imagePath = $imageFile->storeAs('images', $imageName, 'public');
-                    $imageAlt = $imageFile->getClientOriginalName();
-                }
-                
-                $section = PostSection::create([
-                    'post_id' => $new_post->id,
-                    'title' => $sectionData['title'] ?? null,
-                    'content' => $sectionData['content'],
-                    'order' => $index + 1,
-                    'image_path' => $imagePath,
-                    'image_alt' => $imageAlt,
-                ]);
-            }
         
-            // Assegna i tag al post
-            if (isset($form_data['tag_id'])) {
-                $new_post->tags()->sync($form_data['tag_id']);
-            }
+        $new_post->tags()->sync($request->input('tag_id'));
 
-            // dd($form_data);
-    
-            return to_route('posts.index')->with('success', 'Post creato con successo!');
-        }
+        return to_route('posts.index')->with('success', 'Post creato con successo!');
     }
+
 
     
     /**
@@ -143,12 +105,8 @@ class PostController extends Controller
     public function show(Post $post)
     {
         $user = Auth::user();
-        
-        $sections = PostSection::where('post_id', $post->id)
-            ->orderBy('order')
-            ->get();
-    
-        return view('posts.show', compact('post', 'user', 'sections'));
+
+        return view('posts.show', compact('post', 'user'));
     }
     
     
@@ -157,23 +115,21 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-
         $user = Auth::user();
         // Carica le relazioni tags
-        $post->load('tags','sections');
-
-        $tags = Tag::orderBy('name', 'asc')->get();
+        $post->load('tags');
         
-        // dd($post->status);
+        $tags = Tag::orderBy('name', 'asc')->get();
 
-        //  se il post è pubblico e l'utente è author e editor
-        if($post->status == 'published' && $user->hasRole(['author', 'editor'])) {
+        // Aggiungi la logica per trasformare i percorsi delle immagini in URL completi
+        // $post->description = $this->updateImageUrls($post->description);
+        
+        // se il post è pubblico e l'utente è author e editor
+        if ($post->status == 'published' && $user->hasRole(['author', 'editor'])) {
             return redirect()->route('posts.index')->with('errMessage', 'Non puoi modificare un post pubblico');
         }
 
-        return view('posts.edit', compact('user','post','tags'));
-        
-
+        return view('posts.edit', compact('user', 'post', 'tags'));
     }
 
     /**
@@ -183,100 +139,53 @@ class PostController extends Controller
     {
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
-        
+
+        // // Se la descrizione è stata modificata, aggiorna gli URL delle immagini
+        // if (isset($form_data['description'])) {
+        //     $form_data['description'] = $this->updateImageUrls($form_data['description']);
+        // }
+
+        // // Gestisci l'immagine
+        // if ($request->hasFile('image')) {
+        //     // Se il post ha già una immagine, la rimuoviamo prima di caricarne una nuova
+        //     $form_data['image'] = $this->uploadImage($request, $post->image);
+        // }
+
         // Controllo del ruolo utente
         if (Auth::user()->hasRole('author')) {
             $form_data['status'] = 'draft'; // Forza lo stato a "draft"
         } elseif (!in_array($form_data['status'], ['draft', 'published'])) {
             return redirect()->back()->withErrors(['status' => 'Stato non valido']);
         }
-    
+
         // Aggiornamento del titolo e generazione dello slug
         if ($post->title !== $form_data['title']) {
             $base_slug = Str::slug($form_data['title']);
             $slug = $base_slug;
             $n = 0;
-    
+
             while (Post::where('slug', $slug)->where('id', '!=', $post->id)->withTrashed()->exists()) {
                 $n++;
                 $slug = $base_slug . '-' . $n;
             }
             $form_data['slug'] = $slug;
         }
-    
+
         $form_data['title'] = strtoupper($form_data['title']);
-    
+        
         // Aggiorna il post
         $post->update($form_data);
         $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
-    
-        // Gestione delle sezioni
-        if ($request->has('sections')) {
-            $existingSectionIds = [];
-            $nextOrder = $post->sections()->max('order') + 1; // Trova il prossimo ordine disponibile
-    
-            foreach ($request->input('sections') as $index => $section) {
-                // Verifica se la sezione ha un ID per determinare se è esistente o nuova
-                if (isset($section['id'])) {
-    
-                    $section['title'] = strtoupper($section['title']);
-                    $section['content'] = ucfirst($section['content']);
-                    // Trova la sezione esistente
-                    $postSection = $post->sections()->find($section['id']);
-                    if ($postSection) {
-                        // Aggiorna la sezione esistente
-                        $postSection->fill([
-                            'title' => $section['title'] ?? null,
-                            'content' => $section['content'],
-                            'order' => $postSection->order, // Mantieni l'ordine esistente
-                        ]);
-                    }
-                } else {
-                    // Crea una nuova sezione
-                    $postSection = new PostSection();
-                    $postSection->fill([
-                        'post_id' => $post->id,
-                        'title' => $section['title'] ?? null,
-                        'content' => $section['content'],
-                        'order' => $nextOrder++, // Assegna il nuovo ordine
-                    ]);
-                }
-    
-                // Gestione dell'immagine se fornita
-                if ($request->hasFile("sections.$index.image")) {
-                    $image = $request->file("sections.$index.image");
-                    $fileName = Str::uuid() . '.webp';
-    
-                    // Converti l'immagine
-                    // $convertedImage = InterventionImage::make($image)->encode('webp', 90);
-                    $path = $image->storeAs('images', $fileName, 'public');
-    
-                    // Salva l'immagine per la sezione direttamente nei campi image_path e image_alt
-                    $postSection->image_path = $path;
-                    $postSection->image_alt = $image->getClientOriginalName();
-                }
-    
-                // Salva la sezione
-                $postSection->save();
-                $existingSectionIds[] = $postSection->id; // Aggiungi l'ID della sezione salvata
-            }
-    
-            // Rimuovi le sezioni non più presenti
-            $post->sections()->whereNotIn('id', $existingSectionIds)->delete();
-        }
 
-        return to_route('posts.index');
+        return to_route('posts.index')->with('success', 'Post modificato con successo!');
     }
-    
-
 
     
-
+    
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
-    {
+    public function destroy(Post $post) {
 
         $user = Auth::user();
 
@@ -289,8 +198,7 @@ class PostController extends Controller
         return to_route('posts.index');
     }
 
-    public function drafts()
-    {
+    public function drafts() {
         $user = Auth::user();
     
         $drafts = Post::where('status', 'draft')->get();
@@ -298,8 +206,7 @@ class PostController extends Controller
         return view('posts.drafts',compact('drafts', 'user'));
     }
 
-    public function publish(Post $post)
-    {
+    public function publish(Post $post) {
         $post->status = 'published';
 
         $post->save();
@@ -308,8 +215,7 @@ class PostController extends Controller
 
     }
 
-    public function trash()
-    {
+    public function trash() {
         $user = Auth::user();
 
         if($user->hasRole('admin')) {
@@ -335,8 +241,7 @@ class PostController extends Controller
 
     }
 
-    public function restore($slug)
-    {
+    public function restore($slug) {
         // Trova il post soft deleted usando lo slug
         $post = Post::withTrashed()->where('slug', $slug)->first();
     
@@ -347,4 +252,32 @@ class PostController extends Controller
     
         abort(404);
     }
+
+
+    public function uploadImage(Request $request)
+    {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            try {
+                $file = $request->file('image');
+                $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+                
+                // Salva il file nella cartella 'uploads' dentro storage/app/public
+                $file->storeAs('/uploads', $fileName);
+                // Log::alert(url('storage/uploads/' . $fileName));
+                // Restituisci l'URL completo dell'immagine
+                return response()->json([
+                    'success' => true,
+                    'imageUrl' => url('storage/uploads/' . $fileName) // Assicurati che l'URL restituito sia completo
+                ]);
+            } catch (\Exception $e) {
+                // In caso di errore
+                return response()->json(['success' => false, 'message' => 'Errore nel caricamento dell\'immagine: ' . $e->getMessage()]);
+            }
+        }
+
+        return response()->json(['success' => false, 'message' => 'Nessun file immagine valido trovato.']);
+    }
+
+
+    
 }

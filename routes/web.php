@@ -48,6 +48,10 @@ Route::middleware(['auth','verified'])->group(function () { // ->prefix('admin')
     
         });
 
+        Route::post('/posts/upload-image', [PostController::class, 'uploadImage'])->name('posts.uploadImage');
+
+
+
         // Rotte per Tag con Permessi
         Route::middleware('role:admin')->group(function () {
         Route::resource('/tags', TagController::class)->except(['show', 'edit']);
