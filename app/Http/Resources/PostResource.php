@@ -21,7 +21,8 @@ class PostResource extends JsonResource
             'user_name' => $this->user->name,
             'created_date' => $this->created_at->format('M d, Y'), 
             'reading_time' => $this->reading_time,
-            'tags' => $this->tags->pluck('name'),
+            'tags' => TagResource::collection($this->whenLoaded('tags')),
+
         ];
     }
 }
