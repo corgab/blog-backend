@@ -44,6 +44,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'email_verified_at' => now(),
         ]);
 
         // Invio mail
@@ -62,7 +63,6 @@ class RegisteredUserController extends Controller
 
         // return redirect()->route('verification.notice')->with('status', 'Utente creato con successo.');
         return redirect(RouteServiceProvider::HOME)->with('status', 'Utente creato con successo');
-
 
     }
 }
