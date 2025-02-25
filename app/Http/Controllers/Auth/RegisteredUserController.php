@@ -49,7 +49,7 @@ class RegisteredUserController extends Controller
         // Invio mail
         // event(new Registered($user));
 
-        Mail::to($user->email)->send(new Welcome($user));
+        // Mail::to($user->email)->send(new Welcome($user));
 
         // Assegna un ruolo predefinito all'utente
         $role = $request->role ?? 'user';
