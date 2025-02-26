@@ -13,15 +13,10 @@
                 {{ $errors->first('sections') }}
             </div>
         @endif
-        @if ($errors)
-            <div>
-                {{ $errors }}
-            </div>
-        @endif
 
-        <div class="alert alert-warning text-center text-decoration-underline link-offset-2" role="alert">
+        {{-- <div class="alert alert-warning text-center text-decoration-underline link-offset-2" role="alert">
             {{ __('When you need to add an image to a section, first save the post and then insert the image') }}
-        </div>
+        </div> --}}
 
         <form id="post-form" action="{{ route('posts.update', $post->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -111,7 +106,7 @@
                 selector: 'textarea[name=description]',
                 plugins: 'advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
                 toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help | image',
-                height: 300,
+                height: 600,
                 file_picker_callback: function(callback, value, meta) {
                     if (meta.filetype == 'image') {
                         var input = document.createElement('input');
@@ -158,7 +153,7 @@
                 setup: function(editor) {
                     editor.on('change', function() {
                         tinymce
-                    .triggerSave(); // Sincronizza il contenuto TinyMCE con il <textarea>
+                            .triggerSave(); // Sincronizza il contenuto TinyMCE con il <textarea>
                     });
                 }
             });
