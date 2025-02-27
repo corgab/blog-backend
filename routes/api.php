@@ -29,6 +29,8 @@ Route::get('/posts/{post:slug}', [PostController::class, 'show']);
 
 Route::get('/tags', [TagController::class, 'index']);
 Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
+Route::get('/tags-with-count', [TagController::class, 'getTagsWithPostCount']);
+
 
 // Gestione Utente
 Route::middleware('api')->group(function () {
