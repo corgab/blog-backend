@@ -35,4 +35,16 @@ class PostController extends Controller
 
         return new PostResource($post);
     }
+
+    public function getFeaturedPosts(Request $request) {
+
+        $perPage = $request->input('per_page', 5);
+
+        $featuredPosts = Post::where('status', 'published')
+            ->where('featured', true)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        return PostResource::collection($featuredPosts);
+    }
 }

@@ -31,7 +31,6 @@ class TagController extends Controller
     public function getTagsWithPostCount(Request $request)
     {
         $tags = Tag::withCount('posts')
-            ->take(5) 
             ->get();
 
         return response()->json($tags);
