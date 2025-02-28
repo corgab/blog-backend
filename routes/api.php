@@ -31,6 +31,7 @@ Route::get('/posts-featured', [PostController::class, 'getFeaturedPosts']);
 Route::get('/tags', [TagController::class, 'index']);
 Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
 Route::get('/tags-with-count', [TagController::class, 'getTagsWithPostCount']);
+Route::get('/tags/{tag:slug}/featured', [TagController::class, 'showFeatures']);
 
 
 // Gestione Utente

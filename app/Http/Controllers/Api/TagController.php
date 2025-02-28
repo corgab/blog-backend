@@ -15,23 +15,42 @@ class TagController extends Controller
 
         $tags = Tag::with(['posts' => function($query) {
             $query->where('status', 'published'); // Filtra i post con publisher
-        }])->paginate($perPage);
+        }])
+        ->take($perPage)
+        ->get();
 
         return TagResource::collection($tags);
     }
 
     public function show(Tag $tag)
     {
-        $tag->load(['posts' => function ($query) {
-            $query->where('status', 'published');
-        }]);
-        return response()->json($tag);
+        $tag->load([
+            'posts' => function ($query) {
+                $query->where('status', 'published');
+            },
+            'posts.tags'
+        ]);
+        return new TagResource($tag);
+    }
+
+    public function showFeatures(Tag $tag)
+    {
+        $tag->load([
+            'posts' => function ($query) {
+                $query->where('status', 'published')
+                ->where('featured', true);
+            },
+            'posts.tags'
+        ]);
+        return new TagResource($tag);
     }
 
     public function getTagsWithPostCount(Request $request)
     {
-        $tags = Tag::withCount('posts')
-            ->get();
+        $tags = Tag::withCount(['posts' => function ($query) {
+            $query->where('status', 'published');
+        }])
+        ->get();
 
         return response()->json($tags);
     }

@@ -21,7 +21,8 @@ class PostController extends Controller
         $posts = Post::where('status', 'published')
             ->with(['user', 'tags'])
             ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+            ->take($perPage)
+            ->get();
     
         return PostResource::collection($posts);
     } 
@@ -43,7 +44,9 @@ class PostController extends Controller
         $featuredPosts = Post::where('status', 'published')
             ->where('featured', true)
             ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+            ->with('tags')
+            ->take($perPage)
+            ->get();
 
         return PostResource::collection($featuredPosts);
     }
