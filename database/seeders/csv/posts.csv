@@ -2,7 +2,7 @@ title,description,featured,status,user_id
 "Post 1","<p>Questo è un post di esempio con <strong>HTML</strong>. Parla di tecnologia e innovazione.</p>",true,"published",1
 "Post 2","<p>Un altro post che tratta di <em>viaggi</em> e luoghi meravigliosi. Include immagini e descrizioni.</p>",true,"published",2
 "Post 3","<p>Post informativo sulla salute mentale. <strong>Importanza del benessere psicologico</strong> e strategie di coping.</p>",true,"published",3
-"Post 4","<p>Guida completa al <a href='#'>coding</a> per principianti. Consigli pratici e risorse utili.</p>",true,"published",4
+"Post 4","<p>Guida completa al <a href='#'>coding</a> per principianti. Consigli pratici e risorse utili.</p>",false,"published",4
 "Post 5","<p>Post su come migliorare la <strong>produttività</strong> al lavoro. Tecniche di time management.</p>",true,"published",5
 "Post 6","<p>Un'analisi approfondita della <em>intelligenza artificiale</em> e le sue applicazioni in vari settori.</p>",true,"published",6
 "Post 7","<p>Come prepararsi per una maratona: allenamento, nutrizione e strategie psicologiche.</p>",true,"published",7
@@ -17,7 +17,7 @@ title,description,featured,status,user_id
 "Post 16","<p>La storia del <strong>design</strong> moderno: evoluzione e tendenze dei più grandi maestri.</p>",true,"published",16
 "Post 17","<p>Consigli per una vita sana: alimentazione, esercizio fisico e salute mentale.</p>",true,"published",17
 "Post 18","<p>La crescente importanza della <strong>sostenibilità</strong> nelle decisioni aziendali e nei consumi.</p>",true,"published",18
-"Post 19","<p>Il futuro della <em>realtà virtuale</em> e delle esperienze immersive nell'intrattenimento.</p>",true,"published",1
+"Post 19","<p>Il futuro della <em>realtà virtuale</em> e delle esperienze immersive nell'intrattenimento.</p>",false,"published",1
 "Post 20","<p>5 libri da leggere assolutamente quest'anno per ampliare la tua visione del mondo.</p>",true,"published",2
 "Post 21","<p>Introduzione alla <strong>filosofia</strong> antica: le scuole di pensiero che hanno cambiato la storia.</p>",true,"published",3
 "Post 22","<p>Le migliori app per <strong>organizzare</strong> la tua giornata e massimizzare la produttività.</p>",true,"published",4
@@ -34,7 +34,7 @@ title,description,featured,status,user_id
 "Post 33","<p>Come costruire una carriera di successo nel <strong>marketing</strong>: passaggi essenziali e competenze richieste.</p>",true,"published",15
 "Post 34","<p>Le meraviglie naturali della <em>Nuova Zelanda</em>: esplora paesaggi mozzafiato e cultura unica.</p>",true,"published",16
 "Post 35","<p>10 motivi per cui dovresti iniziare a fare <strong>yoga</strong> ogni giorno.</p>",true,"published",17
-"Post 36","<p>Il futuro dell'<strong>energia rinnovabile</strong> e il suo impatto sul nostro pianeta.</p>",true,"published",18
+"Post 36","<p>Il futuro dell'<strong>energia rinnovabile</strong> e il suo impatto sul nostro pianeta.</p>",false,"published",18
 "Post 37","<p>Guida al <strong>networking</strong>: come costruire relazioni professionali di valore.</p>",true,"published",1
 "Post 38","<p>Come l'intelligenza artificiale sta <em>rivoluzionando</em> il settore sanitario.</p>",true,"published",2
 "Post 39","<p>5 cose che devi sapere prima di fare il tuo primo viaggio da solo.</p>",true,"published",3
@@ -53,7 +53,7 @@ title,description,featured,status,user_id
 "Post 52","<p>Il mondo delle <strong>imprese sociali</strong> e come stanno cambiando il panorama economico.</p>",true,"published",16
 "Post 53","<p>Le opportunità offerte dal <strong>lavoro remoto</strong> per una carriera più equilibrata.</p>",true,"published",17
 "Post 54","<p>Strategie per migliorare la tua <strong>leadership</strong> in ambito professionale.</p>",true,"published",18
-"Post 55","<p>Le meraviglie naturali del <em>Perù</em>: escursioni e esperienze uniche.</p>",true,"published",1
+"Post 55","<p>Le meraviglie naturali del <em>Perù</em>: escursioni e esperienze uniche.</p>",false,"published",1
 "Post 56","<p>Guida alla scelta del miglior <strong>laptop</strong> per lavoro e svago.</p>",true,"published",2
 "Post 57","<p>Il ruolo crescente della <strong>cybersecurity</strong> nel proteggere i dati aziendali.</p>",true,"published",3
 "Post 58","<p>10 abitudini quotidiane per vivere una vita <strong>più felice</strong> e serena.</p>",true,"published",4
@@ -73,7 +73,7 @@ title,description,featured,status,user_id
 "Post 72","<p>Le più belle destinazioni per una vacanza <strong>all'insegna della cultura</strong> e dell'arte.</p>",true,"published",18
 "Post 73","<p>Introduzione all'arte del <strong>storytelling</strong> e come usarla per influenzare gli altri.</p>",true,"published",1
 "Post 74","<p>Le migliori strategie per rimanere concentrato mentre lavori da remoto.</p>",true,"published",2
-"Post 75","<p>Come gestire i tuoi <strong>finanziamenti personali</strong> per una vita più equilibrata.</p>",true,"published",3
+"Post 75","<p>Come gestire i tuoi <strong>finanziamenti personali</strong> per una vita più equilibrata.</p>",false,"published",3
 "Post 76","<p>Il mondo delle <strong>startup tecnologiche</strong>: come innovare e fare la differenza.</p>",true,"published",4
 "Post 77","<p>Riflessioni sulla <strong>diversità</strong> culturale e l'importanza della comprensione reciproca.</p>",true,"published",5
 "Post 78","<p>Il potere della <strong>scrittura persuasiva</strong> per la tua carriera.</p>",true,"published",6
@@ -89,13 +89,13 @@ title,description,featured,status,user_id
 "Post 88","<p>Le opportunità offerte dall'<strong>e-commerce</strong> nel 2025 per i piccoli imprenditori.</p>",true,"published",16
 "Post 89","<p>Introduzione al <strong>marketing digitale</strong>: concetti base e come utilizzarli.</p>",true,"published",17
 "Post 90","<p>Come migliorare la tua <strong>intelligenza artificiale</strong> con pratiche quotidiane.</p>",true,"published",18
-"Post 91","<p>Le migliori tecniche per <strong>studiare in modo più efficace</strong> per gli esami.</p>",true,"published",1
+"Post 91","<p>Le migliori tecniche per <strong>studiare in modo più efficace</strong> per gli esami.</p>",false,"published",1
 "Post 92","<p>Riflessioni sul futuro della <strong>mobilità sostenibile</strong>.</p>",true,"published",2
 "Post 93","<p>La gestione delle <strong>emozioni</strong> nelle situazioni stressanti.</p>",true,"published",3
 "Post 94","<p>Come diventare un <strong>esperto di social media</strong> e gestire un brand online.</p>",true,"published",4
-"Post 95","<p>Le migliori app per <strong>gestire il budget</strong> personale in modo efficace.</p>",true,"published",5
+"Post 95","<p>Le migliori app per <strong>gestire il budget</strong> personale in modo efficace.</p>",false,"published",5
 "Post 96","<p>Le ultime tendenze della <strong>tecnologia indossabile</strong> e come stanno cambiando il nostro modo di vivere.</p>",true,"published",6
 "Post 97","<p>Come usare il <strong>growth hacking</strong> per far crescere il tuo business online.</p>",true,"published",7
 "Post 98","<p>Strategie di marketing per il <strong>lancio di prodotto</strong> in un mercato competitivo.</p>",true,"published",8
-"Post 99","<p>5 motivi per cui dovresti iniziare a fare <strong>networking</strong> subito.</p>",true,"published",9
+"Post 99","<p>5 motivi per cui dovresti iniziare a fare <strong>networking</strong> subito.</p>",false,"published",9
 "Post 100","<p>Le migliori pratiche per ottimizzare il <strong>SEO</strong> del tuo sito web.</p>",true,"published",10

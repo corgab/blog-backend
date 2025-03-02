@@ -47,11 +47,14 @@ class TagController extends Controller
 
     public function getTagsWithPostCount(Request $request)
     {
-        $tags = Tag::withCount(['posts' => function ($query) {
+        $tags = Tag::whereHas('posts', function ($query) {
+            $query->where('status', 'published');
+        })
+        ->withCount(['posts' => function ($query) {
             $query->where('status', 'published');
         }])
         ->get();
-
+    
         return response()->json($tags);
     }
 }

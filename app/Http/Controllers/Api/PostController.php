@@ -20,6 +20,7 @@ class PostController extends Controller
 
         $posts = Post::where('status', 'published')
             ->with(['user', 'tags'])
+            ->where('featured', false)
             ->orderBy('created_at', 'desc')
             ->take($perPage)
             ->get();
