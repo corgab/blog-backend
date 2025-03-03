@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             // Production
+            NewsletterSeeder::class,
             UserSeeder::class,
             RoleSeeder::class,
             PermissionSeeder::class,

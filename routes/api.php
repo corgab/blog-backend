@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\User\AuthController;
-
+use App\Http\Controllers\Api\NewsletterController;
 
 
 /*
@@ -32,6 +32,9 @@ Route::get('/tags', [TagController::class, 'index']);
 Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
 Route::get('/tags-with-count', [TagController::class, 'getTagsWithPostCount']);
 Route::get('/tags/{tag:slug}/featured', [TagController::class, 'showFeatures']);
+
+Route::post('/newsletter', [NewsletterController::class, 'store']);
+Route::delete('/newsletter/{email}', [NewsletterController::class, 'destroy']);
 
 
 // Gestione Utente
