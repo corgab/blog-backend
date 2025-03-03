@@ -28,7 +28,7 @@ class NewsletterController extends Controller
         ]);
 
         Newsletter::create($validated);
-        Log::info('Iscrizione alla newsletter di: ', [
+        Log::info('Email aggiunta alla newsletter di: ', [
             'email' => $validated['email'],
             'ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
@@ -72,8 +72,8 @@ class NewsletterController extends Controller
     
         $subscriber->delete();
     
-        Log::info("Email cancellata con successo: ", [
-            'email' => $subscriber,
+        Log::info("Email cancellata dalla newsletter: ", [
+            'email' => $subscriber->email,
             'ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);

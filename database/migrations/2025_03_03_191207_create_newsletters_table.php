@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('email')->unique();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropSoftDeletes('newsletters');
+        Schema::dropIfExists('newsletters');
     }
 };
