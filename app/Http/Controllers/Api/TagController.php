@@ -33,12 +33,15 @@ class TagController extends Controller
         return new TagResource($tag);
     }
 
-    public function showFeatures(Tag $tag)
+    public function showFeatures(Tag $tag, Request $request)
     {
+        $perPage = $request->input('per_page', 5);
+
         $tag->load([
-            'posts' => function ($query) {
+            'posts' => function ($query) use ($perPage) {
                 $query->where('status', 'published')
-                ->where('featured', true);
+                ->where('featured', true)
+                ->take($perPage);
             },
             'posts.tags'
         ]);
