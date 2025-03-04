@@ -19,19 +19,30 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        $this->call([
-            // Production
-            NewsletterSeeder::class,
-            UserSeeder::class,
-            RoleSeeder::class,
-            PermissionSeeder::class,
-            RolePermissionSeeder::class,
-            UserRoleSeeder::class,
+        if(env('APP_ENV') == 'production') {
+
+            $this->call([
+                UserSeeder::class,
+                RoleSeeder::class,
+                PermissionSeeder::class,
+                RolePermissionSeeder::class,
+                UserRoleSeeder::class,
+            ]);
+        } else {
+            $this->call([
+                // Production
+                UserSeeder::class,
+                RoleSeeder::class,
+                PermissionSeeder::class,
+                RolePermissionSeeder::class,
+                UserRoleSeeder::class,
             
-            TagSeeder::class,
-            PostSeeder::class,
-            // PostSectionSeeder::class,
-            // ImageSeeder::class,
-         ]);
+                TagSeeder::class,
+                PostSeeder::class,
+                NewsletterSeeder::class,
+             ]);
+        }
+
+        
     }
 }
