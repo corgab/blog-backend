@@ -58,6 +58,9 @@ return [
 
     'asset_url' => env('ASSET_URL', '/'),
 
+    'frontend_url' => env('APP_FRONTEND', 'http://localhost:3000'),
+
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -69,7 +72,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Europe/Rome',
 
     /*
     |--------------------------------------------------------------------------

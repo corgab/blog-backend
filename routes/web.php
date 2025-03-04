@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -50,14 +51,25 @@ Route::middleware(['auth','verified'])->group(function () { // ->prefix('admin')
 
         Route::post('/posts/upload-image', [PostController::class, 'uploadImage'])->name('posts.uploadImage');
 
-
-
         // Rotte per Tag con Permessi
         Route::middleware('role:admin')->group(function () {
         Route::resource('/tags', TagController::class)->except(['show', 'edit']);
     });
     });
 });
+
+// Route::get('/preview-newsletter', function () {
+//     $subscriber = Newsletter::first();
+//     $posts = Post::orderBy('created_at', 'desc')->where('status', 'published')->take(3)->get();
+
+//     if (!$subscriber) {
+//         return "Nessun iscritto trovato nel database.";
+//     }
+//     // Crea un'istanza della mail
+//     $mail = new NewsletterMail($posts);
+
+//     return $mail->render();
+// });
 
 require __DIR__.'/auth.php';
 

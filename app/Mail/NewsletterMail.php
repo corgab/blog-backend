@@ -13,14 +13,14 @@ class NewsletterMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subscriber;
+    public $posts;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($subscriber)
+    public function __construct($posts)
     {
-        $this->subscriber = $subscriber;
+        $this->posts = $posts;
     }
 
     /**
@@ -29,7 +29,7 @@ class NewsletterMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Newsletter Mail',
+            subject: 'Novità di questa settimana da '. config('app.name'),
         );
     }
 
@@ -41,7 +41,7 @@ class NewsletterMail extends Mailable
         return new Content(
             view: 'emails.newsletter',
             with: [
-                'subscriber' => $this->subscriber,
+                'posts' => $this->posts,
             ],
         );
     }

@@ -10,13 +10,6 @@ use Illuminate\Support\Facades\Log;
 
 class NewsletterController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -28,29 +21,14 @@ class NewsletterController extends Controller
         ]);
 
         Newsletter::create($validated);
+
         Log::info('Email aggiunta alla newsletter di: ', [
             'email' => $validated['email'],
             'ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
-        return response()->json("Iscrizione alla newsletter completata!", 201);
+        return response()->json("Ti sei iscritto alla newsletter di " . config('app.name'), 201);
 
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Newsletter $newsletter)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Newsletter $newsletter)
-    {
-        //
     }
 
     /**
@@ -77,6 +55,6 @@ class NewsletterController extends Controller
             'ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
-        return response()->json('Disiscrizione avvenuta con successo', 200);
+        return response()->json('Disiscrizione a ' . config('app.name') . ' avvenuta con successo', 200);
     }
 }

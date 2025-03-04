@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Mail\NewsletterMail;
 use App\Models\Subscriber;
+use App\Models\Post;
 use Illuminate\Support\Facades\Log;
 
 class SendNewsletter implements ShouldQueue
@@ -32,11 +33,14 @@ class SendNewsletter implements ShouldQueue
     {
         \Log::info('Job eseguito per l\'invio della newsletter.');
 
+        // Recupera gli ultimi 3 posts featured
+        $posts = Post::orderBy('created_at', 'desc')->where('status', 'published')->where('featured', true)->with('tags')->take(3)->get();
+
         foreach ($this->subscribers as $subscriber) {
             \Log::info('Invio newsletter a: ' . $subscriber->email);
 
             // Invia la mail
-            Mail::to($subscriber->email)->send(new NewsletterMail($subscriber));
+            Mail::to($subscriber->email)->send(new NewsletterMail($posts));
 
             sleep(5);
         }
