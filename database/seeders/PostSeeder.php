@@ -44,7 +44,7 @@ class PostSeeder extends Seeder
             if ($index !== 0) {
                 $new_post = new Post();
                 $new_post->title = $row[0];
-                $new_post->description = $row[1];
+                $new_post->content = $row[1];
                 $new_post->slug = Str::slug($new_post->title, '-');
                 $new_post->featured = filter_var($row[2], FILTER_VALIDATE_BOOLEAN);
                 $new_post->status = $row[3];

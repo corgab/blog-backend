@@ -20,16 +20,13 @@ class PostResource extends JsonResource
             'slug' => $this->slug,
             'content' => $this->content,
             'is_featured' => $this->featured,
-            // author collezione
             'author' => [
                 'name' => $this->user->name,
                 'slug' => $this->user->slug
             ],
-            // 'user_name' => $this->user->name,
             'created_date' => $this->created_at->format('M d, Y'), 
             'reading_time' => $this->reading_time,
             'tags' => TagResource::collection($this->whenLoaded('tags')),
-
         ];
     }
 }

@@ -23,7 +23,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         // Recuperare tutti i post dell'utente
-        $user->load('posts');
+        $user->load('posts.tags');
 
         return new UserResource($user);
     }
