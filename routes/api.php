@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\Api\NewsletterController;
-
+use App\Http\Controllers\Api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +35,8 @@ Route::get('/tags/{tag:slug}/featured', [TagController::class, 'showFeatures']);
 
 Route::post('/newsletter', [NewsletterController::class, 'store']);
 Route::delete('/newsletter/{email}', [NewsletterController::class, 'destroy']);
+
+Route::get('/users/{user:slug}', [UserController::class, 'show']);
 
 
 // Gestione Utente

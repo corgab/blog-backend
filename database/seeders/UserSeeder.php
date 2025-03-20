@@ -6,6 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Str;
+
 
 class UserSeeder extends Seeder
 {
@@ -41,9 +43,10 @@ class UserSeeder extends Seeder
 
                 $new_user->name = $row[0];
                 $new_user->email = $row[1];
+                $new_user->slug = Str::of($new_user->name)->slug('-');
                 $new_user->password = Hash::make($row[2]);
                 $new_user->email_verified_at = now();
-
+                
                 $new_user->save();
             }
         }
