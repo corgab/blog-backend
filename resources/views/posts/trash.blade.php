@@ -17,7 +17,7 @@
                         <th scope="col">{{ __('Title') }}</th>
                         <th scope="col">{{ __('Author') }}</th>
                         <th scope="col">{{ __('Deleted at') }}</th>
-                        <th scope="col">{{ __('Actions') }}</th>
+                        <th scope="col" colspan="2">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,6 +34,18 @@
                                 </form>
 
                             </td>
+                            @if (auth()->user()->hasRole('admin'))
+                                <td>
+                                    <form action="{{ route('posts.permDelete', $post) }}" method="POST"
+                                        style="display:inline;">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit"
+                                            class="btn btn-danger btn-sm">{{ __('Permanent Delete') }}</button>
+                                    </form>
+
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>

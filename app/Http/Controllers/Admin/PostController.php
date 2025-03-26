@@ -253,6 +253,15 @@ class PostController extends Controller
         abort(404);
     }
 
+    public function permDelete($slug) {
+        $post = Post::withTrashed()->where('slug', $slug)->first();
+
+        if($post) {
+            $post->forceDelete(); // Elimina perma
+            return back()->with('success', 'Post permanentemente eliminato!');
+        }
+
+    }
 
     public function uploadImage(Request $request)
     {

@@ -25,36 +25,34 @@ use Illuminate\Support\Facades\Session;
 //     return redirect()->back();
 // })->name('lang.switch');
 
-Route::middleware(['auth','verified'])->group(function () { // ->prefix('admin') ,'role:admin|editor|author'
+Route::middleware(['auth'])->group(function () { // ->prefix('admin') ,'role:admin|editor|author'
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
         // Rotte per Profilo
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Rotte per Post
+    //AUTHORs
     Route::middleware('role:admin|editor|author')->group(function () {
 
         Route::resource('/posts', PostController::class);
         Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
-    
-        Route::get('/trash', [PostController::class, 'trash'])->name('posts.trash');
         Route::put('/trash/restore/{post:slug}', [PostController::class, 'restore'])->name('posts.restore');
-    
-        Route::middleware('role:admin|editor')->group(function () {
-            Route::get('/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
-            Route::get('/posts/publish/{post:slug}', [PostController::class, 'publish'])->name('posts.publish');
-    
-        });
-
+        Route::get('/trash', [PostController::class, 'trash'])->name('posts.trash');
         Route::post('/posts/upload-image', [PostController::class, 'uploadImage'])->name('posts.uploadImage');
 
-        // Rotte per Tag con Permessi
-        Route::middleware('role:admin')->group(function () {
-        Route::resource('/tags', TagController::class)->except(['show', 'edit']);
     });
+    // EDITORs
+    Route::middleware('role:admin|editor')->group(function () {
+        Route::get('/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
+        Route::get('/posts/publish/{post:slug}', [PostController::class, 'publish'])->name('posts.publish');
+    });
+
+    // ADMINs
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('/tags', TagController::class)->except(['show', 'edit']);
+        Route::put('/trash/permdelete/{post:slug}', [PostController::class, 'restore'])->name('posts.permDelete');
     });
 });
 
