@@ -15,6 +15,7 @@ class Post extends Model
         'title',
         'slug',
         'description',
+        'content',
         'featured',
         'user_id',
         'status',

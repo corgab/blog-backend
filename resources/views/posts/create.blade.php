@@ -29,10 +29,10 @@
                         @enderror
                     </div>
                     <div class="form-floating mb-2">
-                        <textarea class="form-control @error('description') is-invalid @enderror" name="description"
-                            placeholder="{{ __('Description') }}" rows="2">{{ old('description') }}</textarea>
+                        <textarea class="form-control @error('content') is-invalid @enderror" name="content" placeholder="{{ __('Content') }}"
+                            rows="2">{{ old('content') }}</textarea>
                         {{-- <label for="description">{{ __('Description') }}</label> --}}
-                        @error('description')
+                        @error('content')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -106,7 +106,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             tinymce.init({
-                selector: 'textarea[name=description]',
+                selector: 'textarea[name=content]',
                 plugins: 'advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
                 toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image | help',
                 height: 600,

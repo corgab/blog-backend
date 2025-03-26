@@ -24,7 +24,7 @@ class StorePostRequest extends FormRequest
         return [
             'title' => 'required|string|max:255|unique:posts,title',
             'slug' => 'nullable|string|unique:posts,slug',
-            'description'=> 'nullable|string',
+            'content'=> 'nullable|string',
             'image' => ' nullable|image|mimes:jpeg,png,webp,jpg|max:2048',
             'featured' => 'required|boolean',
             'tag_id' => 'required|array',
