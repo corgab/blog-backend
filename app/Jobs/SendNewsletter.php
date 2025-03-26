@@ -37,11 +37,10 @@ class SendNewsletter implements ShouldQueue
         $posts = Post::orderBy('created_at', 'desc')->where('status', 'published')->where('featured', true)->with('tags')->take(3)->get();
 
         foreach ($this->subscribers as $subscriber) {
-            \Log::info('Invio newsletter a: ' . $subscriber->email);
-
             // Invia la mail
             Mail::to($subscriber->email)->send(new NewsletterMail($posts));
 
+            \Log::info('Invio newsletter a: ' . $subscriber->email . ' con successo');
             sleep(5);
         }
     }
