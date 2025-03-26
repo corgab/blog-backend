@@ -21,7 +21,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::orderBy('id', 'asc')->get();
+        $tags = Tag::orderBy('id', 'asc')->withCount('posts')->get();
+
         return view('tags.index', compact('tags'));
     }
 

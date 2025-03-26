@@ -48,10 +48,10 @@
                 </div>
             </div>
         </div>
-        @if ($post->description)
+        @if ($post->content)
             <h3>{{ __('Content') }}</h3>
             <div>
-                {!! $post->description !!}
+                {!! $post->content !!}
             </div>
         @endif
 
