@@ -52,7 +52,7 @@ Route::middleware(['auth'])->group(function () { // ->prefix('admin') ,'role:adm
     // ADMINs
     Route::middleware('role:admin')->group(function () {
         Route::resource('/tags', TagController::class)->except(['show', 'edit']);
-        Route::put('/trash/permdelete/{post:slug}', [PostController::class, 'restore'])->name('posts.permDelete');
+        Route::put('/trash/permdelete/{post:slug}', [PostController::class, 'permDelete'])->name('posts.permDelete');
     });
 });
 

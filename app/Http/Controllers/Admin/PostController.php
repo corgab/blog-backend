@@ -220,7 +220,6 @@ class PostController extends Controller
 
         if($user->hasRole('admin')) {
 
-            $user = Auth::user();
             $posts = Post::onlyTrashed()
             ->orderBy('created_at','desc')
             // ->where('user_id', $user->id)
