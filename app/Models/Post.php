@@ -14,11 +14,13 @@ class Post extends Model
     protected $fillable = [
         'title',
         'slug',
+        'image',
         'description',
         'content',
         'featured',
         'user_id',
         'status',
+        'meta_description'
     ];
 
     public function user()
@@ -40,7 +42,7 @@ class Post extends Model
     public function getReadingTimeAttribute()
     {
         // Recupera il contenuto del post
-        $content = $this->description; 
+        $content = $this->content;
     
         // Rimuove tutti i tag HTML per ottenere solo il testo
         $text = strip_tags($content);

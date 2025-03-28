@@ -67,7 +67,15 @@ class PostController extends Controller
 
         // Gestisci l'immagine
         if ($request->hasFile('image')) {
-            $form_data['image'] = $this->uploadImage($request);
+            // Prendi il file
+            $file = $request->file('image');
+
+            // Nome
+            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            // Salva in
+            $file->storeAs('/cover_images', $fileName);
+
+            $form_data['image'] = url('storage/cover_images/' . $fileName);
         }
 
         $form_data['title'] = strtoupper($form_data['title']);
@@ -113,8 +121,7 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
-    {
+    public function edit(Post $post) {
         $user = Auth::user();
         // Carica le relazioni tags
         $post->load('tags');
@@ -135,8 +142,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, Post $post)
-    {
+    public function update(UpdatePostRequest $request, Post $post) {
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
 
@@ -180,8 +186,6 @@ class PostController extends Controller
         return to_route('posts.index')->with('success', 'Post modificato con successo!');
     }
 
-    
-    
     /**
      * Remove the specified resource from storage.
      */
@@ -262,20 +266,22 @@ class PostController extends Controller
 
     }
 
-    public function uploadImage(Request $request)
-    {
+    public function uploadImage(Request $request) {
+
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
+
             try {
                 $file = $request->file('image');
                 $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-                
+
+                // dd($fileName);
                 // Salva il file nella cartella 'uploads' dentro storage/app/public
-                $file->storeAs('/uploads', $fileName);
+                $file->storeAs('/post_images', $fileName);
                 // Log::alert(url('storage/uploads/' . $fileName));
                 // Restituisci l'URL completo dell'immagine
                 return response()->json([
                     'success' => true,
-                    'imageUrl' => url('storage/uploads/' . $fileName) // Assicurati che l'URL restituito sia completo
+                    'imageUrl' => url('storage/post_images/' . $fileName) // Assicurati che l'URL restituito sia completo
                 ]);
             } catch (\Exception $e) {
                 // In caso di errore
@@ -285,7 +291,5 @@ class PostController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Nessun file immagine valido trovato.']);
     }
-
-
     
 }

@@ -30,6 +30,7 @@ class UpdatePostRequest extends FormRequest
             'status' => 'required|in:draft,published',
             'tag_id' => 'required|array',
             'tag_id.*' => 'exists:tags,id',
+            'meta_description' => 'nullable|string|max:255',
         ];
     }
 
