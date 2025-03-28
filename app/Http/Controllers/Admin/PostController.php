@@ -75,7 +75,7 @@ class PostController extends Controller
             // Salva in
             $file->storeAs('/cover_images', $fileName);
 
-            $form_data['image'] = url('storage/cover_images/' . $fileName);
+            $form_data['image'] = asset('storage/cover_images/' . $fileName);
         }
 
         $form_data['title'] = strtoupper($form_data['title']);
@@ -146,16 +146,32 @@ class PostController extends Controller
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
 
-        // // Se la descrizione è stata modificata, aggiorna gli URL delle immagini
-        // if (isset($form_data['description'])) {
-        //     $form_data['description'] = $this->updateImageUrls($form_data['description']);
-        // }
+        // Gestisci l'immagine
+        if ($request->hasFile('image')) {
+            // Se ha gia un immagine
+            if ($post->image) {
+                // Rimuove '/storage'
+                $imagePath = str_replace('/storage', '', $post->image); 
+                
+                // Verifica se il file esiste nel disco 'public'
+                if (Storage::disk('public')->exists($imagePath)) {
+                    // Elimina il file
+                    Storage::disk('public')->delete($imagePath);
+                } else {
+                    Log::warning("Immagine cover non eliminata: " . $imagePath);
+                }
+            }
 
-        // // Gestisci l'immagine
-        // if ($request->hasFile('image')) {
-        //     // Se il post ha già una immagine, la rimuoviamo prima di caricarne una nuova
-        //     $form_data['image'] = $this->uploadImage($request, $post->image);
-        // }
+            // Prendi il file
+            $file = $request->file('image');
+
+            // Nome
+            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            // Salva in
+            $file->storeAs('/cover_images', $fileName);
+
+            $form_data['image'] = asset('storage/cover_images/' . $fileName);
+        }
 
         // Controllo del ruolo utente
         if (Auth::user()->hasRole('author')) {

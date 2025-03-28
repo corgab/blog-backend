@@ -62,6 +62,30 @@
                         @enderror
                     </div>
 
+                    {{-- Immagine --}}
+                    @if ($post->image)
+                        <div>
+                            <img src={{ $post->image }} alt="Post Image">
+                        </div>
+                        <div class="my-4">
+                            <label for="image" class="form-label">{{ __('Cover image') }}</label>
+                            <input class="form-control @error('image') is-invalid @enderror" type="file" id="image"
+                                name="image">
+                            @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @else
+                        <div class="my-4">
+                            <label for="image" class="form-label">{{ __('Cover image') }}</label>
+                            <input class="form-control @error('image') is-invalid @enderror" type="file" id="image"
+                                name="image">
+                            @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @endif
+
                     {{-- Featured --}}
                     <div class="form-check form-switch my-3">
                         <input type="hidden" value="0" id="featured-hidden" name="featured">

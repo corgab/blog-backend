@@ -10,9 +10,15 @@
 
         <a href="{{ route('posts.edit', $post) }}" class="btn btn-warning mb-4"><i class="bi bi-pencil-square"></i>
             {{ __('Edit') }}</a>
-        <div class="text-center">
-            <img src={{ $post->image }} alt="post image" class="img-fluid">
-        </div>
+        @if ($post->image)
+            <div class="text-center">
+                <img src={{ $post->image }} alt="post image" class="img-fluid">
+            </div>
+        @else
+            <div class="text-center">
+                <a class="" href={{ route('posts.edit', $post) }}>{{ __('Insert cover image') }}</a>
+            </div>
+        @endif
         <!-- Post Metadata -->
         <div class="row my-4">
             <div class="col-md-12">
