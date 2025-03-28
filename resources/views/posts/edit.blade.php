@@ -188,12 +188,6 @@
                 tinymce.triggerSave();
                 let content = textarea.value.trim();
 
-                // Se il campo è vuoto, mostriamo un errore manuale
-                if (!content) {
-                    alert("La descrizione è obbligatoria.");
-                    textarea.focus();
-                    event.preventDefault(); // Blocca l'invio del form
-                }
             });
         });
     </script>
