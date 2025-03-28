@@ -73,7 +73,7 @@
                         <input type="hidden" value="0" id="featured-hidden" name="featured">
                         <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured"
                             value="1" {{ old('featured') ? 'checked' : '' }}>
-                        <label class="form-check-label ms-2" for="featured">Premium</label>
+                        <label class="form-check-label ms-2" for="featured">{{ __('Featured') }}</label>
                     </div>
 
                     {{-- Stato --}}
@@ -91,6 +91,25 @@
                             @enderror
                         </div>
                     @endif
+                    {{-- Description --}}
+                    <div class="form-floating mb-2">
+                        <textarea class="form-control @error('description') is-invalid @enderror" name="description"
+                            placeholder="{{ __('Description') }}" rows="2">{{ old('description') }}</textarea>
+                        <label for="description">{{ __('Description') }}</label>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    {{-- META --}}
+                    <div class="form-floating mb-4">
+                        <input type="text" class="form-control @error('meta_description') is-invalid @enderror"
+                            id="meta_description" name="meta_description" value="{{ old('meta_description') }}"
+                            placeholder={{ __('Meta Description') }}>
+                        <label for="meta_description">{{ __('Meta Description') }}</label>
+                        @error('meta_description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
             </div>
         </form>

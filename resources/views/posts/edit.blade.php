@@ -88,6 +88,24 @@
                             @enderror
                         </div>
                     @endif
+                    {{-- Description --}}
+                    <div class="form-floating mb-2">
+                        <textarea class="form-control @error('description') is-invalid @enderror" name="description"
+                            placeholder="{{ __('Description') }}" rows="2">{{ old('description', $post->description) }}</textarea>
+                        <label for="description">{{ __('Description') }}</label>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    {{-- META --}}
+                    <div>
+                        <label for="meta_description" class="form-label">{{ __('Meta Description') }}</label>
+                        <input type="text" class="form-control" id="meta_description" name="meta_description"
+                            @error('meta_description') is-invalid @enderror
+                            value="{{ old('meta_description', $post->meta_description) }}"
+                            placeholder={{ __('Meta Description') }}>
+                    </div>
+
                 </div>
             </div>
         </form>
@@ -107,6 +125,9 @@
                 plugins: 'advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
                 toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help | image',
                 height: 600,
+                convert_urls: false,
+                relative_urls: false,
+                remove_script_host: false,
                 file_picker_callback: function(callback, value, meta) {
                     if (meta.filetype == 'image') {
                         var input = document.createElement('input');
