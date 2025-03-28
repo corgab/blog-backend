@@ -9,7 +9,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Mail\NewsletterMail;
-use App\Models\Subscriber;
 use App\Models\Post;
 use Illuminate\Support\Facades\Log;
 

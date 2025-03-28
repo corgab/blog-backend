@@ -30,8 +30,8 @@ class SendNewsletterCommand extends Command
 
     public function handle()
     {
-        $newsletters = Newsletter::all();
-        SendNewsletter::dispatch($newsletters);
+        $subscribers = Newsletter::all();
+        SendNewsletter::dispatch($subscribers);
         $this->info('Newsletter inviata con successo.');
     }
 
