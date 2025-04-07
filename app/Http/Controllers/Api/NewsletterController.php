@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Newsletter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Validation\ValidationException as Error;
 
 class NewsletterController extends Controller
 {
@@ -14,21 +14,44 @@ class NewsletterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'email' => 'required|email|unique:newsletters,email'
-        ]);
+    public function store(Request $request) {
+        try {
+            $validated = $request->validate([
+                'email' => 'required|email|unique:newsletters|email:rfc,dns',
+                'name' => 'nullable|string',
+                'terms' => 'required|accepted',
+                'privacy' => 'required|accepted',
+            ]);
+    
+            $newsletter = Newsletter::create([
+                'email' => $validated['email'],
+                'name' => $validated['name'] ?? 'User',
+                'terms_accepted' => true,
+                'terms_accepted_at' => now(),
+                'privacy_accepted' => true,
+                'privacy_accepted_at' => now(),
+                'consent_ip' => $request->ip(),
+                'consent_user_agent' => $request->userAgent(),
+            ]);
+    
+            Log::channel('newsletter')->info('Nuova iscrizione newsletter', [
+                'email' => $validated['email'],
+                'name' => $validated['name'],
+                'ip' => $request->ip(),
+                'user_agent' => substr($request->userAgent(), 0, 255),
+                'metadata' => $newsletter->only(['terms_accepted_at', 'privacy_accepted_at'])
+            ]);
+    
+            return response()->json("Ti sei iscritto alla newsletter di " . config('app.name'), 201);
+        }catch (Error $e) {
 
-        Newsletter::create($validated);
+            $firstError = $e->validator->errors()->first();
 
-        Log::info('Email aggiunta alla newsletter di: ', [
-            'email' => $validated['email'],
-            'ip' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-        ]);
-        return response()->json("Ti sei iscritto alla newsletter di " . config('app.name'), 201);
-
+            return response()->json([
+                'message' => 'Errore di validazione',
+                'error' => $firstError,
+            ], 422);
+        }
     }
 
     /**

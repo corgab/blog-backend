@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('newsletters', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->default('User');
             $table->string('email')->unique();
+            $table->boolean('terms_accepted')->default(false);
+            $table->timestamp('terms_accepted_at')->nullable();
+            $table->boolean('privacy_accepted')->default(false);
+            $table->timestamp('privacy_accepted_at')->nullable();
+            $table->ipAddress('consent_ip')->nullable();
             $table->timestamps();
         });
     }
