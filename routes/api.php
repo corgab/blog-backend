@@ -36,9 +36,6 @@ Route::get('/tags/{tag:slug}/featured', [TagController::class, 'showFeatures']);
 Route::post('/newsletter', [NewsletterController::class, 'store']);
 Route::delete('/newsletter/{email}', [NewsletterController::class, 'destroy']);
 
-Route::get('/users/{user:slug}', [UserController::class, 'show']);
-
-
 // Gestione Utente
 Route::middleware('api')->group(function () {
     // Rotte pubbliche
