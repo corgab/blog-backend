@@ -46,6 +46,18 @@ class TagController extends Controller
         $slug = $base_slug;
         $n = 0;
 
+        // Gestisci l'immagine
+        if ($request->hasFile('image')) {
+            // Prendi il file
+            $file = $request->file('image');
+            // Nome
+            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            // Salva in
+            $file->storeAs('/cover_tags', $fileName);
+
+            $form_data['image'] = asset('storage/cover_tags/' . $fileName);
+        }
+
         do {
             $find = Tag::where('slug', $slug)->first();
             if ($find !== null) {

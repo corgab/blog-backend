@@ -23,7 +23,8 @@ class StoreTagRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|unique:tags,name',
-            'slug' => 'nullable|string|unique:posts,slug',
+            'slug' => 'nullable|string|unique:tags,slug',
+            'image' => ' nullable|image|mimes:jpeg,png,webp,jpg|max:2048',
         ];
     }
 }

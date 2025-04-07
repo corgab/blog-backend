@@ -11,6 +11,7 @@
         <thead>
             <tr>
                 <th scope="col">Name</th>
+                <th scope="col">image</th>
                 <th scope="col">Posts</th>
                 <th scope="col">Actions</th>
             </tr>
@@ -19,6 +20,15 @@
             @forelse($tags as $tag)
                 <tr>
                     <th scope="row">{{ $tag->name }}</th>
+                    @if ($tag->image)
+                        {
+                        <td>
+                            <img src={{ url($tag->image) }} alt="tag image" class="img-fluid">
+                        </td>
+                        }
+                    @else
+                        <td>nessun immagine</td>
+                    @endif
                     <td>{{ $tag->posts_count }}</td>
                     <td>
                         @can('manage tags')

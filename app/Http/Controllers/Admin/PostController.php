@@ -69,7 +69,6 @@ class PostController extends Controller
         if ($request->hasFile('image')) {
             // Prendi il file
             $file = $request->file('image');
-
             // Nome
             $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
             // Salva in
