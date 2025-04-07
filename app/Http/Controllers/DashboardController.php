@@ -20,7 +20,7 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
             $totalPosts = Post::where('status','published')->count();
-            $totalDrafts = Post::count();
+            $totalDrafts = Post::where('status', 'draft')->count();
 
             return view('dashboard', compact('posts','user','totalPosts','totalDrafts'));
 
