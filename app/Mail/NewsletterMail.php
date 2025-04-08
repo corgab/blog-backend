@@ -14,13 +14,14 @@ class NewsletterMail extends Mailable
     use Queueable, SerializesModels;
 
     public $posts;
-
+    public $user;
     /**
      * Create a new message instance.
      */
-    public function __construct($posts)
+    public function __construct($posts, $user)
     {
         $this->posts = $posts;
+        $this->user = $user;
     }
 
     /**
@@ -42,6 +43,7 @@ class NewsletterMail extends Mailable
             view: 'emails.newsletter',
             with: [
                 'posts' => $this->posts,
+                'user' => $this->user
             ],
         );
     }

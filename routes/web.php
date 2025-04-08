@@ -6,8 +6,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\TagController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
-
-
+use App\Mail\NewsletterMail;
+use App\Models\Post;
+use App\Models\Newsletter;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,13 @@ Route::middleware(['auth'])->group(function () { // ->prefix('admin') ,'role:adm
         Route::resource('/tags', TagController::class)->except(['show', 'edit']);
         Route::put('/trash/permdelete/{post:slug}', [PostController::class, 'permDelete'])->name('posts.permDelete');
     });
+});
+
+Route::get('/mail', function () {
+    $posts = Post::orderBy('created_at', 'desc')->where('status', 'published')->where('featured', true)->with('tags')->take(3)->get();
+    $subscriber = Newsletter::first();
+
+    return (new NewsletterMail($posts, $subscriber->name))->render();
 });
 
 // Route::get('/preview-newsletter', function () {

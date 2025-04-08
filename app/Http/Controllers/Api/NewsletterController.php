@@ -33,10 +33,10 @@ class NewsletterController extends Controller
                 'consent_ip' => $request->ip(),
                 'consent_user_agent' => $request->userAgent(),
             ]);
-    
+
             Log::channel('newsletter')->info('Nuova iscrizione newsletter', [
                 'email' => $validated['email'],
-                'name' => $validated['name'],
+                'name' => $validated['name'] ?? 'User',
                 'ip' => $request->ip(),
                 'user_agent' => substr($request->userAgent(), 0, 255),
                 'metadata' => $newsletter->only(['terms_accepted_at', 'privacy_accepted_at'])

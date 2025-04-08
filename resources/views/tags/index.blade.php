@@ -21,18 +21,13 @@
                 <tr>
                     <th scope="row">{{ $tag->name }}</th>
                     @if ($tag->image)
-                        {
-                        <td>
-                            <img src={{ url($tag->image) }} alt="tag image" class="img-fluid">
-                        </td>
-                        }
+                        <td>immagine</td>
                     @else
                         <td>nessun immagine</td>
                     @endif
                     <td>{{ $tag->posts_count }}</td>
                     <td>
                         @can('manage tags')
-                            {{-- <a href="{{ route('tags.edit', $tag) }}" class="btn btn-warning">Edit</a> --}}
                             <form action="{{ route('tags.destroy', $tag) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')

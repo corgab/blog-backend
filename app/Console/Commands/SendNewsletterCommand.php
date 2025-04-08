@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Newsletter;
 use App\Jobs\SendNewsletter;
+use App\Models\Post;
 
 
 class SendNewsletterCommand extends Command
@@ -31,8 +32,10 @@ class SendNewsletterCommand extends Command
     public function handle()
     {
         $subscribers = Newsletter::all();
-        SendNewsletter::dispatch($subscribers);
-        $this->info('Newsletter inviata con successo.');
+        $posts = Post::where('status', 'published')->latest()->take(3)->get();
+        SendNewsletter::dispatch($subscribers, $posts);
+        
+        $this->info("Newsletter inviata gli iscritti");
     }
 
 }

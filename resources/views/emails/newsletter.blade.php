@@ -137,7 +137,7 @@
             <img class="logo" src={{ url('/storage/images/logo-white.svg') }} alt="Logo del blog">
             <div>La tua {{ config('app.name') }} Newsletter️️</div>
         </div>
-        <h1>Ciao!</h1>
+        <h1>Ciao {{ $user }}</h1>
         <p>Siamo felici di ritrovarti! Ecco le ultime novità:</p>
 
         @foreach ($posts as $post)

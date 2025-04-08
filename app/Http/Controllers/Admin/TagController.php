@@ -74,7 +74,6 @@ class TagController extends Controller
         return to_route('tags.index');
     }
     
-
     /**
      * Remove the specified resource from storage.
      */

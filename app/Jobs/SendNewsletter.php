@@ -10,39 +10,44 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Mail\NewsletterMail;
 use App\Models\Post;
+use App\Models\Newsletter;
 use Illuminate\Support\Facades\Log;
+use Throwable;
+use Illuminate\Support\Collection;
 
 class SendNewsletter implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
-    public $backoff = 10; 
+    public $maxExceptions = 2;
+    public $timeout = 60;
+    public $backoff = [30, 60, 120];
 
-    protected $subscribers;
+    public $subscribers;
+    public $posts;
 
-    public function __construct($subscribers)
+    public function __construct(Collection $subscribers, Collection $posts)
     {
         $this->subscribers = $subscribers;
+        $this->posts = $posts;
     }
-
-    // app/Jobs/SendNewsletter.php
 
     public function handle()
     {
-        \Log::info('Job eseguito per l\'invio della newsletter.');
 
-        // Recupera gli ultimi 3 posts featured
-        $posts = Post::orderBy('created_at', 'desc')->where('status', 'published')->where('featured', true)->with('tags')->take(3)->get();
+        // Log::error($subscribers);
+        foreach ($this->subscribers as $index => $subscriber) {
+            try {
+                Log::info("Invio mail a: {$subscriber->email}");
 
-        foreach ($this->subscribers as $subscriber) {
-            // Invia la mail
-            Mail::to($subscriber->email)->send(new NewsletterMail($posts));
+                Mail::to($subscriber->email)
+                    ->send(new NewsletterMail($this->posts, $subscriber->name));
 
-            \Log::info('Invio newsletter a: ' . $subscriber->email . ' con successo');
-            sleep(5);
+                Log::info("Mail inviata a: {$subscriber->email}");
+            } catch (Throwable $e) {
+                Log::error("Impossibile inviare la newsletter a {$subscriber->email}: " . $e->getMessage());
+            }
         }
     }
-
-    
 }
