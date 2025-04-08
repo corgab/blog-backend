@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->string('slug')->unique();
             $table->string('image')->nullable();
-            $table->string('description')->nullable();
-            $table->text('content')->nullable();
+            $table->text('description')->nullable();
+            $table->mediumText('content')->nullable();
             $table->boolean('featured');
             $table->enum('status', ['draft', 'published'])->default('draft');
             // $table->text('meta_keywords')->nullable();

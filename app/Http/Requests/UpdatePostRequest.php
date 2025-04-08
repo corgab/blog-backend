@@ -22,16 +22,16 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' =>'required|string|max:255',
-            'slug' =>'nullable|string',
-            'description' => 'nullable|string|max:500',
-            'content'=> 'nullable|string',
+            'title' => 'required|string|max:255',
+            'slug' => 'nullable|string',
+            'description' => 'nullable|string|max:65000',
+            'content' => 'nullable|string|max:16000000',
             'image' => ' nullable|image|mimes:jpeg,png,webp,jpg|max:2048',
             'featured' => 'required|boolean',
             'status' => 'required|in:draft,published',
             'tag_id' => 'required|array',
             'tag_id.*' => 'exists:tags,id',
-            'meta_description' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:65000',
         ];
     }
 
@@ -58,5 +58,4 @@ class UpdatePostRequest extends FormRequest
 
         ];
     }
-
 }
