@@ -74,7 +74,6 @@ class PostController extends Controller
             $form_data['image'] = url('storage/cover_images/' . $fileName);
         }
 
-        $form_data['title'] = strtoupper($form_data['title']);
         $form_data['user_id'] = Auth::id(); // Assegna l'ID dell'utente autenticato
         $form_data['status'] = $request->input('status', 'draft'); // Imposta lo stato, predefinito a 'draft'
 
@@ -190,8 +189,6 @@ class PostController extends Controller
             }
             $form_data['slug'] = $slug;
         }
-
-        $form_data['title'] = strtoupper($form_data['title']);
 
         // Aggiorna il post
         $post->update($form_data);
