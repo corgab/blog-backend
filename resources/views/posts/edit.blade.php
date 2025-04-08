@@ -65,7 +65,7 @@
                     {{-- Immagine --}}
                     @if ($post->image)
                         <div>
-                            <img src={{ $post->image }} alt="Post Image">
+                            <img src={{ $post->image }} alt="Post Image" class="img-fluid">
                         </div>
                         <div class="my-4">
                             <label for="image" class="form-label">{{ __('Cover image') }}</label>

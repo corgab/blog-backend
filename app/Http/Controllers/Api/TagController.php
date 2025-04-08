@@ -10,14 +10,15 @@ use App\Models\Tag;
 
 class TagController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $perPage = $request->input('per_page', 5);
 
-        $tags = Tag::with(['posts' => function($query) {
+        $tags = Tag::with(['posts' => function ($query) {
             $query->where('status', 'published'); // Filtra i post con publisher
         }])
-        ->take($perPage)
-        ->get();
+            ->take($perPage)
+            ->get();
 
         return TagResource::collection($tags);
     }
@@ -40,8 +41,8 @@ class TagController extends Controller
         $tag->load([
             'posts' => function ($query) use ($perPage) {
                 $query->where('status', 'published')
-                ->where('featured', true)
-                ->take($perPage);
+                    ->where('featured', true)
+                    ->take($perPage);
             },
             'posts.tags'
         ]);
@@ -53,11 +54,11 @@ class TagController extends Controller
         $tags = Tag::whereHas('posts', function ($query) {
             $query->where('status', 'published');
         })
-        ->withCount(['posts' => function ($query) {
-            $query->where('status', 'published');
-        }])
-        ->get();
-    
-        return response()->json($tags);
+            ->withCount(['posts' => function ($query) {
+                $query->where('status', 'published');
+            }])
+            ->get();
+
+        return TagResource::collection($tags);
     }
 }
