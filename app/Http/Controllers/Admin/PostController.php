@@ -10,7 +10,7 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Image;
 use App\Models\PostSection;
-use Intervention\Image\Facades\Image as InterventionImage; 
+use Intervention\Image\Facades\Image as InterventionImage;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -26,19 +26,17 @@ class PostController extends Controller
 
     {
         $user = Auth::user();
-        if($user->hasRole('admin') || $user->hasRole('editor')) {
+        if ($user->hasRole('admin') || $user->hasRole('editor')) {
             $posts = Post::orderBy('created_at', 'desc')
-            ->with('user','tags')
-            ->get();
-
+                ->with('user', 'tags')
+                ->get();
         } else {
-            $posts = Post::orderBy('created_at', 'desc')->where('user_id', $user->id)->with('user','tags')->get();
-
+            $posts = Post::orderBy('created_at', 'desc')->where('user_id', $user->id)->with('user', 'tags')->get();
         }
 
         // dd($posts);
 
-        return view('posts.index', compact('user','posts'));
+        return view('posts.index', compact('user', 'posts'));
     }
 
     /**
@@ -53,8 +51,7 @@ class PostController extends Controller
         // Tutti i tags
         $tags = Tag::orderBy('name', 'asc')->get();
 
-        return view('posts.create', compact('user','posts','tags'));
-
+        return view('posts.create', compact('user', 'posts', 'tags'));
     }
 
     /**
@@ -74,7 +71,7 @@ class PostController extends Controller
             // Salva in
             $file->storeAs('/cover_images', $fileName);
 
-            $form_data['image'] = asset('storage/cover_images/' . $fileName);
+            $form_data['image'] = url('storage/cover_images/' . $fileName);
         }
 
         $form_data['title'] = strtoupper($form_data['title']);
@@ -98,14 +95,14 @@ class PostController extends Controller
 
         // Creazione del nuovo post
         $new_post = Post::create($form_data);
-        
+
         $new_post->tags()->sync($request->input('tag_id'));
 
         return to_route('posts.index')->with('success', 'Post creato con successo!');
     }
 
 
-    
+
     /**
      * Display the specified resource.
      */
@@ -115,21 +112,22 @@ class PostController extends Controller
 
         return view('posts.show', compact('post', 'user'));
     }
-    
-    
+
+
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post) {
+    public function edit(Post $post)
+    {
         $user = Auth::user();
         // Carica le relazioni tags
         $post->load('tags');
-        
+
         $tags = Tag::orderBy('name', 'asc')->get();
 
         // Aggiungi la logica per trasformare i percorsi delle immagini in URL completi
         // $post->description = $this->updateImageUrls($post->description);
-        
+
         // se il post è pubblico e l'utente è author e editor
         if ($post->status == 'published' && $user->hasRole(['author', 'editor'])) {
             return redirect()->route('posts.index')->with('errMessage', 'Non puoi modificare un post pubblico');
@@ -141,7 +139,8 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, Post $post) {
+    public function update(UpdatePostRequest $request, Post $post)
+    {
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
 
@@ -150,14 +149,14 @@ class PostController extends Controller
             // Se ha gia un immagine
             if ($post->image) {
                 // Rimuove '/storage'
-                $imagePath = str_replace('/storage', '', $post->image); 
-                
+                $imagePath = str_replace('/storage', '', $post->image);
+
                 // Verifica se il file esiste nel disco 'public'
                 if (Storage::disk('public')->exists($imagePath)) {
                     // Elimina il file
                     Storage::disk('public')->delete($imagePath);
                 } else {
-                    Log::warning("Immagine cover non eliminata: " . $imagePath);
+                    Log::warning("Immagine copertina del Post non eliminata: " . $imagePath);
                 }
             }
 
@@ -169,7 +168,7 @@ class PostController extends Controller
             // Salva in
             $file->storeAs('/cover_images', $fileName);
 
-            $form_data['image'] = asset('storage/cover_images/' . $fileName);
+            $form_data['image'] = url('storage/cover_images/' . $fileName);
         }
 
         // Controllo del ruolo utente
@@ -193,7 +192,7 @@ class PostController extends Controller
         }
 
         $form_data['title'] = strtoupper($form_data['title']);
-        
+
         // Aggiorna il post
         $post->update($form_data);
         $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
@@ -204,11 +203,12 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post) {
+    public function destroy(Post $post)
+    {
 
         $user = Auth::user();
 
-        if($post->status == 'published' && $user->hasRole('author')) {
+        if ($post->status == 'published' && $user->hasRole('author')) {
             return back()->with('errMessage', 'Non puoi eliminare questo post perchè è pubblico');
         }
 
@@ -217,71 +217,73 @@ class PostController extends Controller
         return to_route('posts.index');
     }
 
-    public function drafts() {
+    public function drafts()
+    {
         $user = Auth::user();
-    
+
         $drafts = Post::where('status', 'draft')->get();
-        
-        return view('posts.drafts',compact('drafts', 'user'));
+
+        return view('posts.drafts', compact('drafts', 'user'));
     }
 
-    public function publish(Post $post) {
+    public function publish(Post $post)
+    {
         $post->status = 'published';
 
         $post->save();
 
         return redirect()->route('posts.drafts')->with('success', 'Post pubblicato con successo');
-
     }
 
-    public function trash() {
+    public function trash()
+    {
         $user = Auth::user();
 
-        if($user->hasRole('admin')) {
+        if ($user->hasRole('admin')) {
 
             $posts = Post::onlyTrashed()
-            ->orderBy('created_at','desc')
-            // ->where('user_id', $user->id)
-            ->get();
+                ->orderBy('created_at', 'desc')
+                // ->where('user_id', $user->id)
+                ->get();
 
-            return view('posts.trash', compact('posts','user'));
+            return view('posts.trash', compact('posts', 'user'));
         } else {
 
             $user = Auth::user();
             $posts = Post::onlyTrashed()
-            ->orderBy('created_at','desc')
-            ->where('user_id', $user->id)
-            ->get();
+                ->orderBy('created_at', 'desc')
+                ->where('user_id', $user->id)
+                ->get();
 
-            return view('posts.trash', compact('posts','user'));
-        } 
-
-
+            return view('posts.trash', compact('posts', 'user'));
+        }
     }
 
-    public function restore($slug) {
+    public function restore($slug)
+    {
         // Trova il post soft deleted usando lo slug
         $post = Post::withTrashed()->where('slug', $slug)->first();
-    
+
         if ($post) {
             $post->restore(); // Ripristina il post
             return redirect()->route('posts.trash')->with('success', 'Post ripristinato correttamente!');
         }
-    
+
         abort(404);
     }
 
-    public function permDelete($slug) {
+    public function permDelete($slug)
+    {
         $post = Post::withTrashed()->where('slug', $slug)->first();
 
-        if($post) {
+        if ($post) {
             $post->forceDelete(); // Elimina perma
             return back()->with('success', 'Post permanentemente eliminato!');
         }
-
     }
 
-    public function uploadImage(Request $request) {
+    public function uploadImage(Request $request)
+    {
 
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
 
@@ -306,5 +308,4 @@ class PostController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Nessun file immagine valido trovato.']);
     }
-    
 }

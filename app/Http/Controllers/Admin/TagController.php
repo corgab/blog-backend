@@ -13,7 +13,7 @@ class TagController extends Controller
     public function __construct()
     {
         // Solo utenti con permesso
-         $this->middleware('permission:manage tags');
+        $this->middleware('permission:manage tags');
     }
 
     /**
@@ -40,7 +40,7 @@ class TagController extends Controller
     public function store(StoreTagRequest $request)
     {
         $form_data = $request->validated();
-    
+
         // Creazione slug univoco
         $base_slug = Str::slug($form_data['name']);
         $slug = $base_slug;
@@ -55,7 +55,7 @@ class TagController extends Controller
             // Salva in
             $file->storeAs('/cover_tags', $fileName);
 
-            $form_data['image'] = asset('storage/cover_tags/' . $fileName);
+            $form_data['image'] = url('storage/cover_tags/' . $fileName);
         }
 
         do {
@@ -65,15 +65,15 @@ class TagController extends Controller
                 $slug = $base_slug . '-' . $n; // Incrementa lo slug se già esistente
             }
         } while ($find !== null);
-    
+
         $form_data['slug'] = $slug;
         $form_data['name'] = ucfirst($form_data['name']);
-    
+
         Tag::create($form_data);
-    
+
         return to_route('tags.index');
     }
-    
+
     /**
      * Remove the specified resource from storage.
      */
