@@ -61,4 +61,11 @@ class TagController extends Controller
 
         return TagResource::collection($tags);
     }
+
+    public function getAllTags()
+    {
+        $tags = Tag::all();
+
+        return TagResource::collection($tags);
+    }
 }

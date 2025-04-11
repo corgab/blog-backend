@@ -27,11 +27,13 @@ Route::get('/posts', [PostController::class, 'index']);
 Route::get('recentposts', [PostController::class, 'recentPosts']);
 Route::get('/posts/{post:slug}', [PostController::class, 'show']);
 Route::get('/posts-featured', [PostController::class, 'getFeaturedPosts']);
+Route::get('/posts-all', [PostController::class, 'getAllPosts']);
 
 Route::get('/tags', [TagController::class, 'index']);
 Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
 Route::get('/tags-with-count', [TagController::class, 'getTagsWithPostCount']);
 Route::get('/tags/{tag:slug}/featured', [TagController::class, 'showFeatures']);
+Route::get('/tags-all', [TagController::class, 'getAllTags']);
 
 Route::post('/newsletter', [NewsletterController::class, 'store']);
 Route::delete('/newsletter/{email}', [NewsletterController::class, 'destroy']);
@@ -52,5 +54,3 @@ Route::middleware('api')->group(function () {
     //     });
     // });
 });
-
-

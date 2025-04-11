@@ -24,9 +24,9 @@ class PostController extends Controller
             ->orderBy('created_at', 'desc')
             ->take($perPage)
             ->get();
-    
+
         return PostResource::collection($posts);
-    } 
+    }
 
     /**
      * Display the specified resource.
@@ -38,7 +38,8 @@ class PostController extends Controller
         return new PostResource($post);
     }
 
-    public function getFeaturedPosts(Request $request) {
+    public function getFeaturedPosts(Request $request)
+    {
 
         $perPage = $request->input('per_page', 5);
 
@@ -50,5 +51,12 @@ class PostController extends Controller
             ->get();
 
         return PostResource::collection($featuredPosts);
+    }
+
+    public function getAllPosts()
+    {
+        $posts = Post::all();
+
+        return PostResource::collection($posts);
     }
 }
