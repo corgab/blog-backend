@@ -55,7 +55,7 @@ class PostController extends Controller
 
     public function getAllPosts()
     {
-        $posts = Post::all();
+        $posts = Post::all()->where('status', 'published');
 
         return PostResource::collection($posts);
     }
