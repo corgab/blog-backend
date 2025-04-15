@@ -147,8 +147,13 @@ class PostController extends Controller
         if ($request->hasFile('image')) {
             // Se ha gia un immagine
             if ($post->image) {
+
+                $urlPath = parse_url($post->image, PHP_URL_PATH);
+
                 // Rimuove '/storage'
-                $imagePath = str_replace('/storage', '', $post->image);
+                $imagePath = ltrim(str_replace('/storage/', '', $urlPath), '/');
+
+                // dd($imagePath);
 
                 // Verifica se il file esiste nel disco 'public'
                 if (Storage::disk('public')->exists($imagePath)) {
