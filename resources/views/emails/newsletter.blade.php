@@ -155,6 +155,7 @@
     </div>
     <div class="footer">
         <p>&copy; {{ date('Y') }} {{ config('app.name') }}. Tutti i diritti riservati.</p>
+        {{-- Inserire unsubscribe --}}
         {{-- <div class="social-icons">
             <a href="SOCIAL_FACEBOOK_URL"><img src="facebook-icon.svg" alt="Facebook"></a>
             <a href="SOCIAL_TWITTER_URL"><img src="twitter-icon.svg" alt="Twitter"></a>
