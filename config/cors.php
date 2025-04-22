@@ -21,7 +21,7 @@ return [
 
     'allowed_origins' => [config('app.frontend_url')],
     // 'allowed_origins' => ['https://www.craftedhub.it/'],
-
+    // 'allowed_origins' => ['*'],
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
