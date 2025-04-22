@@ -31,7 +31,7 @@ class PostResource extends JsonResource
             'seo' => [
                 'meta_title' => $this->title,
                 'meta_description' => $this->meta_description ?? substr(strip_tags($this->description), 0, 160),
-                'canonical_url' => config('app.frontend_url') . $this->slug,
+                'canonical_url' => config('app.frontend_url') . "/" . $this->slug,
                 'og_image' => $this->image,
                 'og_type' => 'article'
             ]
