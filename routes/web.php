@@ -48,6 +48,7 @@ Route::middleware(['auth'])->group(function () { // ->prefix('admin') ,'role:adm
         Route::resource('/posts', PostController::class);
 
         Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
+        Route::get('/trash', [PostController::class, 'trash'])->name('posts.trash');
         Route::put('/trash/restore/{post:slug}', [PostController::class, 'restore'])->name('posts.restore');
         Route::post('/posts/upload-image', [PostController::class, 'uploadImage'])->name('posts.uploadImage');
 
