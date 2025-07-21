@@ -117,10 +117,16 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
-        
+
         'newsletter' => [
             'driver' => 'single',
             'path' => storage_path('logs/newsletter.log'),
+            'level' => 'info',
+        ],
+
+        'publish_post' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/posts.log'),
             'level' => 'info',
         ],
     ],
