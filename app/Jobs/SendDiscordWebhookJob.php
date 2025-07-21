@@ -49,6 +49,7 @@ class SendDiscordWebhookJob implements ShouldQueue
         **Data:** {$this->post->created_at->format('d/m/Y H:i')}
 
         🚀 Leggilo ora su https://www.craftedhub.it/
+        @here
         DISCORD;
 
         if(!app()->environment('production')) {
