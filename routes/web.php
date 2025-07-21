@@ -35,27 +35,31 @@ Route::middleware(['auth','verified'])->group(function () { // ->prefix('admin')
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Rotte per Post
-    Route::middleware('role:admin|editor|author')->group(function () {
+    Route::middleware('role:admin|editor|author')->group(function () {;
 
+        Route::middleware('role:admin')->group(function () {
+            Route::resource('/tags', TagController::class)->except(['show', 'edit']);
+
+            Route::get('/posts/approve', [PostController::class, 'approveIndex'])->name('posts.approve');
+            Route::post('/posts/{post:slug}/approve/', [PostController::class, 'approve'])->name('posts.approve.store');
+        });
         Route::resource('/posts', PostController::class);
+
         Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
-    
+
         Route::get('/trash', [PostController::class, 'trash'])->name('posts.trash');
         Route::put('/trash/restore/{post:slug}', [PostController::class, 'restore'])->name('posts.restore');
-    
-        Route::middleware('role:admin|editor')->group(function () {
-            Route::get('/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
-            Route::get('/posts/publish/{post:slug}', [PostController::class, 'publish'])->name('posts.publish');
-    
-        });
 
         Route::post('/posts/upload-image', [PostController::class, 'uploadImage'])->name('posts.uploadImage');
 
-        // Rotte per Tag con Permessi
-        Route::middleware('role:admin')->group(function () {
-        Route::resource('/tags', TagController::class)->except(['show', 'edit']);
     });
+
+    Route::middleware('role:admin|editor')->group(function () {
+        Route::get('/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
+        Route::get('/posts/publish/{post:slug}', [PostController::class, 'publish'])->name('posts.publish'); // Da spostare
+
     });
+
 });
 
 // Route::get('/preview-newsletter', function () {

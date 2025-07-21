@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('content')->nullable();
             $table->boolean('featured');
-            $table->enum('status', ['draft', 'published'])->default('draft');
+            $table->enum('status', ['draft', 'review', 'approved', 'published', 'archived'])->default('draft');
             $table->timestamps();
             $table->softDeletes();
         });

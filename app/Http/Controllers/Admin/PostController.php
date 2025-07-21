@@ -10,7 +10,7 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Image;
 use App\Models\PostSection;
-use Intervention\Image\Facades\Image as InterventionImage; 
+use Intervention\Image\Facades\Image as InterventionImage;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -46,7 +46,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        // Recupero l'utente 
+        // Recupero l'utente
         $user = Auth::user();
         // Trova i post associati all'utente
         $posts = Post::where('user_id', $user->id)->first();
@@ -91,14 +91,16 @@ class PostController extends Controller
 
         // Creazione del nuovo post
         $new_post = Post::create($form_data);
-        
+
         $new_post->tags()->sync($request->input('tag_id'));
+
+        dd($new_post);
 
         return to_route('posts.index')->with('success', 'Post creato con successo!');
     }
 
 
-    
+
     /**
      * Display the specified resource.
      */
@@ -108,8 +110,8 @@ class PostController extends Controller
 
         return view('posts.show', compact('post', 'user'));
     }
-    
-    
+
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -118,12 +120,12 @@ class PostController extends Controller
         $user = Auth::user();
         // Carica le relazioni tags
         $post->load('tags');
-        
+
         $tags = Tag::orderBy('name', 'asc')->get();
 
         // Aggiungi la logica per trasformare i percorsi delle immagini in URL completi
         // $post->description = $this->updateImageUrls($post->description);
-        
+
         // se il post è pubblico e l'utente è author e editor
         if ($post->status == 'published' && $user->hasRole(['author', 'editor'])) {
             return redirect()->route('posts.index')->with('errMessage', 'Non puoi modificare un post pubblico');
@@ -172,7 +174,7 @@ class PostController extends Controller
         }
 
         $form_data['title'] = strtoupper($form_data['title']);
-        
+
         // Aggiorna il post
         $post->update($form_data);
         $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
@@ -180,8 +182,6 @@ class PostController extends Controller
         return to_route('posts.index')->with('success', 'Post modificato con successo!');
     }
 
-    
-    
     /**
      * Remove the specified resource from storage.
      */
@@ -200,10 +200,10 @@ class PostController extends Controller
 
     public function drafts() {
         $user = Auth::user();
-    
+
         $drafts = Post::where('status', 'draft')->get();
-        
-        return view('posts.drafts',compact('drafts', 'user'));
+
+        return view('posts.approve',compact('drafts', 'user'));
     }
 
     public function publish(Post $post) {
@@ -236,7 +236,7 @@ class PostController extends Controller
             ->get();
 
             return view('posts.trash', compact('posts','user'));
-        } 
+        }
 
 
     }
@@ -244,12 +244,12 @@ class PostController extends Controller
     public function restore($slug) {
         // Trova il post soft deleted usando lo slug
         $post = Post::withTrashed()->where('slug', $slug)->first();
-    
+
         if ($post) {
             $post->restore(); // Ripristina il post
             return redirect()->route('posts.trash')->with('success', 'Post ripristinato correttamente!');
         }
-    
+
         abort(404);
     }
 
@@ -260,7 +260,7 @@ class PostController extends Controller
             try {
                 $file = $request->file('image');
                 $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-                
+
                 // Salva il file nella cartella 'uploads' dentro storage/app/public
                 $file->storeAs('/uploads', $fileName);
                 // Log::alert(url('storage/uploads/' . $fileName));
@@ -279,5 +279,22 @@ class PostController extends Controller
     }
 
 
-    
+    public function approveIndex()
+    {
+
+        $posts = Post::where('status', 'draft')->get();
+
+        return view('posts.approve', compact('posts'));
+    }
+
+    public function approve(Post $post) {
+
+        $post->status = 'approved';
+
+        $post->save();
+
+        return redirect()->route('posts.approve', $post)->with('success', 'Post approvato con successo');
+    }
+
+
 }
