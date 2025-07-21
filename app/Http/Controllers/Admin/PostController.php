@@ -210,7 +210,7 @@ class PostController extends Controller
 
         $user = Auth::user();
 
-        if ($post->status == 'published' && $user->hasRole('author')) {
+        if ($post->status == 'published') {
             return back()->with('errMessage', 'Non puoi eliminare questo post perchè è pubblico');
         }
 

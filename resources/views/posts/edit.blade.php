@@ -96,7 +96,19 @@
 
                     {{-- Stato --}}
                     @if (Auth::user()->hasRole('author'))
-                        <input type="hidden" name="status" value="draft">
+                        <div class="form-floating mb-4">
+                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
+                                <option value="draft" {{ old('status', $post->status) == 'draft' ? 'selected' : '' }}>
+                                    {{ __('Draft') }}</option>
+                                <option value="published"
+                                    {{ old('status', $post->status) == 'review' ? 'selected' : '' }}>
+                                    In Revisione</option>
+                            </select>
+                            <label for="status">{{ __('Status') }}</label>
+                            @error('status')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     @else
                         <div class="form-floating mb-4">
                             <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
@@ -203,9 +215,6 @@
                 }
             });
 
-            // Rimuove l'attributo required dal <textarea> originale per evitare errori di focus
-            let textarea = document.querySelector('textarea[name=description]');
-            textarea.removeAttribute('required');
 
             // Assicura che i dati vengano aggiornati prima dell'invio del form
             document.getElementById("post-form").addEventListener("submit", function(event) {
