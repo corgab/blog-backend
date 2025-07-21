@@ -36,10 +36,9 @@
                     </div>
 
                     <div class="form-floating mb-2">
-                        <textarea class="form-control @error('description') is-invalid @enderror" name="description"
-                            placeholder="{{ __('Description') }}" rows="2" required>{{ old('description', $post->description) }}</textarea>
+                        <textarea class="form-control @error('content') is-invalid @enderror" name="content" rows="2" required>{{ old('content', $post->content) }}</textarea>
                         {{-- <label for="description">{{ __('Description') }}</label> --}}
-                        @error('description')
+                        @error('content')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -79,8 +78,8 @@
                                 <option value="draft" {{ old('status', $post->status) == 'draft' ? 'selected' : '' }}>
                                     {{ __('Draft') }}</option>
                                 <option value="published"
-                                    {{ old('status', $post->status) == 'published' ? 'selected' : '' }}>
-                                    {{ __('Published') }}</option>
+                                    {{ old('status', $post->status) == 'approved' ? 'selected' : '' }}>
+                                    Approvato</option>
                             </select>
                             <label for="status">{{ __('Status') }}</label>
                             @error('status')
@@ -103,7 +102,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             tinymce.init({
-                selector: 'textarea[name=description]',
+                selector: 'textarea[name=content]',
                 plugins: 'advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
                 toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help | image',
                 height: 600,
@@ -159,7 +158,7 @@
             });
 
             // Rimuove l'attributo required dal <textarea> originale per evitare errori di focus
-            let textarea = document.querySelector('textarea[name=description]');
+            let textarea = document.querySelector('textarea[name=content]');
             textarea.removeAttribute('required');
 
             // Assicura che i dati vengano aggiornati prima dell'invio del form
@@ -167,12 +166,6 @@
                 tinymce.triggerSave();
                 let content = textarea.value.trim();
 
-                // Se il campo è vuoto, mostriamo un errore manuale
-                if (!content) {
-                    alert("La descrizione è obbligatoria.");
-                    textarea.focus();
-                    event.preventDefault(); // Blocca l'invio del form
-                }
             });
         });
     </script>

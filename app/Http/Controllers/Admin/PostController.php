@@ -94,8 +94,6 @@ class PostController extends Controller
 
         $new_post->tags()->sync($request->input('tag_id'));
 
-        dd($new_post);
-
         return to_route('posts.index')->with('success', 'Post creato con successo!');
     }
 
@@ -179,7 +177,7 @@ class PostController extends Controller
         $post->update($form_data);
         $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
 
-        return to_route('posts.index')->with('success', 'Post modificato con successo!');
+        return redirect()->route('posts.index')->with('success', 'Post modificato con successo!');
     }
 
     /**
