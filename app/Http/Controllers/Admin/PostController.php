@@ -44,7 +44,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        // Recupero l'utente 
+        // Recupero l'utente
         $user = Auth::user();
         // Trova i post associati all'utente
         $posts = Post::where('user_id', $user->id)->first();
@@ -199,7 +199,7 @@ class PostController extends Controller
         $post->update($form_data);
         $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
 
-        return to_route('posts.index')->with('success', 'Post modificato con successo!');
+        return redirect()->route('posts.index')->with('success', 'Post modificato con successo!');
     }
 
     /**
@@ -293,7 +293,6 @@ class PostController extends Controller
                 $file = $request->file('image');
                 $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
 
-                // dd($fileName);
                 // Salva il file nella cartella 'uploads' dentro storage/app/public
                 $file->storeAs('/post_images', $fileName);
                 // Log::alert(url('storage/uploads/' . $fileName));
@@ -310,4 +309,23 @@ class PostController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Nessun file immagine valido trovato.']);
     }
+
+    public function approveIndex()
+    {
+
+        $posts = Post::where('status', 'draft')->get();
+
+        return view('posts.approve', compact('posts'));
+    }
+
+    public function approve(Post $post) {
+
+        $post->status = 'approved';
+
+        $post->save();
+
+        return redirect()->route('posts.approve', $post)->with('success', 'Post approvato con successo');
+    }
+
+
 }

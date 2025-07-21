@@ -39,8 +39,8 @@
                 </div>
 
                 <div class="col-lg-4 col-md-12">
-                    {{-- Tags --}}
-                    <h5 class="mb-3">Tags</h5>
+                    {{-- Categorie --}}
+                    <h5 class="mb-3">Categorie</h5>
                     <div class="row">
                         <div class="col row row-cols-2">
                             @foreach ($tags as $tag)
@@ -73,17 +73,18 @@
                         <input type="hidden" value="0" id="featured-hidden" name="featured">
                         <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured"
                             value="1" {{ old('featured') ? 'checked' : '' }}>
-                        <label class="form-check-label ms-2" for="featured">{{ __('Featured') }}</label>
+                        <label class="form-check-label ms-2" for="featured">Featured</label>
                     </div>
 
                     {{-- Stato --}}
                     @if (Auth::user()->hasRole('author'))
                         <input type="hidden" name="status" value="draft">
+                        <input type="checkbox" name="review" value="review" @selected(old('review') == 'review')">
                     @else
                         <div class="form-floating mb-4">
                             <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
                                 <option value="draft" @selected(old('status') == 'draft')>{{ __('Draft') }}</option>
-                                <option value="published" @selected(old('status') == 'published')>{{ __('Published') }}</option>
+                                <option value="approved" @selected(old('approved') == 'approved')>Approvato</option>
                             </select>
                             <label for="status">{{ __('Status') }}</label>
                             @error('status')

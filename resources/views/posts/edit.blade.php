@@ -46,8 +46,8 @@
                 </div>
 
                 <div class="col-lg-4 col-md-12">
-                    {{-- Tags --}}
-                    <h5 class="mb-3">Tags</h5>
+                    {{-- Categorie --}}
+                    <h5 class="mb-3">Categorie</h5>
                     <div class="row row-cols-2">
                         @foreach ($tags as $tag)
                             <div class="form-check col">
@@ -91,7 +91,7 @@
                         <input type="hidden" value="0" id="featured-hidden" name="featured">
                         <input class="form-check-input" type="checkbox" role="switch" id="featured" name="featured"
                             value="1" {{ old('featured', $post->featured) ? 'checked' : '' }}>
-                        <label class="form-check-label ms-2" for="featured">Premium</label>
+                        <label class="form-check-label ms-2" for="featured">Featured</label>
                     </div>
 
                     {{-- Stato --}}
@@ -103,8 +103,8 @@
                                 <option value="draft" {{ old('status', $post->status) == 'draft' ? 'selected' : '' }}>
                                     {{ __('Draft') }}</option>
                                 <option value="published"
-                                    {{ old('status', $post->status) == 'published' ? 'selected' : '' }}>
-                                    {{ __('Published') }}</option>
+                                    {{ old('status', $post->status) == 'approved' ? 'selected' : '' }}>
+                                    Approvato</option>
                             </select>
                             <label for="status">{{ __('Status') }}</label>
                             @error('status')

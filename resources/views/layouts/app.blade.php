@@ -31,14 +31,12 @@
             @if (Auth::user()->hasRole('user'))
                 <!-- Logica utente -->
             @else
-                <a href="{{ route('posts.index') }}">All Posts</a>
-                <a href="{{ route('posts.create') }}">Create New Post</a>
+                <a href="{{ route('posts.index') }}">Posts</a>
+                <a href="{{ route('posts.create') }}">Crea nuovo post</a>
                 <a href="{{ route('posts.trash') }}">Cestino</a>
 
-                @if (Auth::user()->hasRole('admin') || $user->hasRole('editor'))
-                    <a href="{{ route('posts.drafts') }}">Draft Posts</a>
-                @endif
                 @if (Auth::user()->hasRole('admin'))
+                    <a href="{{ route('posts.approve') }}">Approva Posts</a>
                     <a href="{{ route('register') }}">Registra un Utente</a>
                     <a href="{{ route('tags.index') }}">Tags</a>
                 @endif

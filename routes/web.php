@@ -29,6 +29,7 @@ use App\Models\Newsletter;
 Route::middleware(['auth'])->group(function () { // ->prefix('admin') ,'role:admin|editor|author'
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
         // Rotte per Profilo
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -37,10 +38,17 @@ Route::middleware(['auth'])->group(function () { // ->prefix('admin') ,'role:adm
     //AUTHORs
     Route::middleware('role:admin|editor|author')->group(function () {
 
+        Route::middleware('role:admin')->group(function () {
+            Route::resource('/tags', TagController::class)->except(['show', 'edit']);
+
+            Route::get('/posts/approve', [PostController::class, 'approveIndex'])->name('posts.approve');
+            Route::post('/posts/{post:slug}/approve/', [PostController::class, 'approve'])->name('posts.approve.store');
+        });
+
         Route::resource('/posts', PostController::class);
+
         Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
         Route::put('/trash/restore/{post:slug}', [PostController::class, 'restore'])->name('posts.restore');
-        Route::get('/trash', [PostController::class, 'trash'])->name('posts.trash');
         Route::post('/posts/upload-image', [PostController::class, 'uploadImage'])->name('posts.uploadImage');
 
     });
@@ -49,6 +57,7 @@ Route::middleware(['auth'])->group(function () { // ->prefix('admin') ,'role:adm
         Route::get('/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
         Route::get('/posts/publish/{post:slug}', [PostController::class, 'publish'])->name('posts.publish');
     });
+
 
     // ADMINs
     Route::middleware('role:admin')->group(function () {
