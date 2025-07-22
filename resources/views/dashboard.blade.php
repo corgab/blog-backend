@@ -29,10 +29,10 @@
                             </div>
                         </a>
                         @if ($user->hasRole('admin') || $user->hasRole('editor'))
-                            <a href="{{ route('posts.drafts') }}" class="col-12 col-md text-decoration-none">
+                            <a href="{{ route('posts.approve') }}" class="col-12 col-md text-decoration-none">
                                 <div class="p-3 border bg-light rounded text-center">
                                     <h5>{{ $totalDrafts }}</h5>
-                                    <p>{{ __('Drafts') }}</p>
+                                    <p>Da Approvare</p>
                                 </div>
                             </a>
                         @endif

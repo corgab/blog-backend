@@ -55,7 +55,6 @@ Route::middleware(['auth'])->group(function () { // ->prefix('admin') ,'role:adm
     });
     // EDITORs
     Route::middleware('role:admin|editor')->group(function () {
-        Route::get('/drafts', [PostController::class, 'drafts'])->name('posts.drafts');
         Route::get('/posts/publish/{post:slug}', [PostController::class, 'publish'])->name('posts.publish');
     });
 
