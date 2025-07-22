@@ -40,7 +40,7 @@
 
                     <!-- Latest Posts -->
                     @if ($posts->isNotEmpty())
-                        <h4 class="mb-3">{{ __('Last posts') }}</h4>
+                        <h4 class="mb-3">Ultimi posts</h4>
                         <div class="list-group">
                             @foreach ($posts as $post)
                                 <a href="{{ route('posts.show', $post) }}" class="list-group-item list-group-item-action">
@@ -52,8 +52,15 @@
                                                     <small class=>{{ $tag->name }}</small>
                                                 @endforeach
                                             </p>
-                                            <small
-                                                class="badge {{ $post->status === 'published' ? 'text-bg-success' : 'text-bg-secondary' }}">{{ ucfirst($post->status) }}</small>
+                                            <small class="badge
+                                                @if ($post->status === 'published') text-bg-success
+                                                @elseif ($post->status === 'draft') text-bg-warning
+                                                @elseif ($post->status === 'approved') text-bg-primary
+                                                @elseif ($post->status === 'archived') text-bg-dark
+                                                @else text-bg-secondary
+                                                @endif">
+                                                {{ $post->status }}
+                                            </small>
                                         </div>
                                         <div class="text-end">
                                             <small class="text-muted">by {{ $post->user->name }}</small>

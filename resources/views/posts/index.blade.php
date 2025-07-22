@@ -29,12 +29,19 @@
                                 </div>
                                 <div class="d-flex flex-wrap mb-3">
                                     @foreach ($post->tags as $tag)
-                                        <span class="badge text-bg-light me-1">{{ $tag->name }}</span>
+                                        <span class="badge text-bg-dark me-1">{{ $tag->name }}</span>
                                     @endforeach
                                 </div>
                                 <div class="mb-3">
-                                    <span
-                                        class="badge {{ $post->status === 'published' ? 'text-bg-success' : 'text-bg-secondary' }}">{{ $post->status }}</span>
+                                    <small class="badge
+                                                @if ($post->status === 'published') text-bg-success
+                                                @elseif ($post->status === 'draft') text-bg-warning
+                                                @elseif ($post->status === 'approved') text-bg-primary
+                                                @elseif ($post->status === 'archived') text-bg-dark
+                                                @else text-bg-secondary
+                                                @endif">
+                                        {{ $post->status }}
+                                    </small>
                                 </div>
                             </div>
 
