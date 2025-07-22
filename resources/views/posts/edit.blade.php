@@ -114,7 +114,7 @@
                             <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
                                 <option value="draft" {{ old('status', $post->status) == 'draft' ? 'selected' : '' }}>
                                     {{ __('Draft') }}</option>
-                                <option value="published"
+                                <option value="approved"
                                     {{ old('status', $post->status) == 'approved' ? 'selected' : '' }}>
                                     Approvato</option>
                             </select>

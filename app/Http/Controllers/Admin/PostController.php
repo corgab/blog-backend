@@ -178,8 +178,6 @@ class PostController extends Controller
         // Controllo del ruolo utente
         if (Auth::user()->hasRole('author')) {
             $form_data['status'] = 'draft'; // Forza lo stato a "draft"
-        } elseif (!in_array($form_data['status'], ['draft', 'published'])) {
-            return redirect()->back()->withErrors(['status' => 'Stato non valido']);
         }
 
         // Aggiornamento del titolo e generazione dello slug

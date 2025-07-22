@@ -28,7 +28,7 @@ class UpdatePostRequest extends FormRequest
             'content' => 'nullable|string|max:16000000',
             'image' => ' nullable|image|mimes:jpeg,png,webp,jpg|max:2048',
             'featured' => 'required|boolean',
-            'status' => 'required|in:draft,published',
+            'status' => 'required|in:draft,approved',
             'tag_id' => 'required|array',
             'tag_id.*' => 'exists:tags,id',
             'meta_description' => 'nullable|string|max:65000',
@@ -50,7 +50,7 @@ class UpdatePostRequest extends FormRequest
             'featured.boolean' => 'Il campo "In Evidenza" deve essere vero o falso.',
 
             'status.required' => 'Il campo "Stato" è obbligatorio.',
-            'status.in' => 'Lo stato deve essere "bozza" o "pubblicato".',
+            'status.in' => 'Lo stato deve essere "bozza" o "approvato".',
 
             'tag_id.required' => 'È necessario selezionare almeno un tag.',
             'tag_id.array' => 'I tag devono essere in un formato valido.',
