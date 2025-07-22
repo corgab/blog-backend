@@ -181,11 +181,6 @@ class PostController extends Controller
                 $form_data['image'] = url('storage/cover_images/' . $fileName);
             }
 
-            // Controllo del ruolo utente
-            if (Auth::user()->hasRole('author')) {
-                $form_data['status'] = 'draft'; // Forza lo stato a "draft"
-            }
-
             // Aggiornamento del titolo e generazione dello slug
             if ($post->title !== $form_data['title']) {
                 $base_slug = Str::slug($form_data['title']);
@@ -227,15 +222,6 @@ class PostController extends Controller
         $post->delete();
 
         return to_route('posts.index');
-    }
-
-    public function drafts()
-    {
-        $user = Auth::user();
-
-        $drafts = Post::where('status', 'draft')->get();
-
-        return view('posts.drafts', compact('drafts', 'user'));
     }
 
     public function publish(Post $post)

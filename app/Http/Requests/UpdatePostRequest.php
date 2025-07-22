@@ -28,7 +28,7 @@ class UpdatePostRequest extends FormRequest
             'content' => 'nullable|string|max:16000000',
             'image' => ' nullable|image|mimes:jpeg,png,webp,jpg|max:2048',
             'featured' => 'required|boolean',
-            'status' => 'required|in:draft,approved',
+            'status' => 'required|in:draft,review,approved',
             'tag_id' => 'required|array',
             'tag_id.*' => 'exists:tags,id',
             'meta_description' => 'nullable|string|max:65000',
