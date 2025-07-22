@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\App;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,7 +16,11 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         // $schedule->command('send:newsletter')->weeklyOn(0, '16:00');
         //$schedule->command('send:newsletter')->daily(); // Testing
-        $schedule->command('publish:post')->dailyAt('10:00');
+        if (App::environment('production')) {
+            $schedule->command('publish:post')->dailyAt('10:00');
+        } else {
+            $schedule->command('publish:post')->everyMinute();
+        }
 
     }
 
