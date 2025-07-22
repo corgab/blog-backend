@@ -10,6 +10,11 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if (session('warn'))
+            <div class="alert alert-warning">
+                {{ session('warn') }}
+            </div>
+        @endif
 
         @if ($posts->isEmpty())
             <p>Non ci sono post da approvare</p>

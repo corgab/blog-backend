@@ -126,7 +126,13 @@ return [
 
         'publish_post' => [
             'driver' => 'single',
-            'path' => storage_path('logs/posts.log'),
+            'path' => storage_path('logs/publish_post.log'),
+            'level' => 'info',
+        ],
+
+        'info_post' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/info_post.log'),
             'level' => 'info',
         ],
     ],

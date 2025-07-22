@@ -3,9 +3,14 @@
     <div class="container mt-4">
         <h1 class="mb-2 text-center">{{ __('Trash') }}</h1>
 
-        @if (session('success') && !$posts->isEmpty())
+        @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
+            </div>
+        @endif
+        @if (session('warn'))
+            <div class="alert alert-warning">
+                {{ session('warn') }}
             </div>
         @endif
         @if ($posts->isEmpty())

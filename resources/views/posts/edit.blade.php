@@ -8,6 +8,17 @@
     <div class="container py-4">
         <h1 class="text-center mb-4">{{ __('Edit') }} Post</h1>
 
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('warn'))
+            <div class="alert alert-warning">
+                {{ session('warn') }}
+            </div>
+        @endif
+
         @if ($errors->has('sections'))
             <div class="alert alert-danger">
                 {{ $errors->first('sections') }}

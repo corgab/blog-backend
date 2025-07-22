@@ -62,45 +62,50 @@ class PostController extends Controller
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
 
-        // Gestisci l'immagine
-        if ($request->hasFile('image')) {
-            // Prendi il file
-            $file = $request->file('image');
-            // Nome
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-            // Salva in
-            $file->storeAs('/cover_images', $fileName);
+        try {
+            // Gestisci l'immagine
+            if ($request->hasFile('image')) {
+                // Prendi il file
+                $file = $request->file('image');
+                // Nome
+                $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+                // Salva in
+                $file->storeAs('/cover_images', $fileName);
 
-            $form_data['image'] = url('storage/cover_images/' . $fileName);
+                $form_data['image'] = url('storage/cover_images/' . $fileName);
+            }
+
+            $form_data['user_id'] = Auth::id(); // Assegna l'ID dell'utente autenticato
+            $form_data['status'] = $request->input('status', 'draft'); // Imposta lo stato, predefinito a 'draft'
+
+            // Creazione slug univoco
+            $base_slug = Str::slug($form_data['title']);
+            $slug = $base_slug;
+            $n = 0;
+
+            do {
+                $find = Post::where('slug', $slug)->withTrashed()->first();
+                if ($find !== null) {
+                    $n++;
+                    $slug = $base_slug . '-' . $n; // Incrementa lo slug se già esistente
+                }
+            } while ($find !== null);
+
+            $form_data['slug'] = $slug;
+
+            // Creazione del nuovo post
+            $new_post = Post::create($form_data);
+            $new_post->tags()->sync($request->input('tag_id'));
+
+            Log::channel('info_post')->info('Post creato con successo', ['post_id' => $new_post->id]);
+
+            return to_route('posts.index')->with('success', 'Post creato con successo!');
+        } catch (\Throwable $th) {
+            Log::channel('info_post')->warning('Errore creazione post', ['post_id' => $new_post->id, 'message' => $th->getMessage()]);
+            return back()->with('warn', 'Impossibile creare il post');
         }
 
-        $form_data['user_id'] = Auth::id(); // Assegna l'ID dell'utente autenticato
-        $form_data['status'] = $request->input('status', 'draft'); // Imposta lo stato, predefinito a 'draft'
-
-        // Creazione slug univoco
-        $base_slug = Str::slug($form_data['title']);
-        $slug = $base_slug;
-        $n = 0;
-
-        do {
-            $find = Post::where('slug', $slug)->withTrashed()->first();
-            if ($find !== null) {
-                $n++;
-                $slug = $base_slug . '-' . $n; // Incrementa lo slug se già esistente
-            }
-        } while ($find !== null);
-
-        $form_data['slug'] = $slug;
-
-        // Creazione del nuovo post
-        $new_post = Post::create($form_data);
-
-        $new_post->tags()->sync($request->input('tag_id'));
-
-        return to_route('posts.index')->with('success', 'Post creato con successo!');
     }
-
-
 
     /**
      * Display the specified resource.
@@ -143,61 +148,68 @@ class PostController extends Controller
         // Ottieni i dati validati dalla richiesta
         $form_data = $request->validated();
 
-        // Gestisci l'immagine
-        if ($request->hasFile('image')) {
-            // Se ha gia un immagine
-            if ($post->image) {
+        try {
+            // Gestisci l'immagine
+            if ($request->hasFile('image')) {
+                // Se ha gia un immagine
+                if ($post->image) {
 
-                $urlPath = parse_url($post->image, PHP_URL_PATH);
+                    $urlPath = parse_url($post->image, PHP_URL_PATH);
 
-                // Rimuove '/storage'
-                $imagePath = ltrim(str_replace('/storage/', '', $urlPath), '/');
+                    // Rimuove '/storage'
+                    $imagePath = ltrim(str_replace('/storage/', '', $urlPath), '/');
 
-                // dd($imagePath);
+                    // dd($imagePath);
 
-                // Verifica se il file esiste nel disco 'public'
-                if (Storage::disk('public')->exists($imagePath)) {
-                    // Elimina il file
-                    Storage::disk('public')->delete($imagePath);
-                } else {
-                    Log::warning("Immagine copertina del Post non eliminata: " . $imagePath);
+                    // Verifica se il file esiste nel disco 'public'
+                    if (Storage::disk('public')->exists($imagePath)) {
+                        // Elimina il file
+                        Storage::disk('public')->delete($imagePath);
+                    } else {
+                        Log::channel('info_post')->warning("Immagine copertina del Post non eliminata: " . $imagePath);
+                    }
                 }
+
+                // Prendi il file
+                $file = $request->file('image');
+
+                // Nome
+                $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+                // Salva in
+                $file->storeAs('/cover_images', $fileName);
+
+                $form_data['image'] = url('storage/cover_images/' . $fileName);
             }
 
-            // Prendi il file
-            $file = $request->file('image');
-
-            // Nome
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-            // Salva in
-            $file->storeAs('/cover_images', $fileName);
-
-            $form_data['image'] = url('storage/cover_images/' . $fileName);
-        }
-
-        // Controllo del ruolo utente
-        if (Auth::user()->hasRole('author')) {
-            $form_data['status'] = 'draft'; // Forza lo stato a "draft"
-        }
-
-        // Aggiornamento del titolo e generazione dello slug
-        if ($post->title !== $form_data['title']) {
-            $base_slug = Str::slug($form_data['title']);
-            $slug = $base_slug;
-            $n = 0;
-
-            while (Post::where('slug', $slug)->where('id', '!=', $post->id)->withTrashed()->exists()) {
-                $n++;
-                $slug = $base_slug . '-' . $n;
+            // Controllo del ruolo utente
+            if (Auth::user()->hasRole('author')) {
+                $form_data['status'] = 'draft'; // Forza lo stato a "draft"
             }
-            $form_data['slug'] = $slug;
+
+            // Aggiornamento del titolo e generazione dello slug
+            if ($post->title !== $form_data['title']) {
+                $base_slug = Str::slug($form_data['title']);
+                $slug = $base_slug;
+                $n = 0;
+
+                while (Post::where('slug', $slug)->where('id', '!=', $post->id)->withTrashed()->exists()) {
+                    $n++;
+                    $slug = $base_slug . '-' . $n;
+                }
+                $form_data['slug'] = $slug;
+            }
+
+            // Aggiorna il post
+            $post->update($form_data);
+            $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
+
+            Log::channel('info_post')->info('Post modificato con successo ', ['post_id' => $post->id]);
+
+            return redirect()->route('posts.index')->with('success', 'Post modificato con successo');
+        } catch (\Throwable $th) {
+            Log::channel('info_post')->warning('Post non modificato', ['post_id' => $post->id, 'message' => $th->getMessage()]);
+            return back()->with('warn', 'Impossibile modificare il post');
         }
-
-        // Aggiorna il post
-        $post->update($form_data);
-        $post->tags()->sync($request->input('tag_id', [])); // Sincronizza i tag
-
-        return redirect()->route('posts.index')->with('success', 'Post modificato con successo!');
     }
 
     /**
@@ -261,25 +273,35 @@ class PostController extends Controller
 
     public function restore($slug)
     {
-        // Trova il post soft deleted usando lo slug
-        $post = Post::withTrashed()->where('slug', $slug)->first();
-
-        if ($post) {
+        try {
+            $post = Post::withTrashed()->where('slug', $slug)->firstOrFail();
             $post->restore(); // Ripristina il post
-            return redirect()->route('posts.trash')->with('success', 'Post ripristinato correttamente!');
-        }
 
-        abort(404);
+            Log::channel('info_post')->info("Post ripristinato con successo", [
+                'post_id' => $post->id,
+            ]);
+
+            return redirect()->route('posts.trash')->with('success', 'Post ripristinato correttamente');
+
+        } catch (\Throwable $th) {
+            Log::channel('info_post')->warning('Errore ripristino post', ['post_id' => $post->id, 'error' => $th->getMessage()]);
+            return redirect()->back()->with('warn', 'Errore nel ripristino post');
+        }
     }
 
     public function permDelete($slug)
     {
-        $post = Post::withTrashed()->where('slug', $slug)->first();
+        try {
+            $post = Post::withTrashed()->where('slug', $slug)->firstOrFail();
 
-        if ($post) {
-            $post->forceDelete(); // Elimina perma
-            return back()->with('success', 'Post permanentemente eliminato!');
+            $post->forceDelete();
+
+            return back()->with('success', 'Post eliminato permanentemente');
+        } catch (\Throwable $th) {
+            Log::channel('info_post')->warning('Errore eliminazione permanente post', ['post_id' => $post->id, 'error' => $th->getMessage()]);
+            return redirect()->back()->with('warn', "Errore nell'eliminazione del post");
         }
+
     }
 
     public function uploadImage(Request $request)
