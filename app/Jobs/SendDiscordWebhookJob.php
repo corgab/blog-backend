@@ -31,7 +31,7 @@ class SendDiscordWebhookJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $webhookUrl = config('services.discord.webhook_url'); // Per adesso è 1 solo
+        $webhookUrl = config('services.discord.webhook_url');
 
         $url = config('app.frontend_url');
         $postUrl = $url . '/' . $this->post->slug;
@@ -52,15 +52,7 @@ class SendDiscordWebhookJob implements ShouldQueue
         @here
         DISCORD;
 
-        if(!app()->environment('production')) {
-            Http::withOptions(['verify' => false])->post($webhookUrl, [
-                'content' => $message,
-            ]);
-            Log::channel('publish_post')->info('Post mandato su discord', [
-                'post_id' => $this->post->id,
-                'app_env' => app()->environment(),
-            ]);
-        } else {
+        if(app()->environment('production')) {
             Http::post($webhookUrl, [
                 'content' => $message,
             ]);

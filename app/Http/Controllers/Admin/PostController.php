@@ -10,6 +10,7 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Image;
 use App\Models\PostSection;
+use Illuminate\Support\Facades\Cache;
 use Intervention\Image\Facades\Image as InterventionImage;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -19,22 +20,43 @@ use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
+    protected function clearPostCache(Post $post)
+    {
+        // Cache del singolo post
+        Cache::forget("posts.show.{$post->id}");
+
+        // Cache index
+        Cache::forget("posts.index.admin");
+        Cache::forget("posts.index.user.{$post->user_id}");
+
+        // Cache cestino
+        Cache::forget("posts.trash.admin");
+        Cache::forget("posts.trash.user.{$post->user_id}");
+
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
-
     {
         $user = Auth::user();
         if ($user->hasRole('admin') || $user->hasRole('editor')) {
-            $posts = Post::orderBy('created_at', 'desc')
-                ->with('user', 'tags')
-                ->get();
+            $cacheKey = 'posts.index.admin';
         } else {
-            $posts = Post::orderBy('created_at', 'desc')->where('user_id', $user->id)->with('user', 'tags')->get();
+            // Gli altri utenti vedono solo i propri
+            $cacheKey = 'posts.index.user.' . $user->id;
         }
 
-        // dd($posts);
+        $posts = Cache::remember($cacheKey, now()->addDay(), function () use ($user) {
+            $query = Post::orderBy('created_at', 'desc')->with(['user', 'tags']);
+
+            if (!$user->hasRole('admin') && !$user->hasRole('editor')) {
+                $query->where('user_id', $user->id);
+            }
+
+            return $query->get();
+        });
 
         return view('posts.index', compact('user', 'posts'));
     }
@@ -46,10 +68,16 @@ class PostController extends Controller
     {
         // Recupero l'utente
         $user = Auth::user();
+
         // Trova i post associati all'utente
-        $posts = Post::where('user_id', $user->id)->first();
+        $posts = Cache::remember('posts.index.user.' . $user->id, now()->addDay(), function () use ($user) {
+            return Post::where('user_id', $user->id)->first();
+        });
+
         // Tutti i tags
-        $tags = Tag::orderBy('name', 'asc')->get();
+        $tags = Cache::remember('tags', now()->addDay(), function () {
+            return Tag::orderBy('name')->get();
+        });
 
         return view('posts.create', compact('user', 'posts', 'tags'));
     }
@@ -114,6 +142,10 @@ class PostController extends Controller
     {
         $user = Auth::user();
 
+        $post = Cache::remember("posts.show.{$post->id}", now()->addDay(), function () use ($post) {
+            return Post::with(['user', 'tags'])->find($post->id);
+        });
+
         return view('posts.show', compact('post', 'user'));
     }
 
@@ -127,13 +159,14 @@ class PostController extends Controller
         // Carica le relazioni tags
         $post->load('tags');
 
-        $tags = Tag::orderBy('name', 'asc')->get();
-
+        $tags = Cache::remember('tags', now()->addDay(), function () {
+            return Tag::orderBy('name')->get();
+        });
         // Aggiungi la logica per trasformare i percorsi delle immagini in URL completi
         // $post->description = $this->updateImageUrls($post->description);
 
         // se il post è pubblico e l'utente è author e editor
-        if ($post->status == 'published' && $user->hasRole(['author', 'editor'])) {
+        if ($post->status == 'published') {
             return redirect()->route('posts.index')->with('errMessage', 'Non puoi modificare un post pubblico');
         }
 
@@ -213,8 +246,6 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
 
-        $user = Auth::user();
-
         if ($post->status == 'published') {
             return back()->with('errMessage', 'Non puoi eliminare questo post perchè è pubblico');
         }
@@ -227,8 +258,9 @@ class PostController extends Controller
     public function publish(Post $post)
     {
         $post->status = 'published';
-
         $post->save();
+
+        $this->clearPostCache($post);
 
         return redirect()->route('posts.drafts')->with('success', 'Post pubblicato con successo');
     }
@@ -237,24 +269,23 @@ class PostController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->hasRole('admin')) {
+        // Definiamo una chiave univoca per la cache
+        $cacheKey = $user->hasRole('admin')
+            ? 'posts.trash.admin'
+            : 'posts.trash.user.' . $user->id;
 
-            $posts = Post::onlyTrashed()
-                ->orderBy('created_at', 'desc')
-                // ->where('user_id', $user->id)
-                ->get();
+        $posts = Cache::remember($cacheKey, now()->addHours(6), function () use ($user) {
+            $query = Post::onlyTrashed()
+                ->orderBy('created_at', 'desc');
 
-            return view('posts.trash', compact('posts', 'user'));
-        } else {
+            if (!$user->hasRole('admin')) {
+                $query->where('user_id', $user->id);
+            }
 
-            $user = Auth::user();
-            $posts = Post::onlyTrashed()
-                ->orderBy('created_at', 'desc')
-                ->where('user_id', $user->id)
-                ->get();
+            return $query->get();
+        });
 
-            return view('posts.trash', compact('posts', 'user'));
-        }
+        return view('posts.trash', compact('posts', 'user'));
     }
 
     public function restore($slug)
@@ -327,11 +358,11 @@ class PostController extends Controller
     public function approve(Post $post) {
 
         $post->status = 'approved';
-
         $post->save();
+
+        $this->clearPostCache($post);
 
         return redirect()->route('posts.approve', $post)->with('success', 'Post approvato con successo');
     }
-
 
 }
