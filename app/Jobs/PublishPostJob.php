@@ -39,7 +39,10 @@ class PublishPostJob implements ShouldQueue
         Cache::forget("posts.index.user.{$this->post->user_id}");
 
         // Integrazione con i discord tramite webhook
-        SendDiscordWebhookJob::dispatch($this->post);
-        Log::channel('publish_post')->info('Post mandato su discord tramite webhook', ['post_id' => $this->post->id]);
+        if(app()->environment('production')) {
+            SendDiscordWebhookJob::dispatch($this->post);
+            Log::channel('publish_post')->info('Post mandato su discord tramite webhook', ['post_id' => $this->post->id]);
+        }
+
     }
 }

@@ -51,7 +51,7 @@ class PostObserver
         $this->clearCache($post);
     }
 
-    protected function clearCache($post)
+    protected function clearCache($post): void
     {
         // Cache singolo post
         Cache::forget("posts.show.{$post->id}");
