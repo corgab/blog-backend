@@ -22,8 +22,8 @@ class PostResource extends JsonResource
             'description' => $this->description,
             'content' => $this->content,
             'is_featured' => $this->featured,
-            'created_date' => $this->created_at->format('M d, Y'),
-            'updated_date' => $this->updated_at->format('M d, Y'),
+            'created_date' => $this->created_at->translatedFormat('M d, Y'),
+            'updated_date' => $this->updated_at->translatedFormat('M d, Y'),
             'reading_time' => $this->reading_time,
             'tags' => TagResource::collection($this->whenLoaded('tags')),
 

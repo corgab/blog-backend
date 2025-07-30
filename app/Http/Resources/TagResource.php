@@ -19,7 +19,7 @@ class TagResource extends JsonResource
             'name' => $this->name,
             'image' => $this->image,
             'slug' => $this->slug,
-            'created_date' => $this->created_at->format('M d, Y'),
+            'created_date' => $this->created_at->translatedFormat('M d, Y'),
             'posts_count' => $this->when(isset($this->posts_count), $this->posts_count),
             'posts' => PostResource::collection($this->whenLoaded('posts')),
         ];
